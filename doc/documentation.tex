@@ -1,0 +1,326 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[a4paper, left=1.5cm, right=1.5cm]{geometry}
+
+%opening
+\title{rbClips scaffold}
+\author{Jarek 'Jarcec' Cecho}
+
+\begin{document}
+
+\maketitle
+
+%% Introduction
+\section{Introduction}
+This document describe scaffold structure of rbClips, binary extension of CLIPS for ruby scripting language. This is first scaffold so in many places, there is direct insertion of CLIPS code which will be hopefully removed in future versions.
+
+\paragraph{General notes:}
+\begin{itemize}
+ \item Entire CLIPS environment lives inside it's own namespace (module) called 'Clips'.
+ \item Most of objects have common methods with same semantic (if semantics differs, it's mention specifically)
+	\begin{itemize}
+	 \item \texttt{to\_s()} Returns fragment of code that describe object in CLIPS word (it's syntactically correct CLIPS code, that can be useds)
+	 \item \texttt{save()} Newly created instances/classes/facts/rules/... are not directly inserted into clips environment, but they have to be inserted manually throw this method. Be aware that almost in every case, saving entity to CLIPS means locking its object in ruby. Meaning that after saving, object is in read-only state and can't be altered.
+	 \item \texttt{destroy()} Opposite function for save(), it will try to remove given entity from CLIPS environment.
+	\end{itemize}
+ \item CLIPS build in types have lower case id that represent them in rbClips. To make reading easiest, for this document pseudovariable ClipsType is used and means on from :symbol, :string, :lexeme, :integer, :float, :number, :instance\_name, :instance\_address, :instance, :external\_address, :fact\_address.
+\end{itemize}
+
+\section{Constraits}
+CLIPS provide strong mechanism for defining contraits (limitation) of slots in Templates and Classes. In rbClips it's surrounded by class Constrait. Saving Constrait in CLIPS environment is impossible because constraits can't live along in CLIPS, that's possible only in ruby environment (to create one constrait and than pass the same config to all slots). In most places, where the constrait object is requested is possible to pass Hash - it will be pass to the constructor and constrait object will be build in place.
+
+Below are listen options for hash passed to constructor, note that only one hash key is valid!
+\begin{itemize}
+ \item \texttt{:type => ClipsType | :any | [ClipsType, ...]} Specifing which type can be used
+ \item \texttt{:values => Array} List with allowed values
+ \item \texttt{:range => Range}
+ \item \texttt{:cardinality => Range} Cardinality of multislot
+\end{itemize}
+
+%% Base
+\section{Base}
+Function and action that are not exactly related to some bigger topic that is wrapped by another class listen below are accessible by object Base. It have just and only static methods for various use:
+\begin{itemize}
+ \item \texttt{run} Run clips (start applying rules), this method will end after no rule can be fired.
+ \item \texttt{reset} Reset clips environment to defaults
+ \item \texttt{agenda} Return String containing outputs of agenda function
+ \item \texttt{insert\_code(String)} Insert given code to CLIPS directly (no checks, no abstraction)
+ \item \texttt{static\_constraint\_checking} and \texttt{static\_constraint\_checking=(Boolean)} Get or set static constrait
+ \item \texttt{dynamic\_constraint\_checking} and \texttt{dynamic\_constraint\_checking=(Boolean)} Get or set dynamic constrait
+ \item More methods mentioned later in this document
+\end{itemize}
+
+
+%% COOL
+\section{COOL}
+CLIPS object-oriented language description and its wrapping by ruby environment.
+
+\subsection{Classes}
+For interaction with classes in CLIPS, rbClips have class Class (yeah same name, just first letter is upper case). It have two static methods:
+\begin{itemize}
+ \item \texttt{new()} Create new instance, description is below
+ \item \texttt{load(String)} Load class from CLIPS environment and return it's representation in ruby.
+\end{itemize}
+
+For creating new classes, you need to create new instance of class 'Class':
+\begin{verbatim}
+ animal = Clips::Class.new :name => 'animal'
+\end{verbatim}
+
+Constructor have more keys in hash for params that follows defclass command:
+\begin{itemize}
+ \item \texttt{:name => String} Name of class in CLIPS
+ \item \texttt{:is\_a => Array} Inheritance list, can contain:
+	\begin{itemize}
+	 \item \texttt{Clips::Class | :user | :object | :integer | ...}
+	\end{itemize}
+ \item \texttt{:role => :concrete | :abstract} Concrete or virtual class (can make instances from it or not)
+ \item \texttt{:pattern\_match => :reactive | :nonreactive} Should change cause pattern-matching
+ \item \texttt{:slots => Array | Hash} Contains slot list and with their options. In array variant you can specify only slot names, in hash you can override default attributes. Hash has structure \texttt{String => { options }}, where key is name of slot and options are:
+	\begin{itemize}
+	 \item \texttt{:default => :derive | :none | String } Default value for slot
+	 \item \texttt{:default\_dynamic => Boolean} Should be the default value dynamic or static
+	 \item \texttt{:storage => :local | :shared} Shared means that this slot is 'static' (shared between instances)
+	 \item \texttt{:access => :rw | :ro | :initialize | :read | :readwrite } Visibility of slot
+	 \item \texttt{:propagation => :inherit | :noinherit} Can the slot be inherited?
+	 \item \texttt{:source => :exclusive | :composite } More info in documentation
+	 \item \texttt{:pattern\_match => :reactive | :nonreactive}  Should change of slot cause pattern-matching
+	 \item \texttt{:visibility => :private | :public} Normal OOP visibility
+	 \item \texttt{:create\_accessor => :none | :ro | :wo | :rw | :read | :write | :readwrite} Create default access function for this actions
+	 \item \texttt{:constrait => Constrait | Hash} Limitation of slot values
+	\end{itemize}
+\end{itemize}
+In instance acces method for each slot will be created, so it's important not to name slots after already defined methods. This method for slot return an instance of object \texttt{Class::Slot}, that have methods for changing slot options (named in same way as options in configuration hash).
+
+Another instance methods:
+\begin{itemize}
+ \item \texttt{new(Hash)} Return newly created instance (Clips::Instance) of this class, description is below when describing instancess of objects
+ \item \texttt{instances()} Returns Array with all instances of this class
+ \item \texttt{save()}
+ \item \texttt{destroy()}
+ \item \texttt{to\_s()}
+\end{itemize}
+
+\paragraph{Example}
+\begin{verbatim}
+# Playing with class
+animal = Clips::Class.new :name => 'animal', :is_a => :user, :role => :abstract, 
+		:slots => { 'age' => {:default => 0, :visibility => public}}
+animal.save
+
+dog = Clips::class.new :name => 'dog', :is_a => animal,
+		:slots => { 'name' => {}, 'race' => {:default => 'unknown'}}
+dog.race.access = :readwrite
+dog.save
+\end{verbatim}
+
+\subsection{Instances}
+New instance of class is created by calling method new(Hash) on it's Class (the capital letter is by purpose). As parametr it accept Hash with slot names as keys (both string or id is possible) and content as values that override default values.
+
+\begin{itemize}
+ \item \texttt{[slot-name]} Read access method for slot (exist only if class declare 'create\_accessor' at least for reading). After saving, it's synonym fo send get-slot message.
+ \item \texttt{[slot-name]=} Write access method for slot (exist only if class declare 'create\_accessor' for writing). After saving, it's synonym for send put-slot message.
+ \item \texttt{duplicate(String, nil | Hash)} Returns copy of  instance with new name and overrides given slots. If original instance is saved, than duplicated instance is saved as well.
+ \item \texttt{initialize(nil | Hash)} Reinitalize object from it's defaults and slot overrides
+ \item \texttt{send(String, *params)} Send a message to this object
+ \item \texttt{save}
+ \item \texttt{destroy}
+ \item \texttt{to\_s}
+\end{itemize}
+
+\paragraph{Example}
+\begin{verbatim}
+# Creating with instances
+puppy = dog.new :name => 'Lassie', :age => 0.2
+puppy.race = 'Hasky'
+puppy.save
+
+# Duff is saved, bacause puppy is saved too
+duff = puppy.duplicate('Duff', {:age => 1.0})
+\end{verbatim}
+
+\subsection{Message handlers}
+Message handlers lives next to instances and classes and are independent on them (just as they are in CLIPS). For this first version of scaffold, API is very simple and in fact and not much ruby-like (just wrapper about CLIPS code). Creation new message-handler is done by creating instance of MessageHandler class and saving it. As a pamarameters (in constructor and in access methods) accept strings that are directly inserted into CLIPS without any checks or any higner approach.
+
+Constructor accept hash with values:
+\begin{itemize}
+ \item \texttt{:name => String} Name of message handler
+ \item \texttt{:type => :around | :before | :primary | :after } Type of message handler
+ \item \texttt{:class => String | Class | :integer | ...} Class for handler
+ \item \texttt{:params => String} Part of params (may be empty)
+ \item \texttt{:body => String} Handler body (cannot be empty)
+\end{itemize}
+
+For every key in hash that constructor accept, instance have access (both read and write) method for changing its values (with same semantic) and in addition traditional set of methods:
+\begin{itemize}
+ \item \texttt{save}
+ \item \texttt{destroy}
+ \item \texttt{to\_s}
+\end{itemize}
+
+\paragraph{Example}
+\begin{verbatim}
+# Creating message handler - so far ogly
+hndl = Clips::MessageHandler.new :name => '+', :class => :numeric,
+	 :params => '?next', :body => '+ ?next ?self'
+\end{verbatim}
+
+\subsection{Other methods for objects}
+Base object (Clips::Base) have same usefull wrappings for objects:
+\begin{itemize}
+ \item \texttt{object\_pattern\_match\_delayed(\&block)} Run code in block with delayed pattern matching
+\end{itemize}
+
+COOL query system is accessible from Base object and consist of these six static methods:
+\begin{itemize}
+ \item \texttt{any\_instancep}
+ \item \texttt{find\_instance}
+ \item \texttt{find\_all\_instances}
+ \item \texttt{do\_for\_instance} 
+ \item \texttt{do\_for\_all\_instances}
+ \item \texttt{delayed\_do\_for\_all\_instances}
+\end{itemize}
+
+They share some commont settings, they all accept instance-set and query and some of them additionaly accept action to do. For this first scaffold, behaviour and parameters are simple. They accept hash and then generate the code:
+\begin{itemize}
+ \item \texttt{:instance\_set => { String => String | Class | [ String | Class, ...]}} Instance set, leading '?' in name (first string) is not compulsory, it will be added automatically if not present
+ \item \texttt{:query => String} String with query (CLIPS code)
+ \item \texttt{:action => String} Actions to do (CLIPS code)
+\end{itemize}
+
+\paragraph{Example}
+\begin{verbatim}
+# Query system
+male = Clips::Class :name => 'Male', :is_a => :user, :slots => ['age', 'name']
+female = Clips::Class :name => 'Female', :is_a => :user, :slots => ['age', 'name']
+
+Clips::Base.do_fo_instances :instance_set => { 'human' => [male, female], 'female' => female},
+	 :action => "(+ ?human:age ?female:age)"
+\end{verbatim}
+
+%% Facts
+\section{Facts}
+For working with Facts rbClips provides two classes Template, Fact.
+
+\subsection{Template}
+Entire workaround above ordered facts. Class is providing API for loading templates from CLIPS environment as well. Static methods:
+\begin{itemize}
+ \item \texttt{new(Hash)} Descibed below, create new template object
+ \item \texttt{load(String)} Load template form CLIPS and return it
+\end{itemize}
+
+Hash options for contructoruction of new template:
+\begin{itemize}
+ \item \texttt{:name => String} Name of template in CLIPS world
+ \item \texttt{:slots => Array | Hash} Slot list - in array accept only strings (names of slots). In hash variant accept String as key (name of slot) and another hash as value with options for this slot.
+	\begin{itemize}
+	 \item \texttt{:multislot => Boolean} Is this multislot? False by default.
+	 \item \texttt{:default => :none | :derive | String } Default value for this slot
+	 \item \texttt{:default\_dynamic => Boolean} Should be default dynamic? Make sens only when some function is given as default value for slot.
+	\end{itemize}
+\end{itemize}
+
+\paragraph{Example}
+\begin{verbatim}
+human = Clips::Template :name => 'human', :slots => ['name', 'age']
+\end{verbatim}
+
+\subsection{Facts}
+Clips::Facts class handle entire workaround above creating and deleting facts (both ordered and non-ordered). 
+
+Creation of new fact:
+\begin{itemize}
+ \item \texttt{Clips::Fact.new(String, Array)} Create new ordered fact, Array can be blank
+ \item \texttt{Clips::Fact.new(Template, Hash)} Create new non-ordered fact, Hash can be blank
+\end{itemize}
+
+\paragraph{Shared methods}
+\begin{itemize}
+ \item \texttt{template()} Return string in ordered fact and Instance of Template in non-ordered case
+ \item \texttt{to\_s()}
+ \item \texttt{save()}
+ \item \texttt{destroy()}
+\end{itemize}
+
+\paragraph{Ordered rules}
+\begin{itemize}
+ \item \texttt{slots()} Return array fact values
+ \item \texttt{slots=(Array)} Redefine fact values
+\end{itemize}
+\paragraph{Nonordered rules}
+\begin{itemize}
+ \item \texttt{[slot-name]()} Return value stored in fact
+ \item \texttt{[slot-name]=(Array)} Redefine value stored in fact
+\end{itemize}
+
+%% Rules
+\section{Rules}
+Rule class is almost most complex class in rbClips. It offers common static methods
+\begin{itemize}
+ \item \texttt{new(Hash)} Config hash, options are listed below
+ \item \texttt{load(String)} Load rule from CLIPS environment directly
+\end{itemize}
+
+Controller hash options:
+\begin{itemize}
+ \item \texttt{:name => String} Rule name
+\end{itemize}
+
+
+\subsection{Working with LHS}
+Setting LHS of Rule is done by calling lhs() method on that rule. Method accept block with parametre of type Clips::Rule::Lhs, that have methods for specifing preconditions.
+
+Simple pattern matching is done by pattern() method. It accept instances (not saved!) of matchable entities - facts and objects, with specified constraits on given slots or possitions. Note, that you can pass ID on slot possition, to create a rule variable of that name or use reserverd ids :all or :one. There are many of blank spaces that have to be hacked by givint string variable with CLIPS code (for example variable slot constraits - ?x\&\~red\&\~green ). pattern() method also accept string with CLIPS fragment, where you can put whatever you want.
+
+\begin{verbatim}
+r = Clips::Rule.new :name => 'die'
+r.lhs do |l|
+	# For ordered facts
+	l.pattern Clips::Fact.new 'human', [:all, 20] Equals (human $? 20)
+	l.pattern Clips::Fact.new 'human', [:one, 20] # Equals (human ? 20)
+	l.pattern Clips::Fact.new 'human', [:x, 20]   # Equals (human ?x 20)
+	
+	# Nonordered facts
+	l.pattern Clips::Fact.new humanfact, {:name => 'Honza', :age => :x} 
+		# Equals (humanfact (name Honza) (age ?x))
+
+	# Objects
+ 	l.pattern humanclass.new(:nick => 'Honza', :age => :x)
+		# Equals (object (is-a humanclass) (nick Honza) (age ?x))
+	
+	# String hack
+	l.pattern "(object (is-a X Y Z) (ahoj ?x:(numberp ?x)))"
+end
+r.save
+\end{verbatim}
+
+You can also group conditions with 'and' and 'or' using blocks:
+\begin{verbatim}
+rule = Clips::Rule.new :name => 'some-rule'
+rule.lhs do |l|
+	l.or do |ll|
+		ll.pattern Clips::Fact.new 'human', [20]
+		ll.pattern Clips::Fact.new 'human', [30]
+	end
+end
+\end{verbatim}
+
+\subsection{Working with RHS}
+So far, rbClips provide just String based specification (CLIPS fragments of code) to determine RHS.
+\begin{verbatim}
+rule = Clips::Rule.new :name => 'some-rule'
+rule.rhs = "(retract ?a) (retract ?b)"
+\end{verbatim}
+
+\paragraph{Variable contraits}
+Design  patterns, predicate calling (function calling)
+ToDo: Dopsat, na dobre ceste :-)
+
+%% Notes
+\section{Author's notes}
+\begin{itemize}
+ \item Design query system, something like (or whatever), just not to pass code directly in CLIPS
+ \item Design blocks of code for query system - ruby blocks should be the best solution ;-)
+ \item Make internal message buffer somehow prepared for stream (hack CLIPS to buindle it by changing main.o)
+\end{itemize}
+
+\end{document}
