@@ -1,0 +1,3 @@
+void Init_rbclips()
+{
+}
