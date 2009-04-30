@@ -21,6 +21,7 @@ This document describe scaffold structure of rbClips, binary extension of CLIPS 
 	 \item \texttt{to\_s()} Returns fragment of code that describe object in CLIPS word (it's syntactically correct CLIPS code, that can be useds)
 	 \item \texttt{save()} Newly created instances/classes/facts/rules/... are not directly inserted into clips environment, but they have to be inserted manually throw this method. Be aware that almost in every case, saving entity to CLIPS means locking its object in ruby. Meaning that after saving, object is in read-only state and can't be altered.
 	 \item \texttt{destroy()} Opposite function for save(), it will try to remove given entity from CLIPS environment.
+	 \item \texttt{environment()} Return in which environment (instance of class Environmnet) is the object connected or nil if it's environment free (can be used anywhere).
 	\end{itemize}
  \item CLIPS build in types have lower case id that represent them in rbClips. To make reading easiest, for this document pseudovariable ClipsType is used and means on from :symbol, :string, :lexeme, :integer, :float, :number, :instance\_name, :instance\_address, :instance, :external\_address, :fact\_address.
 \end{itemize}
@@ -40,7 +41,7 @@ Below are listen options for hash passed to constructor, note that only one hash
 \section{Base}
 Function and action that are not exactly related to some bigger topic that is wrapped by another class listen below are accessible by object Base. It have just and only static methods for various use:
 \begin{itemize}
- \item \texttt{run} Run clips (start applying rules), this method will end after no rule can be fired.
+ \item \texttt{run(Fixnum, Environment | nil)} Run clips (start applying rules) in given Environment or when passed nil in actually set environment, this method will end after the maximal count of rules will be fired or there aren't any rule to rile.
  \item \texttt{reset} Reset clips environment to defaults
  \item \texttt{agenda} Return String containing outputs of agenda function
  \item \texttt{insert\_code(String)} Insert given code to CLIPS directly (no checks, no abstraction)
@@ -49,6 +50,21 @@ Function and action that are not exactly related to some bigger topic that is wr
  \item More methods mentioned later in this document
 \end{itemize}
 
+\subsection{Environment}
+rbClis is environment aware (can run multiple environments) - everythink operates with class Environment. Base class have methods to work with it:
+\begin{itemize}
+ \item \texttt{getEnvironment()} Return current environment.
+ \item \texttt{setEnvironment(Environment)} Set environment, this method returns previous environment instance
+\end{itemize}
+Please note that one environment (the default one) is created for you when loading rbClips into memory.
+
+\begin{verbatim}
+ # Saving previous (automatically generated)
+ defenv = Clips::Base.getEnvironment
+ # Creating new environment
+ newenv = Clips::Environment.new
+ prevenv = Clips::Base.setEnvironment(newenv)
+\end{verbatim}
 
 %% COOL
 \section{COOL}
