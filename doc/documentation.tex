@@ -44,7 +44,7 @@ Function and action that are not exactly related to some bigger topic that is wr
  \item \texttt{run(Fixnum, Environment | nil)} Run clips (start applying rules) in given Environment or when passed nil in actually set environment, this method will end after the maximal count of rules will be fired or there aren't any rule to rile.
  \item \texttt{reset} Reset clips environment to defaults
  \item \texttt{agenda} Return String containing outputs of agenda function
- \item \texttt{insert\_code(String)} Insert given code to CLIPS directly (no checks, no abstraction)
+ \item \texttt{insert\_code(String)} Insert given fragment of code to CLIPS directly (no checks, no abstraction)
  \item \texttt{static\_constraint\_checking} and \texttt{static\_constraint\_checking=(Boolean)} Get or set static constrait
  \item \texttt{dynamic\_constraint\_checking} and \texttt{dynamic\_constraint\_checking=(Boolean)} Get or set dynamic constrait
  \item More methods mentioned later in this document
@@ -120,11 +120,11 @@ Another instance methods:
 \begin{verbatim}
 # Playing with class
 animal = Clips::Class.new :name => 'animal', :is_a => :user, :role => :abstract, 
-		:slots => { 'age' => {:default => 0, :visibility => public}}
+                  :slots => { 'age' => {:default => 0, :visibility => public}}
 animal.save
 
 dog = Clips::class.new :name => 'dog', :is_a => animal,
-		:slots => { 'name' => {}, 'race' => {:default => 'unknown'}}
+                  :slots => { 'name' => {}, 'race' => {:default => 'unknown'}}
 dog.race.access = :readwrite
 dog.save
 \end{verbatim}
@@ -135,7 +135,7 @@ New instance of class is created by calling method new(Hash) on it's Class (the 
 \begin{itemize}
  \item \texttt{[slot-name]} Read access method for slot (exist only if class declare 'create\_accessor' at least for reading). After saving, it's synonym fo send get-slot message.
  \item \texttt{[slot-name]=} Write access method for slot (exist only if class declare 'create\_accessor' for writing). After saving, it's synonym for send put-slot message.
- \item \texttt{duplicate(String, nil | Hash)} Returns copy of  instance with new name and overrides given slots. If original instance is saved, than duplicated instance is saved as well.
+ \item \texttt{duplicate(String, nil | Hash)} Returns copy of  instance with new name and overrides given slots. If original instance is saved, than duplicated instance is saved as well. This copy is done by CLIPS function (duplicate-instance) and it's seems to be just a shallow copy.
  \item \texttt{initialize(nil | Hash)} Reinitalize object from it's defaults and slot overrides
  \item \texttt{send(String, *params)} Send a message to this object
  \item \texttt{save}
@@ -177,7 +177,7 @@ For every key in hash that constructor accept, instance have access (both read a
 \begin{verbatim}
 # Creating message handler - so far ogly
 hndl = Clips::MessageHandler.new :name => '+', :class => :numeric,
-	 :params => '?next', :body => '+ ?next ?self'
+                :params => '?next', :body => '+ ?next ?self'
 \end{verbatim}
 
 \subsection{Other methods for objects}
@@ -209,8 +209,8 @@ They share some commont settings, they all accept instance-set and query and som
 male = Clips::Class :name => 'Male', :is_a => :user, :slots => ['age', 'name']
 female = Clips::Class :name => 'Female', :is_a => :user, :slots => ['age', 'name']
 
-Clips::Base.do_fo_instances :instance_set => { 'human' => [male, female], 'female' => female},
-	 :action => "(+ ?human:age ?female:age)"
+Clips::Base.do_for_instances :instance_set => { 'human' => [male, female], 'female' => female},
+         :action => "(+ ?human:age ?female:age)"
 \end{verbatim}
 
 %% Facts
@@ -257,12 +257,12 @@ Creation of new fact:
  \item \texttt{destroy()}
 \end{itemize}
 
-\paragraph{Ordered rules}
+\paragraph{Ordered facts}
 \begin{itemize}
  \item \texttt{slots()} Return array fact values
  \item \texttt{slots=(Array)} Redefine fact values
 \end{itemize}
-\paragraph{Nonordered rules}
+\paragraph{Nonordered facts}
 \begin{itemize}
  \item \texttt{[slot-name]()} Return value stored in fact
  \item \texttt{[slot-name]=(Array)} Redefine value stored in fact
@@ -290,21 +290,21 @@ Simple pattern matching is done by pattern() method. It accept instances (not sa
 \begin{verbatim}
 r = Clips::Rule.new :name => 'die'
 r.lhs do |l|
-	# For ordered facts
-	l.pattern Clips::Fact.new 'human', [:all, 20] Equals (human $? 20)
-	l.pattern Clips::Fact.new 'human', [:one, 20] # Equals (human ? 20)
-	l.pattern Clips::Fact.new 'human', [:x, 20]   # Equals (human ?x 20)
-	
-	# Nonordered facts
-	l.pattern Clips::Fact.new humanfact, {:name => 'Honza', :age => :x} 
-		# Equals (humanfact (name Honza) (age ?x))
+  # For ordered facts
+  l.pattern Clips::Fact.new 'human', [:all, 20] Equals (human $? 20)
+  l.pattern Clips::Fact.new 'human', [:one, 20] # Equals (human ? 20)
+  l.pattern Clips::Fact.new 'human', [:x, 20]   # Equals (human ?x 20)
+  
+  # Nonordered facts
+  l.pattern Clips::Fact.new humanfact, {:name => 'Honza', :age => :x} 
+    # Equals (humanfact (name Honza) (age ?x))
 
-	# Objects
- 	l.pattern humanclass.new(:nick => 'Honza', :age => :x)
-		# Equals (object (is-a humanclass) (nick Honza) (age ?x))
+  # Objects
+  l.pattern humanclass.new(:nick => 'Honza', :age => :x)
+    # Equals (object (is-a humanclass) (nick Honza) (age ?x))
 	
-	# String hack
-	l.pattern "(object (is-a X Y Z) (ahoj ?x:(numberp ?x)))"
+  # String hack
+  l.pattern "(object (is-a X Y Z) (ahoj ?x:(numberp ?x)))"
 end
 r.save
 \end{verbatim}
@@ -313,10 +313,10 @@ You can also group conditions with 'and' and 'or' using blocks:
 \begin{verbatim}
 rule = Clips::Rule.new :name => 'some-rule'
 rule.lhs do |l|
-	l.or do |ll|
-		ll.pattern Clips::Fact.new 'human', [20]
-		ll.pattern Clips::Fact.new 'human', [30]
-	end
+  l.or do |ll|
+    ll.pattern Clips::Fact.new 'human', [20]
+    ll.pattern Clips::Fact.new 'human', [30]
+  end
 end
 \end{verbatim}
 
@@ -330,6 +330,29 @@ rule.rhs = "(retract ?a) (retract ?b)"
 \paragraph{Variable contraits}
 Design  patterns, predicate calling (function calling)
 ToDo: Dopsat, na dobre ceste :-)
+
+%% Simple example
+\section{Example of application}
+\begin{verbatim}
+# Creating facts
+Clips::Fact.new( 'animal', %w(dog) ).save
+Clips::Fact.new( 'animal', %w(cat) ).save
+Clips::Fact.new( 'animal', %w(horse) ).save
+Clips::Fact.new( 'animal', %w(duck) ).save
+Clips::Fact.new( 'child-of', %w(dog puppy) ).save
+Clips::Fact.new( 'child-of', %w(cat kitten) ).save
+
+# Creating rules
+rule = Clips::Rule.new 'animalize'
+rule.lhs do  |l|
+        l.pattern Clips::Fact.new 'animal', [:animal]
+        l.pattern Clips::Fact.new 'child-of', [:animal, :child]
+end
+rule.rhs = "(assert (animal ?child))"
+rule.save
+
+# Run
+Clips::Base.run\end{verbatim}
 
 %% Notes
 \section{Author's notes}
