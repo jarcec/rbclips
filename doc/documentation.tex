@@ -284,7 +284,7 @@ Creation of new fact:
 \section{Rules}
 Rule class is almost most complex class in rbClips. It offers common static methods
 \begin{itemize}
- \item \texttt{new(Hash)} Config hash, options are listed below
+ \item \texttt{new(Hash, \&block)} Config hash, options are listed below, and  block that set up the precodition and results.
  \item \texttt{load(String)} Load rule from CLIPS environment directly
 \end{itemize}
 
@@ -293,17 +293,15 @@ Controller hash options:
  \item \texttt{:name => String} Rule name
 \end{itemize}
 
+\subsection{Configuration block}
+Accept one variable that is used for build rule precondition (Left-hand side) and results (right-hand side) in one place. Given object of class Clips::Rule::Handler have methods for specifying left hand side and right hand side together because in most case LHS and RHS is connected as well. Ruby symbols means in Handler's methods CLIPS variable (e.g. :x will be transformed into ?x in CLIPS). There are two reserved symbols :one and :all that transforms into '?' and '\$?'.
 
-\subsection{Working with LHS}
-Setting LHS of Rule is done by calling lhs() method on that rule. Method accept block with parametre of type Clips::Rule::Lhs, that have methods for specifing preconditions.
-
-Simple pattern matching is done by pattern() method. It accept instances (not saved!) of matchable entities - facts and objects, with specified constraits on given slots or possitions. Note, that you can pass ID on slot possition, to create a rule variable of that name or use reserverd ids :all or :one. There are many of blank spaces that have to be hacked by givint string variable with CLIPS code (for example variable slot constraits - ?x\&\~red\&\~green ). pattern() method also accept string with CLIPS fragment, where you can put whatever you want.
+Simple pattern matching in LHS is done by pattern() method. It accept instances (not saved!) of matchable entities - facts and objects, with specified constraits on given slots or possitions. There are many of blank spaces that have to be hacked by givint string variable with CLIPS code (for example variable slot constraits - ?x\&\~red\&\~green ). pattern() method also accept string with CLIPS fragment, where you can put whatever you want. 
 
 \begin{verbatim}
-r = Clips::Rule.new :name => 'die'
-r.lhs do |l|
+r = Clips::Rule.new :name => 'die' do |l|
   # For ordered facts
-  l.pattern Clips::Fact.new 'human', [:all, 20] Equals (human $? 20)
+  l.pattern Clips::Fact.new 'human', [:all, 20] # Equals (human $? 20)
   l.pattern Clips::Fact.new 'human', [:one, 20] # Equals (human ? 20)
   l.pattern Clips::Fact.new 'human', [:x, 20]   # Equals (human ?x 20)
   
@@ -323,8 +321,7 @@ r.save
 
 You can also group conditions with 'and' and 'or' using blocks:
 \begin{verbatim}
-rule = Clips::Rule.new :name => 'some-rule'
-rule.lhs do |l|
+rule = Clips::Rule.new :name => 'some-rule' do |l|
   l.or do |ll|
     ll.pattern Clips::Fact.new 'human', [20]
     ll.pattern Clips::Fact.new 'human', [30]
@@ -332,16 +329,25 @@ rule.lhs do |l|
 end
 \end{verbatim}
 
-\subsection{Working with RHS}
-So far, rbClips provide just String based specification (CLIPS fragments of code) to determine RHS.
+There are methods that modify both LHS and RHS - for example you searching for some pattern in fact and than you want to retract the fact - there are two operations (pattern matching and retraction) with one fact. In rbClips you specify this by only one method call \texttt{retract}, that have same parametres and behaviour as \texttt{pattern}, but additionally it add to RHS retract command.
 \begin{verbatim}
-rule = Clips::Rule.new :name => 'some-rule'
-rule.rhs = "(retract ?a) (retract ?b)"
+rule = Clips::Rule.new :name => 'some-rule' do |l|
+  l.retract Clips::Fact.new 'human', [20] # Search for it and than delete it
+end
 \end{verbatim}
 
+Calling ruby object as a result of rule (RHS) is simple just write
+\begin{verbatim}
+rule = Clips::Rule.new :name => 'some-rule' do |l|
+  l.rcall ruby-instance, 'method-name', :a, 'x'
+end
+\end{verbatim}
+rcall method itself store reference to given instance, so you don't have to do it manually as was described earlier. When rule is fired, it run method 'method-name' from that object (instance) and give it two parametres - one is variable a that will be filled up with it's content (e.g. method will not receive symbal :a, but i will be substituted) and string 'x'.
+
+You can specify more options to RHS using method \texttt{rhs(String)}, that add given fragment of CLIPS code to rhs with no changes.
+
 \paragraph{Variable contraits}
-Design  patterns, predicate calling (function calling)
-ToDo: Dopsat, na dobre ceste :-)
+You have to do it manually by giving fragment of CLIPS code.
 
 %% Simple example
 \section{Example of application}
