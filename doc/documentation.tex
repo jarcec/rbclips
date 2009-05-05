@@ -8,6 +8,7 @@
 \begin{document}
 
 \maketitle
+\tableofcontents
 
 %% Introduction
 \section{Introduction}
@@ -25,6 +26,9 @@ This document describe scaffold structure of rbClips, binary extension of CLIPS 
 	\end{itemize}
  \item CLIPS build in types have lower case id that represent them in rbClips. To make reading easiest, for this document pseudovariable ClipsType is used and means on from :symbol, :string, :lexeme, :integer, :float, :number, :instance\_name, :instance\_address, :instance, :external\_address, :fact\_address.
 \end{itemize}
+
+\subsection{Flow of rbClips application}
+In common CLIPS application normal flow of application is creating instances, rules and facst and then starting firing the rules. rbClips is in fact only wrapper above CLIPS, so it share the same approach. You defince classes, instances, facts, rules and save them to environment(s). Than simply run \texttt{Clips::Base.run(Fixnum)} to start firing rules.
 
 \section{Constraits}
 CLIPS provide strong mechanism for defining contraits (limitation) of slots in Templates and Classes. In rbClips it's surrounded by class Constrait. Saving Constrait in CLIPS environment is impossible because constraits can't live along in CLIPS, that's possible only in ruby environment (to create one constrait and than pass the same config to all slots). In most places, where the constrait object is requested is possible to pass Hash - it will be pass to the constructor and constrait object will be build in place.
@@ -179,6 +183,14 @@ For every key in hash that constructor accept, instance have access (both read a
 hndl = Clips::MessageHandler.new :name => '+', :class => :numeric,
                 :params => '?next', :body => '+ ?next ?self'
 \end{verbatim}
+
+\subsection{Calling ruby objects from CLIPS}
+rbClips is able to call ruby objects from CLIPS. There are two ways how to do it, manually and automatically. Automatic way is described later in section about rules. The manual way consist of two steps:
+\begin{enumerate}
+ \item You have to save reference to object that you want to run throw \texttt{Clips::Base.save\_reference(Object)}. Successfull calling return Fixnum that identify saved reference.
+ \item When you want call saved instance just use this fragment of CLIPS code: \texttt{(ruby ID method-name param-list*)}.
+\end{enumerate}
+Please keep in mind, that I don't know ruby internals and it's Garbage collector. Code save only reference to object and don't know if that is sufficient for GB (so the object won't be removed from memory). In another words, don't pass here some local variable that will be deleted, but some global object, that remain in memory for all the time. Hopefully this limitation will be fixed later, when I start doing it.
 
 \subsection{Other methods for objects}
 Base object (Clips::Base) have same usefull wrappings for objects:
