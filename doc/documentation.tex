@@ -45,7 +45,7 @@ Below are listen options for hash passed to constructor, note that only one hash
 \section{Base}
 Function and action that are not exactly related to some bigger topic that is wrapped by another class listen below are accessible by object Base. It have just and only static methods for various use:
 \begin{itemize}
- \item \texttt{run(Fixnum, Environment | nil)} Run clips (start applying rules) in given Environment or when passed nil in actually set environment, this method will end after the maximal count of rules will be fired or there aren't any rule to rile.
+ \item \texttt{run(Fixnum, Environment | nil)} Run clips (start applying rules) in given Environment or when passed nil in actually set environment, this method will end after the maximal count of rules will be fired or there aren't any rule to fire.
  \item \texttt{reset} Reset clips environment to defaults
  \item \texttt{agenda} Return String containing outputs of agenda function
  \item \texttt{insert\_code(String)} Insert given fragment of code to CLIPS directly (no checks, no abstraction)
@@ -55,7 +55,7 @@ Function and action that are not exactly related to some bigger topic that is wr
 \end{itemize}
 
 \subsection{Environment}
-rbClis is environment aware (can run multiple environments) - everythink operates with class Environment. Base class have methods to work with it:
+rbClis is environment aware (can run multiple environments) - everything operates with class Environment. Base class have methods to work with it:
 \begin{itemize}
  \item \texttt{getEnvironment()} Return current environment.
  \item \texttt{setEnvironment(Environment)} Set environment, this method returns previous environment instance
@@ -65,6 +65,9 @@ Please note that one environment (the default one) is created for you when loadi
 \begin{verbatim}
  # Saving previous (automatically generated)
  defenv = Clips::Base.getEnvironment
+ # or
+ # defenv = Clips::Environment.current
+
  # Creating new environment
  newenv = Clips::Environment.new
  prevenv = Clips::Base.setEnvironment(newenv)
