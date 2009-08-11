@@ -22,8 +22,8 @@ int printRouter(char *name, char*str)
 {
 //  if(strcmp(name, "wprompt") == 0) return TRUE;
 
-//  printf("%s", str);
-  printf("%s: '%s'\n", name, str);
+  printf("%s", str);
+//  printf("%s: '%s'\n", name, str);
   return TRUE;
 }
 int getcRouter(char *name)
@@ -39,6 +39,26 @@ int exitRouter(int code)
   return code;
 }
 
+int ExecuteIfCommandComplete_jarcec(void *theEnv)
+{
+   if ((CompleteCommand(CommandLineData(theEnv)->CommandString) == 0) || 
+       (RouterData(theEnv)->CommandBufferInputCount <= 0))
+    { return FALSE; }
+      
+  FlushPPBuffer(theEnv);
+  SetPPBufferStatus(theEnv,OFF);
+  RouterData(theEnv)->CommandBufferInputCount = -1;
+  RouteCommand(theEnv,CommandLineData(theEnv)->CommandString,TRUE);
+  FlushPPBuffer(theEnv);
+  SetHaltExecution(theEnv,FALSE);
+  SetEvaluationError(theEnv,FALSE);
+  FlushCommandString(theEnv);
+  FlushBindList(theEnv);
+  PeriodicCleanup(theEnv,TRUE,FALSE);
+  PrintPrompt(theEnv);
+         
+  return TRUE;
+}
 
 // Tries
 int main(int argc, char **argv)
@@ -63,15 +83,16 @@ int main(int argc, char **argv)
 
   // Some coding (tries)
   AppendCommandString(env, "(assert (ahoj ahoj ahoj))\n(assert (zvire jarcec))\n");
-  ret = ExecuteIfCommandComplete(env);
-  ret = ExecuteIfCommandComplete(env);
+  ret = ExecuteIfCommandComplete_jarcec(env);
+  printf("Debug: %s\n", GetCommandString(env));
+  ret = ExecuteIfCommandComplete_jarcec(env);
   printf("exec: %d\n", ret);
 
   AppendCommandString(env, "(assert (ahoj ahoj ahoj nazdar))\n");
-  ret = ExecuteIfCommandComplete(env);
+  ret = ExecuteIfCommandComplete_jarcec(env);
   printf("exec: %d\n", ret);
 
   AppendCommandString(env, "(facts)\n");
-  ret = ExecuteIfCommandComplete(env);
+  ret = ExecuteIfCommandComplete_jarcec(env);
   printf("exec: %d\n", ret);
 }
