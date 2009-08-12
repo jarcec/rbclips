@@ -35,7 +35,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 	gcc -c -Wall  -Wundef -Wpointer-arith -Wshadow -Wcast-qual \
 	    -Wcast-align -Winline -Wmissing-declarations -Wredundant-decls \
 	    -Wmissing-prototypes -Wnested-externs \
-	    -Wstrict-prototypes -Waggregate-return -Wno-implicit $<
+	    -Wstrict-prototypes -Waggregate-return -Wno-implicit -fPIC $<
 
 # Creating Unix Libraries
 # http://www.cs.duke.edu/~ola/courses/programming/libraries.html
