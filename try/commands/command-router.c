@@ -64,8 +64,9 @@ int ExecuteIfCommandComplete_jarcec(void *theEnv)
 int main(int argc, char **argv)
 {
   // Initialization
-  InitializeEnvironment();
-  void *env = GetCurrentEnvironment();
+//  InitializeEnvironment();
+//  void *env = GetCurrentEnvironment();
+  void *env = CreateEnvironment();
   int ret;
 
   // Adding my new routers
