@@ -48,7 +48,7 @@ Function and action that are not exactly related to some bigger topic that is wr
  \item \texttt{run(Fixnum, Environment | nil)} Run clips (start applying rules) in given Environment or when passed nil in actually set environment, this method will end after the maximal count of rules will be fired or there aren't any rule to fire.
  \item \texttt{reset} Reset clips environment to defaults
  \item \texttt{agenda} Return String containing outputs of agenda function
- \item \texttt{insert\_code(String)} Insert given fragment of code to CLIPS directly (no checks, no abstraction)
+ \item \texttt{insert\_command(String)} Run given clips command directly without any checks (you can pass only one command at the time!)
  \item \texttt{static\_constraint\_checking} and \texttt{static\_constraint\_checking=(Boolean)} Get or set static constrait
  \item \texttt{dynamic\_constraint\_checking} and \texttt{dynamic\_constraint\_checking=(Boolean)} Get or set dynamic constrait
  \item More methods mentioned later in this document
