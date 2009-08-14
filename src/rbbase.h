@@ -4,5 +4,7 @@
 //! Clips::Base
 extern VALUE cl_cBase;    
 
+/* Function list */
+
 #endif // _RBBASE_H_
 
