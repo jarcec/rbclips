@@ -101,7 +101,11 @@ VALUE cl_environment_clone(VALUE self)
  */
 VALUE cl_environment_equal(VALUE self, VALUE other)
 {
-  // TODO: Check if 'other' is Environment instance as well
+  if(rb_obj_class(other) != cl_cEnvironment)
+  {
+    rb_raise(rb_eArgError, "Expected two Clips::Environment instances to be compared!");
+    return Qfalse;
+  }
 
   cl_sEnvironmentWrap *selfwrap = DATA_PTR(self);
   cl_sEnvironmentWrap *otherwrap = DATA_PTR(other);
