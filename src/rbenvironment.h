@@ -31,4 +31,10 @@ VALUE cl_environment_current();
 //! Environment\#set_current
 VALUE cl_environment_set_current(VALUE);
 
+//! Environment\#dup, Environmnet\#clone
+VALUE cl_environment_clone(VALUE);
+
+//! Environment\#eql?, Environmnet\#equal?, Environmnet\#==
+VALUE cl_environment_equal(VALUE, VALUE);
+
 #endif // _RBENVIRONMNET_H_

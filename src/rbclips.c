@@ -24,6 +24,11 @@ void Init_rbclips()
   rb_define_singleton_method(cl_cEnvironment, "current", cl_environment_current, 0);
   rb_define_method(cl_cEnvironment, "to_s", cl_environment_to_s, 0);
   rb_define_method(cl_cEnvironment, "set_current", cl_environment_set_current, 0);
+  rb_define_method(cl_cEnvironment, "dup", cl_environment_clone, 0);
+  rb_define_method(cl_cEnvironment, "clone", cl_environment_clone, 0);
+  rb_define_method(cl_cEnvironment, "==", cl_environment_equal, 1);
+  rb_define_alias(cl_cEnvironment, "equal?", "==");
+  rb_define_alias(cl_cEnvironment, "eql?", "==");
 
   // Initialization of internal list of environments
   cl_vEnvironments = rb_ary_new();

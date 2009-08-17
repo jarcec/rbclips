@@ -18,7 +18,7 @@ VALUE cl_environment_new(VALUE self)
   
   wrap->ptr = CreateEnvironment();
 
-  VALUE ret = Data_Wrap_Struct(self, NULL, NULL, wrap);
+  VALUE ret = Data_Wrap_Struct(self, NULL, free, wrap);
   rb_obj_call_init(ret, 0, NULL);
 
   // Saving newly created environment into global list
@@ -72,9 +72,40 @@ VALUE cl_environment_current()
   
   wrap->ptr = GetCurrentEnvironment();
 
-  VALUE ret = Data_Wrap_Struct(cl_cEnvironment, NULL, NULL, wrap);
+  VALUE ret = Data_Wrap_Struct(cl_cEnvironment, NULL, free, wrap);
   rb_obj_call_init(ret, 0, NULL);
 
   return ret;
+}
+
+/*
+ * Create copy of ruby object - the environment itself will be *not*
+ * copyed! <objects after that will describe identical environment>
+ */
+VALUE cl_environment_clone(VALUE self)
+{
+  cl_sEnvironmentWrap *selfwrap = DATA_PTR(self);
+  cl_sEnvironmentWrap *wrap = calloc( 1, sizeof(*wrap) );
+  
+  wrap->ptr = selfwrap->ptr;
+
+  VALUE ret = Data_Wrap_Struct(cl_cEnvironment, NULL, free, wrap);
+  rb_obj_call_init(ret, 0, NULL);
+
+  return ret;
+}
+
+/**
+ * Return true or false, base on whether the different environment object
+ * describe the same CLIPS environment.
+ */
+VALUE cl_environment_equal(VALUE self, VALUE other)
+{
+  // Check if other is Environment instance as well
+
+  cl_sEnvironmentWrap *selfwrap = DATA_PTR(self);
+  cl_sEnvironmentWrap *otherwrap = DATA_PTR(other);
+
+  return (selfwrap->ptr == otherwrap->ptr) ? Qtrue : Qfalse;
 }
 

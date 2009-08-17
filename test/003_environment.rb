@@ -23,4 +23,25 @@ class Test_Base < Test::Unit::TestCase
     a.set_current
     assert_equal a.to_s, Clips::Environment.current.to_s
   end
+
+  def test_equals
+    a = Clips::Environment.new
+    b = a.dup
+
+    assert a == b
+    assert b.eql? a
+    assert b.equal? a
+
+    a.set_current
+    assert b == Clips::Environment.current
+  end
+
+  def test_cloning
+    num = Clips::Environment.all.size
+    a = Clips::Environment.current.clone
+    b = a.dup
+    c = b.clone
+
+    assert_equal num, Clips::Environment.all.size
+  end
 end
