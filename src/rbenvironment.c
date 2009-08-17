@@ -133,9 +133,11 @@ VALUE cl_environment_valid(VALUE self)
  */
 VALUE cl_environment_destroy(VALUE self)
 {
-  // TODO: Check if the environment is active
-
   cl_sEnvironmentWrap *wrap = DATA_PTR(self);
+
+  // Current environment cannot be deleted
+  if(GetCurrentEnvironment() == wrap->ptr)
+    return Qfalse;
 
   if(wrap->ptr)
   {
