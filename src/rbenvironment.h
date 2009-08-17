@@ -37,4 +37,10 @@ VALUE cl_environment_clone(VALUE);
 //! Environment\#eql?, Environmnet\#equal?, Environmnet\#==
 VALUE cl_environment_equal(VALUE, VALUE);
 
+//! Environment\#valid?
+VALUE cl_environment_valid(VALUE);
+
+//! Environment\#destroy!
+VALUE cl_environment_destroy(VALUE);
+
 #endif // _RBENVIRONMNET_H_

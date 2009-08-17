@@ -44,4 +44,21 @@ class Test_Base < Test::Unit::TestCase
 
     assert_equal num, Clips::Environment.all.size
   end
+
+  def test_valid
+    assert Clips::Environment.current.valid?
+    assert Clips::Environment.new.valid?
+  end
+
+  def test_destroy
+    num = Clips::Environment.all.size
+    a = Clips::Environment.new
+    assert a.valid?
+    a.destroy!
+    assert !a.valid?
+    assert_equal num, Clips::Environment.all.size
+
+    # TODO: Check on current environment - current, cannot be deleted
+  end
 end
+

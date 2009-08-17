@@ -101,11 +101,51 @@ VALUE cl_environment_clone(VALUE self)
  */
 VALUE cl_environment_equal(VALUE self, VALUE other)
 {
-  // Check if other is Environment instance as well
+  // TODO: Check if 'other' is Environment instance as well
 
   cl_sEnvironmentWrap *selfwrap = DATA_PTR(self);
   cl_sEnvironmentWrap *otherwrap = DATA_PTR(other);
 
   return (selfwrap->ptr == otherwrap->ptr) ? Qtrue : Qfalse;
+}
+
+/**
+ * Check validity of current class, if the environment that self
+ * describe is valid clips environment.
+ */
+VALUE cl_environment_valid(VALUE self)
+{
+  // TODO: Check in CLIPS if the environment exists!
+
+  cl_sEnvironmentWrap *wrap = DATA_PTR(self);
+
+  return wrap->ptr ? Qtrue : Qfalse;
+}
+
+/*
+ * Delete environment from clips. Note that you can delete only not 
+ * active environment. It's save to destroy not valid environment
+ * (the ona that was destroyed earlier).
+ */
+VALUE cl_environment_destroy(VALUE self)
+{
+  // TODO: Check if the environment is active
+
+  cl_sEnvironmentWrap *wrap = DATA_PTR(self);
+
+  if(wrap->ptr)
+  {
+    if(DestroyEnvironment(wrap->ptr))
+    {
+      wrap->ptr = 0;
+      return Qtrue;
+
+      // TODO: Delete this environment from internal list
+    } else {
+      return Qfalse;
+    }
+  }
+
+  return Qtrue;
 }
 
