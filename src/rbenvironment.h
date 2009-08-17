@@ -16,16 +16,16 @@ typedef struct _cl_sEnvironmentWrap cl_sEnvironmentWrap;
 
 /* Function list */
 
-//! Environment\#new
+//! Environment::new
 VALUE cl_environment_new(VALUE);
 
 //! Environment\#to_s
 VALUE cl_environment_to_s(VALUE);
 
-//! Environment\#all
+//! Environment::all
 VALUE cl_environment_all();
 
-//! Environment\#current
+//! Environment::current
 VALUE cl_environment_current();
 
 //! Environment\#set_current
