@@ -20,8 +20,9 @@ class Test_Base < Test::Unit::TestCase
 
     # Setting default environment
     a = Clips::Environment.new
+    assert_not_equal a, Clips::Environment.current
     a.set_current
-    assert_equal a.to_s, Clips::Environment.current.to_s
+    assert_equal a, Clips::Environment.current
   end
 
   def test_equals
@@ -62,8 +63,9 @@ class Test_Base < Test::Unit::TestCase
 
     a = Clips::Environment.new
     assert a.valid?
-    a.destroy!
+    assert a.destroy!
     assert !a.valid?
+    assert !a.destroy!
     assert_equal num, Clips::Environment.all.size
   end
 end

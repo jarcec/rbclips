@@ -16,7 +16,11 @@ VALUE cl_environment_new(VALUE self)
 {
   cl_sEnvironmentWrap *wrap = calloc( 1, sizeof(*wrap) );
   
+  // Little workaround - CreateEnvironment set the created environment as
+  // current one, which is not good for ruby design.
+  void *oldenv = GetCurrentEnvironment();
   wrap->ptr = CreateEnvironment();
+  SetCurrentEnvironment(oldenv);
 
   VALUE ret = Data_Wrap_Struct(self, NULL, free, wrap);
   rb_obj_call_init(ret, 0, NULL);
@@ -54,7 +58,7 @@ VALUE cl_environment_set_current(VALUE self)
 {
   cl_sEnvironmentWrap *wrap = DATA_PTR(self);
 
-  // ToDo: Validity check
+  // TODO: Validity check
   // 1) Is valid?
   // 2) Is not active?
 
@@ -119,11 +123,7 @@ VALUE cl_environment_equal(VALUE self, VALUE other)
  */
 VALUE cl_environment_valid(VALUE self)
 {
-  // TODO: Check in CLIPS if the environment exists!
-
-  cl_sEnvironmentWrap *wrap = DATA_PTR(self);
-
-  return wrap->ptr ? Qtrue : Qfalse;
+    return rb_ary_includes(cl_vEnvironments, self);  
 }
 
 /*
@@ -139,19 +139,15 @@ VALUE cl_environment_destroy(VALUE self)
   if(GetCurrentEnvironment() == wrap->ptr)
     return Qfalse;
 
-  if(wrap->ptr)
+  if(wrap->ptr && DestroyEnvironment(wrap->ptr))
   {
-    if(DestroyEnvironment(wrap->ptr))
-    {
-      wrap->ptr = 0;
-      return Qtrue;
+    // Delete from internal list
+    rb_ary_delete(cl_vEnvironments, self);
 
-      // TODO: Delete this environment from internal list
-    } else {
-      return Qfalse;
-    }
+    wrap->ptr = 0;
+    return Qtrue;
   }
 
-  return Qtrue;
+  return Qfalse;
 }
 
