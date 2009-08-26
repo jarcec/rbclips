@@ -22,8 +22,8 @@ int printRouter(char *name, char*str)
 {
 //  if(strcmp(name, "wprompt") == 0) return TRUE;
 
-  printf("%s", str);
-//  printf("%s: '%s'\n", name, str);
+//  printf("%s", str);
+  printf("%s: '%s'\n", name, str);
   return TRUE;
 }
 int getcRouter(char *name)
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
   ret = ExecuteIfCommandComplete_jarcec(env);
   printf("exec: %d\n", ret);
 
-  AppendCommandString(env, "(facts)\n");
+  AppendCommandString(env, "(fdacts)\n");
   ret = ExecuteIfCommandComplete_jarcec(env);
   printf("exec: %d\n", ret);
 }

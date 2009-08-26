@@ -55,22 +55,26 @@ Function and action that are not exactly related to some bigger topic that is wr
 \end{itemize}
 
 \subsection{Environment}
-rbClis is environment aware (can run multiple environments) - everything operates with class Environment. Base class have methods to work with it:
+rbClis is environment aware (can run multiple environments) and everything is covered by Clips::Environment class. At the time you require a rbClips library it create one environment and set it as a current. Clips::Environment have these eigen methods:
 \begin{itemize}
- \item \texttt{getEnvironment()} Return current environment.
- \item \texttt{setEnvironment(Environment)} Set environment, this method returns previous environment instance
+ \item \texttt{current()} Return instance of current environment.
+ \item \texttt{all()} Return array with all environments that are present in system.
+ \item \texttt{current} Return current environment.
 \end{itemize}
-Please note that one environment (the default one) is created for you when loading rbClips into memory.
+
+Instance methods:
+\begin{itemize}
+ \item \texttt{set\_current()} Set this instance as current
+ \item \texttt{destroy!()} Remove environment from clips
+\end{itemize}
 
 \begin{verbatim}
  # Saving previous (automatically generated)
- defenv = Clips::Base.getEnvironment
- # or
- # defenv = Clips::Environment.current
+ defenv = Clips::Environment.current
 
  # Creating new environment
  newenv = Clips::Environment.new
- prevenv = Clips::Base.setEnvironment(newenv)
+ newenv.set_current
 \end{verbatim}
 
 %% COOL

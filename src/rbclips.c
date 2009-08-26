@@ -1,6 +1,7 @@
 #include "rbclips.h"
 #include "rbbase.h"
 #include "rbenvironment.h"
+#include "rbrouter.h"
 
 /* Definitions */
 VALUE cl_mClips;
@@ -16,6 +17,7 @@ void Init_rbclips()
 
   // Clips::Base
   cl_cBase = rb_define_class_under(cl_mClips, "Base", rb_cObject);
+  rb_define_singleton_method(cl_cBase, "insert_command", cl_base_insert_command, 1);
 
   // Clips::Environment
   cl_cEnvironment = rb_define_class_under(cl_mClips, "Environment", rb_cObject);
@@ -39,4 +41,6 @@ void Init_rbclips()
   VALUE env = cl_environment_new(cl_cEnvironment);
   cl_environment_set_current(env);
 
+  // Initialization of routering system
+  cl_router_init();
 }
