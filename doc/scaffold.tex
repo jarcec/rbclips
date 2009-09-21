@@ -31,9 +31,9 @@ This document describe scaffold structure of rbClips, binary extension of CLIPS 
 In common CLIPS application normal flow of application is creating instances, rules and facst and then starting firing the rules. rbClips is in fact only wrapper above CLIPS, so it share the same approach. You defince classes, instances, facts, rules and save them to environment(s). Than simply run \texttt{Clips::Base.run(Fixnum)} to start firing rules.
 
 \section{Constraits}
-CLIPS provide strong mechanism for defining contraits (limitation) of slots in Templates and Classes. In rbClips it's surrounded by class Constrait. Saving Constrait in CLIPS environment is impossible because constraits can't live along in CLIPS, that's possible only in ruby environment (to create one constrait and than pass the same config to all slots). In most places, where the constrait object is requested is possible to pass Hash - it will be pass to the constructor and constrait object will be build in place.
+CLIPS provide strong mechanism for defining contraits (limitation) of slots in Templates and Classes. In rbClips it's surrounded by class Constrait. But keep on your mind that this is only prescription that is not saved in CLIPS environment. This means that if you use Constrait object in creating some slot, this slot will use this constraits that are set in time of creation, but if you after change  the constrait, it will not change the slot.
 
-Below are listen options for hash passed to constructor, note that only one hash key is valid!
+Below are listen options for hash passed to constructor.
 \begin{itemize}
  \item \texttt{:type => ClipsType | :any | [ClipsType, ...]} Specifing which type(s) can be used
  \item \texttt{:values => Array} List with allowed values
@@ -41,9 +41,24 @@ Below are listen options for hash passed to constructor, note that only one hash
  \item \texttt{:cardinality => Range} Cardinality of multislot
 \end{itemize}
 
+There is also an option to use block to set up constrait object that accept one variable (Clips::Constrait:Creator) that have these methods:
+\begin{itemize}
+ \item \texttt{type(Array)} Array with accept types
+ \item \texttt{values(Array)} Array with accept values
+ \item \texttt{range(Range)} Range
+ \item \texttt{cardinality(Range)} Cardinality of multislot
+\end{itemize}
+
+Examples:
+\begin{verbatim}
+ c1 = Clips::Constrait.new :name => 'animal'
+\end{verbatim}
+
+\textbf{Possible problems:} Constrait object don't check how is set up. All checking is done when using constrait object (for example when creating slot). So some problems are reported when using not when creating. For example CLIPS prohibit to set values and range at the same time and so on...
+
 %% Base
 \section{Base}
-Function and action that are not exactly related to some bigger topic that is wrapped by another class listen below are accessible by object Base. It have just and only static methods for various use:
+Function and action that are not exactly related to some bigger topic that is wrapped by another class listen below are accessible by object Base. It have just and only class methods for various use:
 \begin{itemize}
  \item \texttt{run(Fixnum, Environment | nil)} Run clips (start applying rules) in given Environment or when passed nil in actually set environment, this method will end after the maximal count of rules will be fired or there aren't any rule to fire.
  \item \texttt{reset} Reset clips environment to defaults
@@ -237,26 +252,43 @@ Clips::Base.do_for_instances :instance_set => { 'human' => [male, female], 'fema
 For working with Facts rbClips provides two classes Template, Fact.
 
 \subsection{Template}
-Entire workaround above ordered facts. Class is providing API for loading templates from CLIPS environment as well. Static methods:
+Entire workaround above ordered facts. Class is providing API for loading templates from CLIPS environment as well. Class methods:
 \begin{itemize}
  \item \texttt{new(Hash)} Descibed below, create new template object
+ \item \texttt{new(String, \&block)} Another variant for creating new template, described below
  \item \texttt{load(String)} Load template form CLIPS and return it
 \end{itemize}
 
-Hash options for contructoruction of new template:
+There are two ways how to create new template (two contructor possibilities), first is one hash passed to it that contain all the information about template and second option is passing a block that set up the slots.
+
+Hash variant of construction have these keys:
 \begin{itemize}
- \item \texttt{:name => String} Name of template in CLIPS world
- \item \texttt{:slots => Array | Hash} Slot list - in array accept only strings (names of slots). In hash variant accept String as key (name of slot) and another hash as value with options for this slot.
+ \item \texttt{:name => String} Name of template in CLIPS world, compulsory hash key.
+ \item \texttt{:slots => Array | Hash} Slot list - in array accept only strings or symbols (names of slots). In hash variant accept string or symbols as keys (name of slots) and another hash as value with options for this slot. This key is again compulsory - there cannot be template without slots (at least one slot have to be defined). Same hash options are used belowed in constructor that use block.
 	\begin{itemize}
 	 \item \texttt{:multislot => Boolean} Is this multislot? False by default.
 	 \item \texttt{:default => :none | :derive | String } Default value for this slot
-	 \item \texttt{:default\_dynamic => Boolean} Should be default dynamic? Make sens only when some function is given as default value for slot.
+	 \item \texttt{:default\_dynamic => Boolean} Should be default dynamic? Make sens only when some function is given as default value for slot and is valid only if :default is set to some string.
 	\end{itemize}
 \end{itemize}
 
 \paragraph{Example}
 \begin{verbatim}
-human = Clips::Template :name => 'human', :slots => ['name', 'age']
+# First example
+human = Clips::Template :name => 'human', :slots => [:name, 'age']
+
+# Second example
+human = Clips::Tempalte :name => 'human', :slots => {:name => {:default => :none}, :age => {:default => "30"}}
+\end{verbatim}
+
+Second way how to create new template is only pass a name (String object) into constructor and block that accept one parameter of type Clips::Template::SlotCreator. This class have instance method $slot$ used for define new slot. It accept two arguments, first is name or symbol - name of the slot and second is optional and it's hash with slot options with same options as above.
+
+\begin{verbatim}
+# Second example - another way
+human = Clips::Template('human') do |template|
+  template.slot :name, :default => :none
+  template.slot :age, :default => "30"
+end
 \end{verbatim}
 
 \subsection{Facts}
