@@ -83,13 +83,11 @@ int main(int argc, char **argv)
   FlushCommandString(env);
 
   // Some coding (tries)
-  AppendCommandString(env, "(assert (ahoj ahoj ahoj))\n(assert (zvire jarcec))\n");
-  ret = ExecuteIfCommandComplete_jarcec(env);
-  printf("Debug: %s\n", GetCommandString(env));
+  AppendCommandString(env, "(assert (ahoj ahoj ahoj))\n");
   ret = ExecuteIfCommandComplete_jarcec(env);
   printf("exec: %d\n", ret);
 
-  AppendCommandString(env, "(assert (ahoj ahoj ahoj nazdar))\n");
+  AppendCommandString(env, "(assert (ahoj ahoj ahoj nazdar\n");
   ret = ExecuteIfCommandComplete_jarcec(env);
   printf("exec: %d\n", ret);
 

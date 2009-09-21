@@ -22,6 +22,9 @@ int cl_router_exit(int);
 //! String with output
 VALUE cl_router_content;
 
+//! Internal flag if the content is error message
+int cl_router_werror_flag = 0;
+
 /**
  * Set up all that's need to forward clips input/output into
  * local variables, that can be than transfer to ruby world.
@@ -53,7 +56,17 @@ VALUE cl_router_get_content_d()
 {
   VALUE ret = cl_router_content;
   cl_router_content = rb_str_new2("");
+  cl_router_werror_flag = 0;
   return ret;
+}
+
+/**
+ * Return true if router contain some error message (some problems
+ * reported by CLIPS)
+ */
+int cl_router_werror()
+{
+  return cl_router_werror_flag;
 }
 
 /**
@@ -80,8 +93,11 @@ int cl_router_query(char *name)
  */
 int cl_router_print(char *name, char *str)
 {
-  // Skip printing PS1 (prompt)
+  // Skip printing $PS1 (prompt)
   if(strcmp("wclips", name) == 0) return TRUE;
+
+  // Saving flag if it's error
+  if(strcmp("werror", name) == 0) cl_router_werror_flag = 1;
 
   cl_router_content = rb_str_cat2(cl_router_content, str);
   return TRUE;

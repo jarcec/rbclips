@@ -2,6 +2,7 @@
 #include "clips/clips.h"
 #include "rbclips.h"
 #include "rbenvironment.h"
+#include "rbexception.h"
 
 /* Definitions */
 VALUE cl_cEnvironment;
@@ -107,7 +108,7 @@ VALUE cl_environment_equal(VALUE self, VALUE other)
 {
   if(rb_obj_class(other) != cl_cEnvironment)
   {
-    rb_raise(rb_eArgError, "Expected two Clips::Environment instances to be compared!");
+    rb_raise(cl_eArgError, "Expected two Clips::Environment instances to be compared!");
     return Qfalse;
   }
 

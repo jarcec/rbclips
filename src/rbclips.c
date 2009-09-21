@@ -2,6 +2,7 @@
 #include "rbbase.h"
 #include "rbenvironment.h"
 #include "rbrouter.h"
+#include "rbexception.h"
 
 /* Definitions */
 VALUE cl_mClips;
@@ -40,6 +41,10 @@ void Init_rbclips()
   // One environments is created by default
   VALUE env = cl_environment_new(cl_cEnvironment);
   cl_environment_set_current(env);
+
+  // Exception classes
+  cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
+  cl_eArgError = rb_define_class_under(cl_mClips, "ArgumentError", cl_eException);
 
   // Initialization of routering system
   cl_router_init();

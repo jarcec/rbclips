@@ -8,7 +8,7 @@ class Test_Base < Test::Unit::TestCase
 
   def test_insert_command
     # Only Strings are allowed
-    assert_raise(ArgumentError)  { Clips::Base.insert_command 5 }
+    assert_raise(Clips::ArgumentError)  { Clips::Base.insert_command 5 }
     
     assert_equal "<Fact-0>\n", Clips::Base.insert_command("(assert (a b))")
     assert_equal "<Fact-1>\n", Clips::Base.insert_command("(assert (c d))")
@@ -17,7 +17,6 @@ class Test_Base < Test::Unit::TestCase
                 Clips::Base.insert_command("(facts)")
     assert_equal "", Clips::Base.insert_command("(clear)")
     assert_equal "", Clips::Base.insert_command("(facts)")
-    assert_equal "\n[EXPRNPSR3] Missing function declaration for microsoft.\n",
-                Clips::Base.insert_command("(microsoft on mars)")
+    assert_raise(Clips::Exception) { Clips::Base.insert_command("(microsoft on mars)") }
   end
 end

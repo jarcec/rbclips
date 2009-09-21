@@ -2,6 +2,7 @@
 #include "rbbase.h"
 #include "rbrouter.h"
 #include "rbenvironment.h"
+#include "rbexception.h"
 #include "clips/clips.h"
 
 /* Definitions */
@@ -15,7 +16,7 @@ VALUE cl_base_insert_command(VALUE self, VALUE cmd)
   // Param check
   if(TYPE(cmd) != T_STRING)
   {
-    rb_raise(rb_eArgError, "Base::insert_command accept only String as parametre!");
+    rb_raise(cl_eArgError, "Base::insert_command accept only String as parametr!");
     return Qfalse;
   }
 
@@ -29,6 +30,21 @@ VALUE cl_base_insert_command(VALUE self, VALUE cmd)
   FlushCommandString(env);
   AppendCommandString(env, StringValueCStr(c));
 
-  ExecuteIfCommandComplete(env);
+  // Executing command
+  if( ! ExecuteIfCommandComplete(env) || cl_router_werror())
+  {
+    char *msg = STR2CSTR(cl_router_get_content_d());
+
+    if(strlen(msg) == 0)
+    {
+      rb_raise(cl_eException, "Unknown error, probably the inserted command is not valid CLIPS command.");
+    } else {
+      rb_raise(cl_eException, "%s",  msg );
+    }
+
+    return Qfalse;
+  }
+
+  // Returning output (if any)
   return cl_router_get_content_d();
 }
