@@ -1,11 +1,14 @@
+#include "ruby.h"
 #include "rbclips.h"
 #include "rbbase.h"
 #include "rbenvironment.h"
 #include "rbrouter.h"
 #include "rbexception.h"
+#include "rbconstraint.h"
 
 /* Definitions */
 VALUE cl_mClips;
+cl_sIds cl_vIds;
 
 /** Ruby module initialization
  *
@@ -35,6 +38,14 @@ void Init_rbclips()
   rb_define_method(cl_cEnvironment, "valid?", cl_environment_valid, 0);
   rb_define_method(cl_cEnvironment, "destroy!", cl_environment_destroy, 0);
 
+  // Clips::Constraint
+  cl_cConstraint = rb_define_class_under(cl_mClips, "Constraint", rb_cObject);
+  rb_define_singleton_method(cl_cConstraint, "new", cl_constraint_new, -1);
+
+  // Exception classes
+  cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
+  cl_eArgError = rb_define_class_under(cl_mClips, "ArgumentError", cl_eException);
+
   // Initialization of internal list of environments
   cl_vEnvironments = rb_ary_new();
 
@@ -42,9 +53,19 @@ void Init_rbclips()
   VALUE env = cl_environment_new(cl_cEnvironment);
   cl_environment_set_current(env);
 
-  // Exception classes
-  cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
-  cl_eArgError = rb_define_class_under(cl_mClips, "ArgumentError", cl_eException);
+  // Creating symbol list
+  cl_vIds.any                 = rb_intern("any");
+  cl_vIds.symbol              = rb_intern("symbol");
+  cl_vIds.string              = rb_intern("string");
+  cl_vIds.lexeme              = rb_intern("lexeme");
+  cl_vIds.integer             = rb_intern("integer");
+  cl_vIds.float_              = rb_intern("float");
+  cl_vIds.number              = rb_intern("number");
+  cl_vIds.instance_name       = rb_intern("instance_name");
+  cl_vIds.instance_address    = rb_intern("instance_address");
+  cl_vIds.instance            = rb_intern("instance");
+  cl_vIds.external_address    = rb_intern("external_address");
+  cl_vIds.fact_address        = rb_intern("fact_address");
 
   // Initialization of routering system
   cl_router_init();

@@ -30,8 +30,8 @@ This document describe scaffold structure of rbClips, binary extension of CLIPS 
 \subsection{Flow of rbClips application}
 In common CLIPS application normal flow of application is creating instances, rules and facst and then starting firing the rules. rbClips is in fact only wrapper above CLIPS, so it share the same approach. You defince classes, instances, facts, rules and save them to environment(s). Than simply run \texttt{Clips::Base.run(Fixnum)} to start firing rules.
 
-\section{Constraits}
-CLIPS provide strong mechanism for defining contraits (limitation) of slots in Templates and Classes. In rbClips it's surrounded by class Constrait. But keep on your mind that this is only prescription that is not saved in CLIPS environment. This means that if you use Constrait object in creating some slot, this slot will use this constraits that are set in time of creation, but if you after change  the constrait, it will not change the slot.
+\section{Constraints}
+CLIPS provide strong mechanism for defining constraints (limitation) of slots in Templates and Classes. In rbClips it's surrounded by class Constraint. Unfortunatelly constraint objects cannot be saved into CLIPS, so they live only in ruby environment (and can be used for creating slots).
 
 Below are listen options for hash passed to constructor.
 \begin{itemize}
@@ -41,7 +41,7 @@ Below are listen options for hash passed to constructor.
  \item \texttt{:cardinality => Range} Cardinality of multislot
 \end{itemize}
 
-There is also an option to use block to set up constrait object that accept one variable (Clips::Constrait:Creator) that have these methods:
+There is also an option to use block to set up constraint object that accept one variable (Clips::Constrait:Creator) that have these methods:
 \begin{itemize}
  \item \texttt{type(Array)} Array with accept types
  \item \texttt{values(Array)} Array with accept values
@@ -51,10 +51,17 @@ There is also an option to use block to set up constrait object that accept one 
 
 Examples:
 \begin{verbatim}
- c1 = Clips::Constrait.new :name => 'animal'
+ # First way
+ constr1 = Clips::Constraint.new :type => [:symbol, :string], values => ["animal", animals]
+ 
+ # Second way
+ constr2 = Clips::Constraint.new do |c|
+   c.type [:symbol, :string]
+   c.values ["animals", animals]
+ end
 \end{verbatim}
 
-\textbf{Possible problems:} Constrait object don't check how is set up. All checking is done when using constrait object (for example when creating slot). So some problems are reported when using not when creating. For example CLIPS prohibit to set values and range at the same time and so on...
+\textbf{Possible problems:} Constrait object don't have something like self check. So you can set is it not allowed way. All checking is done when using constrait object (when creating slot). Therefore some problems are reported when using not when creating. For example CLIPS prohibit to set values and range at the same time and so on...
 
 %% Base
 \section{Base}
