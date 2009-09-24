@@ -79,7 +79,7 @@ int cl_constraint_initialize_setup_variable(VALUE key, VALUE value, VALUE self)
   // Check argument type
   if(TYPE(key) != T_SYMBOL && TYPE(key) != T_STRING)
   {
-    rb_raise(cl_eArgError, "Given key is not symbol or string.");
+    rb_raise(cl_eArgError, "Key '%s' have class '%s' but expected was Symbol or String.", CL_STR(key), CL_STR_CLASS(value) );
     return ST_STOP;
   }
 
@@ -97,7 +97,7 @@ int cl_constraint_initialize_setup_variable(VALUE key, VALUE value, VALUE self)
       case T_STRING:
         if( !cl_constraint_check_clipstype(value, true) )
         {
-          rb_raise(cl_eArgError, "Unknown CLIPS type given.");
+          rb_raise(cl_eArgError, "'%s' is not a valid ClipsType", CL_STR(value));
           return ST_STOP;
         }
         vv = rb_ary_new();
@@ -110,14 +110,14 @@ int cl_constraint_initialize_setup_variable(VALUE key, VALUE value, VALUE self)
             for(i = 0; i < len; i++)
               if( !cl_constraint_check_clipstype( rb_ary_entry(value, i), false ) )
               {
-                 rb_raise(cl_eArgError, "Unknown CLIPS type given.");
+                 rb_raise(cl_eArgError, "'%s' is not a valid ClipsType", CL_STR(value));
                  return ST_STOP;
               }
           }
           vv = value;
         break;
       default:
-        rb_raise(cl_eArgError, "Unknown CLIPS type given.");
+        rb_raise(cl_eArgError, "Hash key 'type' allow only symbor, string or array as an value.");
         return ST_STOP;
     }
 
@@ -130,7 +130,7 @@ int cl_constraint_initialize_setup_variable(VALUE key, VALUE value, VALUE self)
   {
     if(TYPE(value) != T_ARRAY)
     {
-      rb_raise(cl_eArgError, ":values key needs and array as value.");
+      rb_raise(cl_eArgError, "Hash key 'values' key needs and array as value, but '%s' have class '%s'", CL_STR(value), CL_STR_CLASS(value));
       return ST_STOP;
     }
 
@@ -147,7 +147,7 @@ int cl_constraint_initialize_setup_variable(VALUE key, VALUE value, VALUE self)
       return ST_CONTINUE;
     }
 
-    rb_raise(cl_eArgError, ":range key needs and range as value.");
+    rb_raise(cl_eArgError, "Hash key 'range' key needs and Range as value, but '%s' have class '%s'", CL_STR(value), CL_STR_CLASS(value));
     return ST_STOP;
   }
 
@@ -160,11 +160,11 @@ int cl_constraint_initialize_setup_variable(VALUE key, VALUE value, VALUE self)
       return ST_CONTINUE;
     }
 
-    rb_raise(cl_eArgError, ":cardinality key needs and range as value.");
+    rb_raise(cl_eArgError, "Hash key 'cardinality' key needs and Range as value, but '%s' have class '%s'", CL_STR(value), CL_STR_CLASS(value));
     return ST_STOP;
   }
 
-  rb_raise(cl_eArgError, "Unknown option key.");
+  rb_raise(cl_eArgError, "Unknown option '%s' of class '%s' in config hash.", CL_STR(key), CL_STR_CLASS(key));
   return ST_STOP;
 }
 
@@ -241,7 +241,7 @@ VALUE cl_constraint_to_s(VALUE self)
       {
         rb_str_catf(ret, "\"%s\" ", STR2CSTR( entry ) );
       } else {
-        rb_str_catf(ret, "%s ",  STR2CSTR( rb_funcall( entry, cl_vIds.to_s, 0 ) ) );
+        rb_str_catf(ret, "%s ", CL_STR(entry) );
       }
     }
 
