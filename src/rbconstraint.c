@@ -298,7 +298,7 @@ VALUE cl_constraint_creator_initialize(VALUE self)
 /*
  * Template functions for Constraint::Creator
  */
-# define CREATOR_INNER(what, swhat) \
+# define CREATOR_INNER(what) \
       cl_sConstraintCreatorWrap *wrap = DATA_PTR(self); \
       if( !wrap || !wrap->ptr ) \
       { \
@@ -306,24 +306,24 @@ VALUE cl_constraint_creator_initialize(VALUE self)
         return Qnil; \
       } \
       \
-      cl_constraint_initialize_setup_variable(rb_str_new2(swhat), param, wrap->ptr); \
+      cl_constraint_initialize_setup_variable(rb_str_new2(what), param, wrap->ptr); \
       \
       return Qtrue
 
 VALUE cl_constraint_creator_type(VALUE self, VALUE param)
 {
-  CREATOR_INNER(type, "type");
+  CREATOR_INNER("type");
 }
 VALUE cl_constraint_creator_values(VALUE self, VALUE param)
 {
-  CREATOR_INNER(values, "values");
+  CREATOR_INNER("values");
 }
 VALUE cl_constraint_creator_range(VALUE self, VALUE param)
 {
-  CREATOR_INNER(range, "range");
+  CREATOR_INNER("range");
 }
 VALUE cl_constraint_creator_cardinality(VALUE self, VALUE param)
 {
-  CREATOR_INNER(cardinality, "cardinality");
+  CREATOR_INNER("cardinality");
 }
 # undef CREATOR_SET

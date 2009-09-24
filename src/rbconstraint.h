@@ -18,7 +18,7 @@ typedef struct _cl_sConstraintCreatorWrap cl_sConstraintCreatorWrap;
 
 /* Function list */
 
-//! Clips::Constraint::new
+//! Clips::Constraint\#initialize
 VALUE cl_constraint_initialize(int, VALUE *, VALUE);
 
 //! Clips::Constraint\#to_s
