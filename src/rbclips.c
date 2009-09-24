@@ -5,6 +5,7 @@
 #include "rbrouter.h"
 #include "rbexception.h"
 #include "rbconstraint.h"
+#include "rbtemplate.h"
 
 /* Definitions */
 VALUE cl_mClips;
@@ -50,6 +51,9 @@ void Init_rbclips()
   rb_define_method(cl_cConstraintCreator, "values", cl_constraint_creator_values, 1);
   rb_define_method(cl_cConstraintCreator, "cardinality", cl_constraint_creator_cardinality, 1);
   rb_define_method(cl_cConstraintCreator, "range", cl_constraint_creator_range, 1);
+
+  // Clips::Template
+  cl_cTemplate = rb_define_class_under(cl_mClips, "Template", rb_cObject);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);

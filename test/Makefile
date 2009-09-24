@@ -3,3 +3,4 @@ all:
 	ruby 002_*
 	ruby 003_*
 	ruby 004_*
+	ruby 005_*
