@@ -40,21 +40,40 @@ void Init_rbclips()
 
   // Clips::Constraint
   cl_cConstraint = rb_define_class_under(cl_mClips, "Constraint", rb_cObject);
-  rb_define_singleton_method(cl_cConstraint, "new", cl_constraint_new, -1);
+  rb_define_method(cl_cConstraint, "initialize", cl_constraint_initialize, -1);
+  rb_define_method(cl_cConstraint, "to_s", cl_constraint_to_s, 0);
+
+  // Clips::Constraint::Creator
+  cl_cConstraintCreator = rb_define_class_under(cl_cConstraint, "Creator", rb_cObject);
+  rb_define_method(cl_cConstraintCreator, "initialize", cl_constraint_creator_initialize, 0);
+  rb_define_method(cl_cConstraintCreator, "type", cl_constraint_creator_type, 1);
+  rb_define_method(cl_cConstraintCreator, "values", cl_constraint_creator_values, 1);
+  rb_define_method(cl_cConstraintCreator, "cardinality", cl_constraint_creator_cardinality, 1);
+  rb_define_method(cl_cConstraintCreator, "range", cl_constraint_creator_range, 1);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
   cl_eArgError = rb_define_class_under(cl_mClips, "ArgumentError", cl_eException);
+  cl_eUseError = rb_define_class_under(cl_mClips, "UsageError", cl_eException);
 
   // Initialization of internal list of environments
   cl_vEnvironments = rb_ary_new();
+  rb_global_variable(&cl_vEnvironments);
 
-  // One environments is created by default
+  // One environments is created by befault
   VALUE env = cl_environment_new(cl_cEnvironment);
   cl_environment_set_current(env);
 
   // Creating symbol list
   cl_vIds.any                 = rb_intern("any");
+  cl_vIds.unknown             = rb_intern("unknown");
+  cl_vIds.to_s                = rb_intern("to_s");
+  cl_vIds.begin               = rb_intern("begin");
+  cl_vIds.end                 = rb_intern("end");
+  cl_vIds.type                = rb_intern("type");
+  cl_vIds.values              = rb_intern("values");
+  cl_vIds.range               = rb_intern("range");
+  cl_vIds.cardinality         = rb_intern("cardinality");
   cl_vIds.symbol              = rb_intern("symbol");
   cl_vIds.string              = rb_intern("string");
   cl_vIds.lexeme              = rb_intern("lexeme");
