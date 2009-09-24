@@ -214,7 +214,7 @@ VALUE cl_constraint_to_s(VALUE self)
 
   // @type
   VALUE v = rb_iv_get(self, "@type");
-  if(TYPE(v) != T_NIL)
+  if(!NIL_P(v))
   {
     rb_str_cat2(ret, "(type ");
 
@@ -228,7 +228,7 @@ VALUE cl_constraint_to_s(VALUE self)
 
   // @values
   v = rb_iv_get(self, "@values");
-  if(TYPE(v) != T_NIL)
+  if(!NIL_P(v))
   {
     rb_str_cat2(ret, "(values ");
 
@@ -250,7 +250,7 @@ VALUE cl_constraint_to_s(VALUE self)
 
   // @range
   v = rb_iv_get(self, "@range");
-  if(TYPE(v) != T_NIL)
+  if(!NIL_P(v))
   {
     VALUE begin = rb_funcall(v, cl_vIds.begin, 0);
     VALUE end   = rb_funcall(v, cl_vIds.end, 0);
@@ -263,7 +263,7 @@ VALUE cl_constraint_to_s(VALUE self)
 
   // @cardinality
   v = rb_iv_get(self, "@cardinality");
-  if(TYPE(v) != T_NIL)
+  if(!NIL_P(v))
   {
     VALUE begin = rb_funcall(v, cl_vIds.begin, 0);
     VALUE end   = rb_funcall(v, cl_vIds.end, 0);

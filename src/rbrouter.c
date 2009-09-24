@@ -1,6 +1,6 @@
+#include "clips/clips.h"
 #include "rbclips.h"
 #include "rbrouter.h"
-#include "clips/clips.h"
 
 /* Definitions */
 
@@ -46,6 +46,7 @@ void cl_router_init()
 
   // Creating backend for storing routers strings
   cl_router_content = rb_str_new2("");
+  rb_global_variable(&cl_router_content);
 }
 
 /**
@@ -54,8 +55,8 @@ void cl_router_init()
  */
 VALUE cl_router_get_content_d()
 {
-  VALUE ret = cl_router_content;
-  cl_router_content = rb_str_new2("");
+  VALUE ret = rb_str_dup(cl_router_content);
+  rb_funcall(cl_router_content, cl_vIds.clear, 0);
   cl_router_werror_flag = 0;
   return ret;
 }

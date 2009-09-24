@@ -70,6 +70,7 @@ void Init_rbclips()
   cl_vIds.to_s                = rb_intern("to_s");
   cl_vIds.begin               = rb_intern("begin");
   cl_vIds.end                 = rb_intern("end");
+  cl_vIds.clear               = rb_intern("clear");
   cl_vIds.type                = rb_intern("type");
   cl_vIds.values              = rb_intern("values");
   cl_vIds.range               = rb_intern("range");

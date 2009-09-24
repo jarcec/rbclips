@@ -17,6 +17,7 @@ struct _cl_sIds
   ID to_s;
   ID begin;
   ID end;
+  ID clear;
 
   // Mostly hash keys
   ID type;
