@@ -1,8 +1,6 @@
 #ifndef _RBCONSTRAINT_H_
 #define _RBCONSTRAINT_H_
 
-#include <ruby.h>
-
 //! Clips::Constraint
 extern VALUE cl_cConstraint;
 

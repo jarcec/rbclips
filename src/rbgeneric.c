@@ -2,7 +2,6 @@
 #include "rbclips.h"
 #include "rbgeneric.h"
 
-
 /**
  * Transfer ruby ID to string representation that is valid in CLIPS.
  * :symbol => SYMBOL, :any => ?VARIABLE 

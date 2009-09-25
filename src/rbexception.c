@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <ruby.h>
 #include "clips/clips.h"
 #include "rbclips.h"
 #include "rbexception.h"

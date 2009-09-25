@@ -1,4 +1,4 @@
-#include "ruby.h"
+#include <ruby.h>
 #include "rbclips.h"
 #include "rbbase.h"
 #include "rbenvironment.h"
@@ -54,6 +54,8 @@ void Init_rbclips()
 
   // Clips::Template
   cl_cTemplate = rb_define_class_under(cl_mClips, "Template", rb_cObject);
+  rb_define_method(cl_cTemplate, "initialize", cl_template_initialize, -1);
+  rb_define_method(cl_cTemplate, "to_s", cl_template_to_s, 0);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);

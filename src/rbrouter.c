@@ -1,3 +1,4 @@
+#include <ruby.h>
 #include "clips/clips.h"
 #include "rbclips.h"
 #include "rbrouter.h"

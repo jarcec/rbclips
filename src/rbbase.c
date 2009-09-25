@@ -1,3 +1,4 @@
+#include <ruby.h>
 #include "rbclips.h"
 #include "rbbase.h"
 #include "rbrouter.h"

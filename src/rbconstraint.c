@@ -36,7 +36,7 @@ VALUE cl_constraint_initialize(int argc, VALUE *argv, VALUE self)
     return cl_constraint_initialize_hash(self, argv[0]);
   }
 
-  rb_raise(cl_eArgError, "Clips::Constrait#initialize called with wrong arguments, required is one Hash argument or none argument and block.");
+  rb_raise(cl_eArgError, "Clips::Constrait#initialize called with wrong arguments, required is one Hash argument or none argument with block.");
   return Qnil;
 }
 
