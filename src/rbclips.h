@@ -13,15 +13,25 @@ struct _cl_sIds
 
   // Ruby methods
   ID to_s;
+  ID to_sym;
   ID begin;
   ID end;
   ID clear;
+  ID size;
 
   // Mostly hash keys
   ID type;
   ID values;
   ID range;
   ID cardinality;
+  ID name;
+  ID slots;
+  ID multislot;
+  ID default_;
+  ID default_dynamic;
+  ID constraint;
+  ID none;
+  ID derive;
 
   // CLIPS build-in types
   ID symbol;

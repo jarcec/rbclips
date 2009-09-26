@@ -274,8 +274,9 @@ Hash variant of construction have these keys:
  \item \texttt{:slots => Array | Hash} Slot list - in array accept only strings or symbols (names of slots). In hash variant accept string or symbols as keys (name of slots) and another hash as value with options for this slot. This key is again compulsory - there cannot be template without slots (at least one slot have to be defined). Same hash options are used belowed in constructor that use block.
 	\begin{itemize}
 	 \item \texttt{:multislot => Boolean} Is this multislot? False by default.
-	 \item \texttt{:default => :none | :derive | String } Default value for this slot
+	 \item \texttt{:default => :none | :derive | String | object } Default value for this slot, if it's not symbol, it will be called with to\_s method before saving to CLIPS.
 	 \item \texttt{:default\_dynamic => Boolean} Should be default dynamic? Make sens only when some function is given as default value for slot and is valid only if :default is set to some string.
+	 \item \texttt{:constraint => Clips::Constraint | Hash } Constraint for given slot, if hash is given, the Constraint objects i build from that hash.
 	\end{itemize}
 \end{itemize}
 
