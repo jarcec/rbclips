@@ -9,6 +9,7 @@
 
 /* Definitions */
 VALUE cl_cTemplate;
+VALUE cl_cTemplateCreator;
 
 //! Creating new Constraint object using block
 VALUE cl_template_initialize_block(VALUE, VALUE);
@@ -97,6 +98,13 @@ VALUE cl_template_initialize_hash(VALUE self, VALUE hash)
     rb_hash_foreach(slots, cl_template_initialize_hash_each, s);
   }
 
+  // At least one slot have to be defined
+  if(NUM2LONG(rb_funcall(s, cl_vIds.size, 0)) == 0)
+  {
+    rb_raise(cl_eUseError, "Clips::Template must have at least one slot!");
+    return Qnil;
+  }
+
   // Saving to class
   rb_iv_set(self, "@name", name);
   rb_iv_set(self, "@slots", s);
@@ -105,10 +113,25 @@ VALUE cl_template_initialize_hash(VALUE self, VALUE hash)
 }
 
 /**
- * Build template from block configuring block
+ * Build template from configuring block
  */
 VALUE cl_template_initialize_block(VALUE self, VALUE name)
 {
+  cl_sTemplateCreatorWrap *wrap = calloc(1, sizeof(*wrap));
+  wrap->ptr = self;
+
+  VALUE creator = Data_Wrap_Struct(cl_cTemplateCreator, NULL, free, wrap);
+  VALUE s = rb_hash_new();
+
+  rb_iv_set(self, "@name", name);
+  rb_iv_set(self, "@slots", s);
+
+  rb_yield(creator);
+
+  // At least one slot have to be defined
+  if(NUM2LONG(rb_funcall(s, cl_vIds.size, 0)) == 0)
+    rb_raise(cl_eUseError, "Clips::Template must have at least one slot!");
+
   return Qnil;
 }
 
@@ -218,3 +241,76 @@ VALUE cl_template_to_s(VALUE self)
 {
   return Qnil;
 }
+
+/**
+ * Constructor checks if this object was created by Clips::Template. If not it raise an
+ * exception, bacause it's prohibited.
+ */
+VALUE cl_template_creator_initialize(VALUE self)
+{
+  cl_sConstraintCreatorWrap *wrap = DATA_PTR(self);
+  if( !wrap || !wrap->ptr )
+  {
+      rb_raise(cl_eUseError, "Direct creation of Clips::Template::Creator is prohibited.");
+      return Qnil;
+  }
+
+  return Qtrue;
+}
+
+/**
+ * Set given slot for an object
+ */
+VALUE cl_template_creator_slot(int argc, VALUE *argv, VALUE self)
+{
+  // Wrapping pointer
+  cl_sConstraintCreatorWrap *wrap = DATA_PTR(self);
+  if( !wrap || !wrap->ptr )
+  {
+      rb_raise(cl_eUseError, "Direct use of Clips::Template::Creator is prohibited.");
+      return Qnil;
+  }
+
+  // The slots hash
+  VALUE s = rb_iv_get(wrap->ptr, "@slots");
+
+  // Params check
+  if(argc == 1 || argc == 2)
+  {
+    if(TYPE(argv[0]) != T_SYMBOL && TYPE(argv[0]) != T_STRING)
+    {
+      rb_raise(cl_eArgError, "Clips::Template::Creator#slot first argument have to be string or symbols argv[0]s but '%s' have class '%s'.", CL_STR(argv[0]), CL_STR_CLASS(argv[0]));
+      return Qfalse;
+    }
+
+    if(argc == 2 && TYPE(argv[1]) != T_HASH)
+    {
+      rb_raise(cl_eArgError, "Clips::Template::Creator#slot second argument have to be hash but '%s' have class '%s'.", CL_STR(argv[1]), CL_STR_CLASS(argv[1]));
+      return Qfalse;
+    }
+  } else {
+    rb_raise(cl_eArgError, "Clips::Template::Creator#slot needs one or two arguments.");
+    return Qnil;
+  }
+
+  // argv[1] is optional, so transcription
+  VALUE value = Qnil;
+
+  // Check if it's valid slot configuration
+  if(argc == 2)
+  {
+    rb_hash_foreach(argv[1], cl_template_initialize_check_variable, s);
+    value = argv[1];
+  }
+
+  // Transfer type if necessary
+  if(TYPE(argv[0]) == T_STRING)
+    argv[0] =  rb_funcall(argv[0], cl_vIds.to_sym, 0);
+
+  // Save this slot, it's valid
+  rb_hash_aset(s, argv[0], value);
+
+  // C'est tout
+  return Qtrue;
+}
+

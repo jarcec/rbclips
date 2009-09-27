@@ -4,6 +4,7 @@ require 'rbclips'
 class Test_Constraint < Test::Unit::TestCase
   def test_exists
     assert Clips.constants.member?(:Constraint)
+    assert Clips::Constraint.constants.member?(:Creator)
   end
 
   def test_new_hash
