@@ -156,10 +156,11 @@ int cl_template_initialize_hash_each(VALUE key, VALUE value, VALUE s)
     key =  rb_funcall(key, cl_vIds.to_sym, 0);
 
   // Check if it's valid slot configuration
-  rb_hash_foreach(value, cl_template_initialize_check_variable, s);
+  VALUE target = rb_hash_new();
+  rb_hash_foreach(value, cl_template_initialize_check_variable, target);
 
   // Save this slot, it's valid
-  rb_hash_aset(s, key, value);
+  rb_hash_aset(s, key, target);
 
   // C'est tout
   return ST_CONTINUE;
@@ -168,7 +169,7 @@ int cl_template_initialize_hash_each(VALUE key, VALUE value, VALUE s)
 /**
  * Second line of configuring hash, parse and check options for one particular slot
  */
-int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE s)
+int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE target)
 {
   // Check argument type
   if(TYPE(key) != T_SYMBOL && TYPE(key) != T_STRING)
@@ -176,6 +177,9 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE s)
     rb_raise(cl_eArgError, "Key '%s' have class '%s' but expected was Symbol or String.", CL_STR(key), CL_STR_CLASS(value) );
     return ST_STOP;
   }
+
+  // Changing key to symbol
+  key = rb_funcall(key, cl_vIds.to_sym, 0);
 
   // Transfer it to ID
   ID sym_key = rb_to_id(key);
@@ -188,6 +192,7 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE s)
       return ST_STOP;
     }
 
+    rb_hash_aset(target, key, value);
     return ST_CONTINUE;
   }
   
@@ -202,9 +207,11 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE s)
         return ST_STOP;
       }
 
+      rb_hash_aset(target, key, value);
       return ST_CONTINUE;
     }
 
+    rb_hash_aset(target, key, value);
     return ST_CONTINUE;
   }
   
@@ -216,6 +223,7 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE s)
       return ST_STOP;
     }
 
+    rb_hash_aset(target, key, value);
     return ST_CONTINUE;
   }
 
@@ -227,6 +235,7 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE s)
       return ST_STOP;
     }
 
+    rb_hash_aset(target, key, value);
     return ST_CONTINUE;
   }
   
@@ -299,8 +308,8 @@ VALUE cl_template_creator_slot(int argc, VALUE *argv, VALUE self)
   // Check if it's valid slot configuration
   if(argc == 2)
   {
-    rb_hash_foreach(argv[1], cl_template_initialize_check_variable, s);
-    value = argv[1];
+    value = rb_hash_new();
+    rb_hash_foreach(argv[1], cl_template_initialize_check_variable, value);
   }
 
   // Transfer type if necessary

@@ -11,6 +11,7 @@ class Test_Template < Test::Unit::TestCase
     assert_nothing_raised               { Clips::Template.new :name => 'human', :slots => [:name, 'age'] }
     assert_nothing_raised               { Clips::Template.new :name => 'human', :slots => %w(name age) }
     assert_nothing_raised               { Clips::Template.new :name => 'human', :slots => {:name => {:multislot => false}, 'age' => {:default => 30}} }
+    assert_nothing_raised               { Clips::Template.new :name => 'human', :slots => {:name => {:multislot => false}, 'age' => {'default' => 30}} }
     assert_raise(Clips::UsageError)     { Clips::Template.new :name => 'human', :slots => %w() }
     assert_raise(Clips::UsageError)     { Clips::Template.new :name => 'human', :slots => {} }
     assert_raise(Clips::ArgumentError)  { Clips::Template.new :type => [:any] }
@@ -32,6 +33,10 @@ class Test_Template < Test::Unit::TestCase
     assert_equal a.instance_eval { @slots }, { :name => nil, :age => nil }
 
     a = Clips::Template.new :name => 'human', :slots => {:name => { :multislot => false}, :age => { :default => 30}}
+    assert_equal a.instance_eval { @name }, 'human'
+    assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
+
+    a = Clips::Template.new :name => 'human', :slots => {:name => { :multislot => false}, :age => { 'default' => 30}}
     assert_equal a.instance_eval { @name }, 'human'
     assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
   end
@@ -57,6 +62,13 @@ class Test_Template < Test::Unit::TestCase
     a = Clips::Template.new 'human' do |s|
       s.slot :name, :multislot => false
       s.slot :age, :default => 30
+    end
+    assert_equal a.instance_eval { @name }, 'human'
+    assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
+
+    a = Clips::Template.new 'human' do |s|
+      s.slot :name, :multislot => false
+      s.slot 'age', 'default' => 30
     end
     assert_equal a.instance_eval { @name }, 'human'
     assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
