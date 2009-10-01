@@ -201,19 +201,6 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE target)
   
   if(sym_key == cl_vIds.default_)
   {
-    if(TYPE(value) == T_SYMBOL)
-    {
-      ID sym = rb_to_id(value);
-      if(sym != cl_vIds.none && sym != cl_vIds.derive)
-      {
-        rb_raise(cl_eArgError, "Clips::Template#initialize :default key as symbol accept only values :none or :derive but '%s' was given.", CL_STR(value));
-        return ST_STOP;
-      }
-
-      rb_hash_aset(target, key, value);
-      return ST_CONTINUE;
-    }
-
     rb_hash_aset(target, key, value);
     return ST_CONTINUE;
   }
@@ -271,7 +258,7 @@ int cl_template_to_s_slot(VALUE key, VALUE value, VALUE target)
   if( ! NIL_P(default_) )
   {
     // Default or default-dynamic?
-    if(TYPE(multislot) == T_TRUE)
+    if(TYPE(default_dynamic) == T_TRUE)
       rb_str_cat2(target, " (default-dynamic ");
     else
       rb_str_cat2(target, " (default ");
@@ -280,10 +267,14 @@ int cl_template_to_s_slot(VALUE key, VALUE value, VALUE target)
     if( TYPE(default_) == T_SYMBOL)
     {
       ID s = rb_to_id(default_);
-      if(s == cl_vIds.derive)   rb_str_cat2(target, "?DERIVE)");
-      if(s == cl_vIds.none)     rb_str_cat2(target, "?NONE)");
-    } else
-      rb_str_catf(target, "%s)", CL_STR(default_));
+      if      (s == cl_vIds.derive)   rb_str_cat2(target, "?DERIVE)");
+      else if (s == cl_vIds.none)     rb_str_cat2(target, "?NONE)");
+      else                            rb_str_catf(target, "%s)", CL_STR(default_));
+
+    } else if(TYPE(default_) == T_STRING)
+        rb_str_catf(target, "\"%s\")", CL_STR(default_));
+      else
+        rb_str_catf(target, "%s)", CL_STR(default_));
   }
 
   // Constraint

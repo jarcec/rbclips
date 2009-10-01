@@ -84,18 +84,35 @@ class Test_Template < Test::Unit::TestCase
   end
 
   def test_to_s
-    c = Clips::Template.new "human" do |s|
-      s.slot :age
-      s.slot :name, :multislot => true
-      s.slot :a1, :default => 30
-      s.slot :a2, :default => :derive
-      s.slot :a3, :default => 'ahoj'
-      s.slot :a4, :default => 40, :default_dynamic => true
-      s.slot :a5, :default => :none
-      s.slot :a6, :constraint => { :type => :integer, :cardinality => 2..23}
-    end
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :multislot => true } }
+    assert_equal c.to_s, "(deftemplate human (multislot a) )"
 
-    assert_equal c.to_s, "(deftemplate human (slot age) (multislot name) (slot a1 (default 30)) (slot a2 (default ?DERIVE)) (slot a3 (default ahoj)) (slot a4 (default 40)) (slot a5 (default ?NONE)) (slot a6 (type INTEGER ) (cardinality 2 23) ) )"
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :default => 30 } }
+    assert_equal c.to_s, "(deftemplate human (slot a (default 30)) )"
+
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :default => 'ahoj' } }
+    assert_equal c.to_s, "(deftemplate human (slot a (default \"ahoj\")) )"
+
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :default => "ahoj" } }
+    assert_equal c.to_s, "(deftemplate human (slot a (default \"ahoj\")) )"
+
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :default =>  :ahoj } }
+    assert_equal c.to_s, "(deftemplate human (slot a (default ahoj)) )"
+
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :default => :none } }
+    assert_equal c.to_s, "(deftemplate human (slot a (default ?NONE)) )"
+
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :default => :derive } }
+    assert_equal c.to_s, "(deftemplate human (slot a (default ?DERIVE)) )"
+
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :default => "ahoj" } }
+    assert_equal c.to_s, "(deftemplate human (slot a (default \"ahoj\")) )"
+
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :default => 30, :default_dynamic => true } }
+    assert_equal c.to_s, "(deftemplate human (slot a (default-dynamic 30)) )"
+
+    c = Clips::Template.new :name => 'human', :slots => { :a => { :constraint => { :type => :integer, :cardinality => 2..23} } }
+    assert_equal c.to_s, "(deftemplate human (slot a (type INTEGER ) (cardinality 2 23) ) )"
   end
 
 end
