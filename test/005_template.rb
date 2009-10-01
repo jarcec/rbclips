@@ -26,11 +26,11 @@ class Test_Template < Test::Unit::TestCase
 
     a = Clips::Template.new :name => 'human', :slots => [:name, 'age']
     assert_equal a.instance_eval { @name }, 'human'
-    assert_equal a.instance_eval { @slots }, { :name => nil, :age => nil }
+    assert_equal a.instance_eval { @slots }, { :name => {}, :age => {} }
 
     a = Clips::Template.new :name => 'human', :slots => %w(name age)
     assert_equal a.instance_eval { @name }, 'human'
-    assert_equal a.instance_eval { @slots }, { :name => nil, :age => nil }
+    assert_equal a.instance_eval { @slots }, { :name => {}, :age => {} }
 
     a = Clips::Template.new :name => 'human', :slots => {:name => { :multislot => false}, :age => { :default => 30}}
     assert_equal a.instance_eval { @name }, 'human'
@@ -57,7 +57,7 @@ class Test_Template < Test::Unit::TestCase
       s.slot 'age'
     end
     assert_equal a.instance_eval { @name }, 'human'
-    assert_equal a.instance_eval { @slots }, { :name => nil, :age => nil }
+    assert_equal a.instance_eval { @slots }, { :name => {}, :age => {} }
 
     a = Clips::Template.new 'human' do |s|
       s.slot :name, :multislot => false
@@ -82,4 +82,20 @@ class Test_Template < Test::Unit::TestCase
     assert_equal Clips::Constraint, a.instance_eval { @slots[:age][:constraint].class }
     assert_equal "(type INTEGER ) ", a.instance_eval { @slots[:age][:constraint].to_s } 
   end
+
+  def test_to_s
+    c = Clips::Template.new "human" do |s|
+      s.slot :age
+      s.slot :name, :multislot => true
+      s.slot :a1, :default => 30
+      s.slot :a2, :default => :derive
+      s.slot :a3, :default => 'ahoj'
+      s.slot :a4, :default => 40, :default_dynamic => true
+      s.slot :a5, :default => :none
+      s.slot :a6, :constraint => { :type => :integer, :cardinality => 2..23}
+    end
+
+    assert_equal c.to_s, "(deftemplate human (slot age) (multislot name) (slot a1 (default 30)) (slot a2 (default ?DERIVE)) (slot a3 (default ahoj)) (slot a4 (default 40)) (slot a5 (default ?NONE)) (slot a6 (type INTEGER ) (cardinality 2 23) ) )"
+  end
+
 end

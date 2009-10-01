@@ -23,6 +23,9 @@ int cl_template_initialize_hash_each(VALUE, VALUE, VALUE);
 //! Set up given variable (if it's valid)
 int cl_template_initialize_check_variable(VALUE, VALUE, VALUE);
 
+//! One by one process inner slot and save them
+int cl_template_to_s_slot(VALUE, VALUE, VALUE);
+
 /**
  * Constructor that accept hash or name with config block
  */
@@ -89,7 +92,7 @@ VALUE cl_template_initialize_hash(VALUE self, VALUE hash)
       if(TYPE(entry) == T_STRING)
         entry =  rb_funcall(entry, cl_vIds.to_sym, 0);
 
-      rb_hash_aset(s, entry, Qnil);
+      rb_hash_aset(s, entry, rb_hash_new());
     }
   }
 
@@ -201,9 +204,9 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE target)
     if(TYPE(value) == T_SYMBOL)
     {
       ID sym = rb_to_id(value);
-      if(sym != cl_vIds.none && cl_vIds.derive)
+      if(sym != cl_vIds.none && sym != cl_vIds.derive)
       {
-        rb_raise(cl_eArgError, "Clips::Template#initialize :default key as symbol ony :none or :derive but '%s' was given.", CL_STR(value));
+        rb_raise(cl_eArgError, "Clips::Template#initialize :default key as symbol accept only values :none or :derive but '%s' was given.", CL_STR(value));
         return ST_STOP;
       }
 
@@ -248,11 +251,72 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE target)
 }
 
 /**
+ * Go throw slots and convert (create) the appropriate text columns
+ */
+int cl_template_to_s_slot(VALUE key, VALUE value, VALUE target)
+{
+  // Possible values
+  VALUE multislot  = rb_hash_lookup(value, ID2SYM(cl_vIds.multislot) );
+  VALUE default_  = rb_hash_lookup(value, ID2SYM(cl_vIds.default_) );
+  VALUE default_dynamic  = rb_hash_lookup(value, ID2SYM(cl_vIds.default_dynamic) );
+  VALUE constraint  = rb_hash_lookup(value, ID2SYM(cl_vIds.constraint) );
+
+  // Slot definition
+  if(TYPE(multislot) == T_TRUE)
+    rb_str_catf(target, " (multislot %s", CL_STR(key));
+  else
+    rb_str_catf(target, " (slot %s", CL_STR(key));
+
+  // Default
+  if( ! NIL_P(default_) )
+  {
+    // Default or default-dynamic?
+    if(TYPE(multislot) == T_TRUE)
+      rb_str_cat2(target, " (default-dynamic ");
+    else
+      rb_str_cat2(target, " (default ");
+
+    // Special keyword ?DERIVE/?NONE or some string/object?
+    if( TYPE(default_) == T_SYMBOL)
+    {
+      ID s = rb_to_id(default_);
+      if(s == cl_vIds.derive)   rb_str_cat2(target, "?DERIVE)");
+      if(s == cl_vIds.none)     rb_str_cat2(target, "?NONE)");
+    } else
+      rb_str_catf(target, "%s)", CL_STR(default_));
+  }
+
+  // Constraint
+  if( ! NIL_P(constraint) )
+  {
+    rb_str_catf(target, " %s", CL_STR(constraint));
+  }
+
+  // C'est tout
+  rb_str_cat2(target, ")");
+  return ST_CONTINUE;
+}
+
+/**
  * Return string reprezentation of self (CLIPS code)
  */
 VALUE cl_template_to_s(VALUE self)
 {
-  return Qnil;
+  VALUE ret = rb_str_new2("(deftemplate ");
+
+  // Name
+  VALUE name = rb_iv_get(self, "@name");
+  rb_str_catf(ret, "%s", STR2CSTR(name) );
+
+  // Slots
+  VALUE slots = rb_iv_get(self, "@slots");
+  rb_hash_foreach(slots, cl_template_to_s_slot, ret);
+
+  // End
+  rb_str_cat2(ret, " )");
+
+  // C'est tout
+  return ret;
 }
 
 /**
@@ -292,7 +356,7 @@ VALUE cl_template_creator_slot(int argc, VALUE *argv, VALUE self)
   {
     if(TYPE(argv[0]) != T_SYMBOL && TYPE(argv[0]) != T_STRING)
     {
-      rb_raise(cl_eArgError, "Clips::Template::Creator#slot first argument have to be string or symbols argv[0]s but '%s' have class '%s'.", CL_STR(argv[0]), CL_STR_CLASS(argv[0]));
+      rb_raise(cl_eArgError, "Clips::Template::Creator#slot first argument have to be string or symbols but '%s' have class '%s'.", CL_STR(argv[0]), CL_STR_CLASS(argv[0]));
       return Qfalse;
     }
 
@@ -306,13 +370,12 @@ VALUE cl_template_creator_slot(int argc, VALUE *argv, VALUE self)
     return Qnil;
   }
 
-  // argv[1] is optional, so transcription
-  VALUE value = Qnil;
+  // Inserted value
+  VALUE value = rb_hash_new();
 
-  // Check if it's valid slot configuration
+  // If we have second argument, process it
   if(argc == 2)
   {
-    value = rb_hash_new();
     rb_hash_foreach(argv[1], cl_template_initialize_check_variable, value);
   }
 
