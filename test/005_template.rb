@@ -74,4 +74,12 @@ class Test_Template < Test::Unit::TestCase
     assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
   end
 
+  def test_constraint
+    assert_nothing_raised               { Clips::Template.new :name => 'human', :slots => { :age => {:constraint => {:type => :integer}}} }
+    assert_raise(Clips::ArgumentError)  { Clips::Template.new :name => 'human', :slots => { :age => {:constraint => {:xxxx => :integer}}} }
+
+    a = Clips::Template.new :name => 'human', :slots => { :age => {:constraint => {:type => :integer}}}
+    assert_equal Clips::Constraint, a.instance_eval { @slots[:age][:constraint].class }
+    assert_equal "(type INTEGER ) ", a.instance_eval { @slots[:age][:constraint].to_s } 
+  end
 end

@@ -235,6 +235,10 @@ int cl_template_initialize_check_variable(VALUE key, VALUE value, VALUE target)
       return ST_STOP;
     }
 
+    // Creating Object if hash is passed in place
+    if( TYPE(value) == T_HASH )
+      value = rb_class_new_instance(1, &value, cl_cConstraint);
+
     rb_hash_aset(target, key, value);
     return ST_CONTINUE;
   }
