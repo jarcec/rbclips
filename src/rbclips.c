@@ -43,6 +43,9 @@ void Init_rbclips()
   cl_cConstraint = rb_define_class_under(cl_mClips, "Constraint", rb_cObject);
   rb_define_method(cl_cConstraint, "initialize", cl_constraint_initialize, -1);
   rb_define_method(cl_cConstraint, "to_s", cl_constraint_to_s, 0);
+  rb_define_method(cl_cConstraint, "==", cl_constraint_equal, 1);
+  rb_define_alias(cl_cConstraint, "equal?", "==");
+  rb_define_alias(cl_cConstraint, "eql?", "==");
 
   // Clips::Constraint::Creator
   cl_cConstraintCreator = rb_define_class_under(cl_cConstraint, "Creator", rb_cObject);

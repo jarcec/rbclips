@@ -22,6 +22,9 @@ VALUE cl_constraint_initialize(int, VALUE *, VALUE);
 //! Clips::Constraint\#to_s
 VALUE cl_constraint_to_s(VALUE);
 
+//! Clips::Constraint\#equal
+VALUE cl_constraint_equal(VALUE, VALUE);
+
 //! Clips::Constraint::Creator\#initialize
 VALUE cl_constraint_creator_initialize(VALUE);
 

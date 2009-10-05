@@ -104,4 +104,21 @@ class Test_Constraint < Test::Unit::TestCase
     assert_equal Clips::Constraint.new(:values => %w(ahoj nazdar), :cardinality => 3..13).to_s, "(values \"ahoj\" \"nazdar\" ) (cardinality 3 13) "
     assert_equal Clips::Constraint.new(:range => 4..14, :cardinality => 3..13).to_s, "(range 4 14) (cardinality 3 13) "
   end
+
+  def test_equal
+    t = Proc.new do |hash| 
+      a = Clips::Constraint.new hash
+      b = Clips::Constraint.new hash
+      assert a == b
+      assert a.eql? b
+      assert a.equal? b
+    end
+
+    t.call :type => :any
+    t.call :type => :integer
+    t.call :type => %w(symbol string)
+    t.call :values => %w(ahoj nazdar hello hi)
+    t.call :range => 3..13
+    t.call :cardinality => 4..14
+  end
 end
