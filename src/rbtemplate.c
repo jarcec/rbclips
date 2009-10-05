@@ -311,6 +311,19 @@ VALUE cl_template_to_s(VALUE self)
 }
 
 /**
+ * Represent this two objects same template?
+ */
+VALUE cl_template_equal(VALUE a, VALUE b)
+{
+  CL_EQUAL_DEFINE;
+  
+  CL_EQUAL_CHECK_IV("@name");
+  CL_EQUAL_CHECK_IV("@slots");
+
+  return Qtrue;
+}
+
+/**
  * Constructor checks if this object was created by Clips::Template. If not it raise an
  * exception, bacause it's prohibited.
  */

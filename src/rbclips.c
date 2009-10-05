@@ -59,6 +59,9 @@ void Init_rbclips()
   cl_cTemplate = rb_define_class_under(cl_mClips, "Template", rb_cObject);
   rb_define_method(cl_cTemplate, "initialize", cl_template_initialize, -1);
   rb_define_method(cl_cTemplate, "to_s", cl_template_to_s, 0);
+  rb_define_method(cl_cTemplate, "==", cl_template_equal, 1);
+  rb_define_alias(cl_cTemplate, "equal?", "==");
+  rb_define_alias(cl_cTemplate, "eql?", "==");
 
   // Clips::Template::Creator
   cl_cTemplateCreator = rb_define_class_under(cl_cTemplate, "Creator", rb_cObject);

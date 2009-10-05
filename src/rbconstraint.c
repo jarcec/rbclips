@@ -283,19 +283,12 @@ VALUE cl_constraint_to_s(VALUE self)
  */
 VALUE cl_constraint_equal(VALUE a, VALUE b)
 {
-  VALUE aa, bb;
-  VALUE ret;
-
-# define CHECK(what)  aa = rb_iv_get(a, (what)); \
-                      bb = rb_iv_get(b, (what)); \
-                      ret = rb_equal(aa, bb); \
-                      if(TYPE(ret) != T_TRUE) return Qfalse
-  CHECK("@type");
-  CHECK("@values");
-  CHECK("@cardinality");
-  CHECK("@range");
-
-# undef CHECK
+  CL_EQUAL_DEFINE;
+  
+  CL_EQUAL_CHECK_IV("@type");
+  CL_EQUAL_CHECK_IV("@values");
+  CL_EQUAL_CHECK_IV("@cardinality");
+  CL_EQUAL_CHECK_IV("@range");
 
   return Qtrue;
 }

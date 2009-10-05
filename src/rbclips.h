@@ -52,12 +52,21 @@ typedef struct _cl_sIds cl_sIds;
 extern cl_sIds cl_vIds;
 
 // Some C "magic"
-#ifndef false
-# define false 0
-#endif
+# ifndef false
+#   define false 0
+# endif
+# ifndef true
+#  define true 1
+# endif
 
-#ifndef true
-# define true 1
-#endif
+
+/** Easy writing equal methods
+ * Macro for easy writing equal methods
+ */
+#define CL_EQUAL_DEFINE           VALUE aa, bb, ret
+#define CL_EQUAL_CHECK_IV(what)   aa = rb_iv_get(a, (what)); \
+                                  bb = rb_iv_get(b, (what)); \
+                                  ret = rb_equal(aa, bb); \
+                                  if(TYPE(ret) != T_TRUE) return Qfalse
 
 #endif // _RBCLIPS_H_

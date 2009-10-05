@@ -112,6 +112,10 @@ class Test_Constraint < Test::Unit::TestCase
       assert a == b
       assert a.eql? b
       assert a.equal? b
+
+      c = a.dup
+      assert c == a
+      assert c == b
     end
 
     t.call :type => :any

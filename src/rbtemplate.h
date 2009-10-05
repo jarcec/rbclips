@@ -22,6 +22,9 @@ VALUE cl_template_initialize(int, VALUE *, VALUE);
 //! Clips::Template\#to_s
 VALUE cl_template_to_s(VALUE);
 
+//! Clips::Template\#equal
+VALUE cl_template_equal(VALUE, VALUE);
+
 //! Clips::Template::Creator\#initialize
 VALUE cl_template_creator_initialize(VALUE);
 
