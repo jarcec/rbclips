@@ -139,4 +139,36 @@ class Test_Template < Test::Unit::TestCase
     t.call :name => 'human', :slots => { :a => { :default => 30, :default_dynamic => true } }
     t.call :name => 'human', :slots => { :a => { :constraint => { :type => :integer, :cardinality => 2..23} } }
   end
+
+  def test_save
+    t = Proc.new do |hash|
+      c = Clips::Template.new hash
+      assert c.save
+
+      a = c.dup
+      assert a == c
+    end
+
+    t.call :name => 'human', :slots => { :a => { :multislot => true } }
+    t.call :name => 'human', :slots => { :a => { :default => 30 } }
+    t.call :name => 'human', :slots => { :a => { :default => 'ahoj' } }
+    t.call :name => 'human', :slots => { :a => { :default => "ahoj" } }
+    t.call :name => 'human', :slots => { :a => { :default =>  :ahoj } }
+    t.call :name => 'human', :slots => { :a => { :default => :none } }
+    t.call :name => 'human', :slots => { :a => { :default => :derive } }
+    t.call :name => 'human', :slots => { :a => { :default => "ahoj" } }
+    t.call :name => 'human', :slots => { :a => { :default => 30, :default_dynamic => true } }
+    t.call :name => 'human', :slots => { :a => { :constraint => { :type => :integer, :cardinality => 2..23}, :multislot => true } }
+  end
+
+  def test_destroy
+    a = Clips::Template.new :name => 'human', :slots => { :a => { :default => 30 } }
+    assert a.save
+    assert a.destroy!
+
+    assert a.save
+    b = a.dup
+    assert b.destroy!
+    assert_raise(Clips::UsageError) { a.destroy! }
+  end
 end

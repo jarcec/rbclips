@@ -18,5 +18,6 @@ class Test_Base < Test::Unit::TestCase
     assert_equal "", Clips::Base.insert_command("(clear)")
     assert_equal "", Clips::Base.insert_command("(facts)")
     assert_raise(Clips::Exception) { Clips::Base.insert_command("(microsoft on mars)") }
+    assert_raise(Clips::Exception) { Clips::Base.insert_command("(microsoft on mars") }
   end
 end

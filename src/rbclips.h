@@ -18,6 +18,7 @@ struct _cl_sIds
   ID end;
   ID clear;
   ID size;
+  ID update;
 
   // Mostly hash keys
   ID type;
@@ -59,6 +60,14 @@ extern cl_sIds cl_vIds;
 #  define true 1
 # endif
 
+//! Get string representation of given object
+#define CL_TO_S(v)        rb_funcall( (v), cl_vIds.to_s, 0)
+
+//! Get C string of given VALUE (wrapper)
+#define CL_STR(v)         STR2CSTR( CL_TO_S(v) )
+
+//! Get C string of given class of given VALUE (wrapper)
+#define CL_STR_CLASS(v)   CL_STR(rb_obj_class(v))
 
 /** Easy writing equal methods
  * Macro for easy writing equal methods
@@ -69,4 +78,7 @@ extern cl_sIds cl_vIds;
                                   ret = rb_equal(aa, bb); \
                                   if(TYPE(ret) != T_TRUE) return Qfalse
 
+#define CL_EQUAL_DEFINE_WRAP(s)   s *aaa = DATA_PTR(a); \
+                                  s *bbb = DATA_PTR(b)
+#define CL_EQUAL_CHECK_PTR        if(!aaa || !bbb || aaa->ptr != bbb->ptr) return false
 #endif // _RBCLIPS_H_

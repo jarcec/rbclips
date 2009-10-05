@@ -6,6 +6,7 @@
 #include "rbconstraint.h"
 #include "rbenvironment.h"
 #include "rbexception.h"
+#include "rbbase.h"
 
 /* Definitions */
 VALUE cl_cTemplate;
@@ -25,6 +26,19 @@ int cl_template_initialize_check_variable(VALUE, VALUE, VALUE);
 
 //! One by one process inner slot and save them
 int cl_template_to_s_slot(VALUE, VALUE, VALUE);
+
+/**
+ * Creating new object - wrap struct
+ */
+VALUE cl_template_new(int argc, VALUE *argv, VALUE self)
+{
+  cl_sTemplateWrap *wrap = calloc(1, sizeof(*wrap));
+
+  VALUE ret = Data_Wrap_Struct(self, NULL, free, wrap);
+  rb_obj_call_init(ret, argc, argv);
+
+  return ret;
+}
 
 /**
  * Constructor that accept hash or name with config block
@@ -311,6 +325,28 @@ VALUE cl_template_to_s(VALUE self)
 }
 
 /**
+ * Make a copy of this object
+ */
+VALUE cl_template_clone(VALUE self)
+{
+  cl_sTemplateWrap *selfwrap = DATA_PTR(self);
+  cl_sTemplateWrap *wrap = calloc( 1, sizeof(*wrap) );
+  
+  wrap->ptr = selfwrap->ptr;
+
+  VALUE ret = Data_Wrap_Struct(cl_cTemplate, NULL, free, wrap);
+
+  VALUE argv[1];
+  argv[0] = rb_hash_new();
+  rb_hash_aset(argv[0], ID2SYM(cl_vIds.name), rb_iv_get(self, "@name"));
+  rb_hash_aset(argv[0], ID2SYM(cl_vIds.slots), rb_iv_get(self, "@slots"));
+
+  rb_obj_call_init(ret, 1, argv);
+
+  return ret;
+}
+
+/**
  * Represent this two objects same template?
  */
 VALUE cl_template_equal(VALUE a, VALUE b)
@@ -319,6 +355,70 @@ VALUE cl_template_equal(VALUE a, VALUE b)
   
   CL_EQUAL_CHECK_IV("@name");
   CL_EQUAL_CHECK_IV("@slots");
+  
+  CL_EQUAL_DEFINE_WRAP(cl_sTemplateWrap);
+  CL_EQUAL_CHECK_PTR;
+
+  return Qtrue;
+}
+
+/**
+ * Save this template to CLIPS environment
+ */
+VALUE cl_template_save(VALUE self)
+{
+  // This return false if exception was raised
+  VALUE ret = cl_base_insert_command(Qnil, CL_TO_S(self));
+
+  if(TYPE(ret) != T_FALSE)
+  {
+    cl_sTemplateWrap *wrap = DATA_PTR(self);
+    wrap->ptr = FindDeftemplate( CL_STR(rb_iv_get(self, "@name" )) );
+  }
+
+  return Qtrue;
+}
+
+/**
+ * Remove template from CLIPS if there is.
+ */
+VALUE cl_template_destroy(VALUE self)
+{
+  // May be dangerous - rather firstly update everything
+  rb_funcall(self, cl_vIds.update, 0);
+
+  cl_sTemplateWrap *wrap = DATA_PTR(self);
+
+  if( !wrap || !wrap->ptr )
+  {
+      rb_raise(cl_eUseError, "Cannot destroy not saved template.");
+      return Qnil;
+  }
+
+  // Return
+  VALUE ret = Qfalse;
+
+  if( Undeftemplate(wrap->ptr) )
+    ret = Qtrue;
+
+  // It doesn't matter how the undeftemplate ends - the template is not in CLIPS anyway...
+  wrap->ptr = NULL;
+
+  return ret;
+}
+
+/**
+ * Template objects keeps inside pointers to CLIPS structures and that's problematic -
+ * The pointer don't have to be valid, update function update the ruby object as is saved
+ * in CLIPS.
+ */
+VALUE cl_template_update(VALUE self)
+{
+  // Self wrap
+  cl_sTemplateWrap *wrap = DATA_PTR(self);
+  VALUE name = rb_iv_get(self, "@name");
+
+  wrap->ptr = FindDeftemplate( STR2CSTR(name) );
 
   return Qtrue;
 }
@@ -329,7 +429,7 @@ VALUE cl_template_equal(VALUE a, VALUE b)
  */
 VALUE cl_template_creator_initialize(VALUE self)
 {
-  cl_sConstraintCreatorWrap *wrap = DATA_PTR(self);
+  cl_sTemplateCreatorWrap *wrap = DATA_PTR(self);
   if( !wrap || !wrap->ptr )
   {
       rb_raise(cl_eUseError, "Direct creation of Clips::Template::Creator is prohibited.");
@@ -345,7 +445,7 @@ VALUE cl_template_creator_initialize(VALUE self)
 VALUE cl_template_creator_slot(int argc, VALUE *argv, VALUE self)
 {
   // Wrapping pointer
-  cl_sConstraintCreatorWrap *wrap = DATA_PTR(self);
+  cl_sTemplateCreatorWrap *wrap = DATA_PTR(self);
   if( !wrap || !wrap->ptr )
   {
       rb_raise(cl_eUseError, "Direct use of Clips::Template::Creator is prohibited.");
