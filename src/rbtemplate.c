@@ -106,6 +106,13 @@ VALUE cl_template_initialize_hash(VALUE self, VALUE hash)
       if(TYPE(entry) == T_STRING)
         entry =  rb_funcall(entry, cl_vIds.to_sym, 0);
 
+      // Check it not exists
+      if( !NIL_P(rb_hash_lookup(s, entry)))
+      {
+        rb_raise(cl_eArgError, "Clips::Template#initialize redefinition of slot '%s'", CL_STR(entry) );
+        return Qnil;
+      }
+
       rb_hash_aset(s, entry, rb_hash_new());
     }
   }
@@ -171,6 +178,13 @@ int cl_template_initialize_hash_each(VALUE key, VALUE value, VALUE s)
   // Transfer type if necessary
   if(TYPE(key) == T_STRING)
     key =  rb_funcall(key, cl_vIds.to_sym, 0);
+
+  // Check it not exists - never executed :-S TODO
+  if( !NIL_P(rb_hash_lookup(s, key)))
+  {
+    rb_raise(cl_eArgError, "Clips::Template#initialize redefinition of slot '%s'", CL_STR(key) );
+    return Qnil;
+  }
 
   // Check if it's valid slot configuration
   VALUE target = rb_hash_new();
@@ -471,6 +485,13 @@ VALUE cl_template_creator_slot(int argc, VALUE *argv, VALUE self)
     }
   } else {
     rb_raise(cl_eArgError, "Clips::Template::Creator#slot needs one or two arguments.");
+    return Qnil;
+  }
+
+  // Check it not exists
+  if( !NIL_P(rb_hash_lookup(s, argv[0])))
+  {
+    rb_raise(cl_eArgError, "Clips::Template#initialize redefinition of slot '%s'", CL_STR(argv[0]) );
     return Qnil;
   }
 

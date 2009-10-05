@@ -74,6 +74,14 @@ class Test_Template < Test::Unit::TestCase
     assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
   end
 
+  def test_new_redefinitions
+    assert_raise(Clips::ArgumentError) { Clips::Template.new :name => 'human', :slots => %w(ahoj ahoj) }
+    assert_raise(Clips::ArgumentError) { Clips::Template.new('human') {|t| t.slot :ahoj; t.slot :ahoj} }
+    # This will pass - very very strange
+    #assert_raise(Clips::ArgumentError) { Clips::Template.new :name => 'human', :slots => { :ahoj => {}, :ahoj => {} } }  
+
+  end
+
   def test_constraint
     assert_nothing_raised               { Clips::Template.new :name => 'human', :slots => { :age => {:constraint => {:type => :integer}}} }
     assert_raise(Clips::ArgumentError)  { Clips::Template.new :name => 'human', :slots => { :age => {:constraint => {:xxxx => :integer}}} }
@@ -171,4 +179,5 @@ class Test_Template < Test::Unit::TestCase
     assert b.destroy!
     assert_raise(Clips::UsageError) { a.destroy! }
   end
+
 end
