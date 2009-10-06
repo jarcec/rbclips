@@ -6,6 +6,7 @@
 #include "rbexception.h"
 #include "rbconstraint.h"
 #include "rbtemplate.h"
+#include "rbfact.h"
 
 /* Definitions */
 VALUE cl_mClips;
@@ -73,6 +74,9 @@ void Init_rbclips()
   cl_cTemplateCreator = rb_define_class_under(cl_cTemplate, "Creator", rb_cObject);
   rb_define_method(cl_cTemplateCreator, "initialize", cl_template_creator_initialize, 0);
   rb_define_method(cl_cTemplateCreator, "slot", cl_template_creator_slot, -1);
+
+  // Clips::Fact
+  cl_cFact = rb_define_class_under(cl_mClips, "Fact", rb_cObject);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
