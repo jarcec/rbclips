@@ -41,7 +41,7 @@ VALUE cl_environment_to_s(VALUE self)
 {
   cl_sEnvironmentWrap *wrap = DATA_PTR(self);
 
-  return rb_sprintf("Environment:%X", (unsigned int)wrap->ptr);
+  return rb_sprintf("Environment:%lX", (unsigned long)wrap->ptr);
 }
 
 /**
