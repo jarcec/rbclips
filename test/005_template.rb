@@ -79,7 +79,11 @@ class Test_Template < Test::Unit::TestCase
     assert_raise(Clips::ArgumentError) { Clips::Template.new('human') {|t| t.slot :ahoj; t.slot :ahoj} }
     # This will pass - very very strange
     #assert_raise(Clips::ArgumentError) { Clips::Template.new :name => 'human', :slots => { :ahoj => {}, :ahoj => {} } }  
+  end
 
+  def test_new_template_name_validation
+    assert_raise(Clips::ArgumentError) { Clips::Template.new :name => 'hum  an', :slots => %w(ahoj cu) }
+    assert_raise(Clips::ArgumentError) { Clips::Template.new('hu man') {|t| t.slot :ahoj; t.slot :abcd} }
   end
 
   def test_constraint

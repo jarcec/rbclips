@@ -27,6 +27,9 @@ int cl_template_initialize_check_variable(VALUE, VALUE, VALUE);
 //! One by one process inner slot and save them
 int cl_template_to_s_slot(VALUE, VALUE, VALUE);
 
+//! Check template name
+int cl_template_check_clips_symbol(VALUE);
+
 /**
  * Creating new object - wrap struct
  */
@@ -78,6 +81,12 @@ VALUE cl_template_initialize_hash(VALUE self, VALUE hash)
   if( TYPE(name) != T_STRING)
   {
     rb_raise(cl_eArgError, "Clips::Template#intialize :name needs an String as parametr but '%s' of class '%s' was given.", CL_STR(name), CL_STR_CLASS(name));
+    return Qnil;
+  }
+
+  if( !cl_template_check_clips_symbol(name) )
+  {
+    rb_raise(cl_eArgError, "Clips::Template#intialize Name '%s' is not valid CLIPS template name .", CL_STR(name));
     return Qnil;
   }
 
@@ -146,6 +155,12 @@ VALUE cl_template_initialize_block(VALUE self, VALUE name)
 
   VALUE creator = Data_Wrap_Struct(cl_cTemplateCreator, NULL, free, wrap);
   VALUE s = rb_hash_new();
+
+  if( !cl_template_check_clips_symbol(name) )
+  {
+    rb_raise(cl_eArgError, "Clips::Template#intialize Name '%s' is not valid CLIPS template name .", CL_STR(name));
+    return Qnil;
+  }
 
   rb_iv_set(self, "@name", name);
   rb_iv_set(self, "@slots", s);
@@ -515,3 +530,19 @@ VALUE cl_template_creator_slot(int argc, VALUE *argv, VALUE self)
   return Qtrue;
 }
 
+/**
+ * Check if given value is valid CLIPS symbol (don't have spaces)
+ */
+int cl_template_check_clips_symbol(VALUE s)
+{
+  VALUE argv[1];
+  argv[0] = rb_str_new2("^[^ \"]+$");
+
+  VALUE regexp = rb_class_new_instance(1, argv, rb_cRegexp);
+
+  VALUE ret = rb_funcall(regexp, cl_vIds.eqq, 1, s);
+
+  if(TYPE(ret) == T_TRUE) return true;
+  
+  return false;
+}

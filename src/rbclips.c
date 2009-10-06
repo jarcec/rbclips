@@ -97,6 +97,7 @@ void Init_rbclips()
   cl_vIds.clear               = rb_intern("clear");
   cl_vIds.size                = rb_intern("size");
   cl_vIds.update              = rb_intern("update");
+  cl_vIds.eqq                 = rb_intern("===");
   cl_vIds.type                = rb_intern("type");
   cl_vIds.values              = rb_intern("values");
   cl_vIds.range               = rb_intern("range");
