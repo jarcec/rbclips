@@ -20,6 +20,7 @@ struct _cl_sIds
   ID size;
   ID update;
   ID eqq;
+  ID ordered;
 
   // Mostly hash keys
   ID type;

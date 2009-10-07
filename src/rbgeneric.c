@@ -25,3 +25,20 @@ const char const * rb_generic_clipstype_str(ID id)
 
   return "";
 }
+
+/**
+ * Check if given value is valid CLIPS symbol (don't have spaces)
+ */
+int cl_generic_check_clips_symbol(VALUE s)
+{
+  VALUE argv[1];
+  argv[0] = rb_str_new2("^[^ \"]+$");
+
+  VALUE regexp = rb_class_new_instance(1, argv, rb_cRegexp);
+
+  VALUE ret = rb_funcall(regexp, cl_vIds.eqq, 1, s);
+
+  if(TYPE(ret) == T_TRUE) return true;
+  
+  return false;
+}

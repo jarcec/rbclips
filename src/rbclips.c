@@ -77,6 +77,12 @@ void Init_rbclips()
 
   // Clips::Fact
   cl_cFact = rb_define_class_under(cl_mClips, "Fact", rb_cObject);
+  rb_define_singleton_method(cl_cFact, "new", cl_fact_new, -1);
+  rb_define_method(cl_cFact, "initialize", cl_fact_initialize, 2);
+  rb_define_method(cl_cFact, "to_s", cl_fact_to_s, 0);
+  rb_define_method(cl_cFact, "save", cl_fact_save, 0);
+  rb_define_method(cl_cFact, "destroy!", cl_fact_destroy, 0);
+  rb_define_method(cl_cFact, "ordered?", cl_fact_ordered, 0);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
@@ -102,6 +108,7 @@ void Init_rbclips()
   cl_vIds.size                = rb_intern("size");
   cl_vIds.update              = rb_intern("update");
   cl_vIds.eqq                 = rb_intern("===");
+  cl_vIds.ordered             = rb_intern("ordered?");
   cl_vIds.type                = rb_intern("type");
   cl_vIds.values              = rb_intern("values");
   cl_vIds.range               = rb_intern("range");
