@@ -27,6 +27,9 @@ VALUE cl_fact_to_s_nonordered(VALUE);
 //! Foreach method for creating nonordered fact
 int cl_fact_initialize_nonordered_each(VALUE, VALUE, VALUE);
 
+//! Foreach method for string conversion
+int cl_fact_to_s_nonordered_each(VALUE, VALUE, VALUE);
+
 /**
  * Creating new object - wrap struct
  */
@@ -178,6 +181,33 @@ VALUE cl_fact_to_s_ordered(VALUE self)
 
   rb_str_cat2(ret, ")");
   return ret;
+}
+
+/**
+ * to_s: Nonordered variant
+ */
+VALUE cl_fact_to_s_nonordered(VALUE self)
+{
+  VALUE ret       = rb_str_new2("(");
+  VALUE template  = rb_iv_get(self, "@template");
+  VALUE slots     = rb_iv_get(self, "@slots");
+  VALUE tname     = rb_iv_get(template, "@name");
+  rb_str_cat2(ret, CL_STR(tname));
+
+  rb_hash_foreach(slots, cl_fact_to_s_nonordered_each, ret);
+
+  rb_str_cat2(ret, ")");
+  return ret;
+}
+
+/**
+ * to_s: For each slot in hash
+ */
+int cl_fact_to_s_nonordered_each(VALUE key, VALUE value, VALUE target)
+{
+  rb_str_catf(target, " (%s %s)", CL_STR(key), CL_STR(value));
+
+  return ST_CONTINUE;
 }
 
 /**

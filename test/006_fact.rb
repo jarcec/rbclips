@@ -6,6 +6,14 @@ class Test_Fact < Test::Unit::TestCase
     assert Clips.constants.member?(:Fact)
   end
 
+  def get_animal
+    Clips::Template.new 'animal' do |t| 
+      t.slot :name
+      t.slot :age
+      t.slot :race
+    end
+  end
+
   def test_ordered
     assert_nothing_raised   { Clips::Fact.new 'human', [:age, 'name', 30, 1.5] }
     assert_nothing_raised   { Clips::Fact.new 'human', %w(jedna dva tri ctyri) }
@@ -23,11 +31,7 @@ class Test_Fact < Test::Unit::TestCase
   end
 
   def test_nonordered
-    template = Clips::Template.new 'animal' do |t| 
-      t.slot :name
-      t.slot :age
-      t.slot :race
-    end
+    template = get_animal
 
     assert_raise(Clips::ArgumentError)  { Clips::Fact.new template, :name  => 'agatha' }
     assert template.save
@@ -39,6 +43,22 @@ class Test_Fact < Test::Unit::TestCase
     a = Clips::Fact.new template, :name => 'agatha', 'age' => 30
     assert_equal a.instance_eval { @slots }, { :name => 'agatha', :age => 30}
     assert_equal a.instance_eval { @template }, template
+
+    assert !a.ordered?
+    assert template.destroy!
+  end
+
+  def test_to_s
+    template = get_animal
+    assert template.save
+    
+    c = Clips::Fact.new template, :name => 'ales', :age => 30, 'race' => 'pes'
+    assert_equal c.to_s, "(animal (name ales) (age 30) (race pes))"
+
+    c = Clips::Fact.new template, :name => 'ales', :race => 'pes'
+    assert_equal c.to_s, "(animal (name ales) (race pes))"
+
+    assert template.destroy!
   end
 
   def test_clone
