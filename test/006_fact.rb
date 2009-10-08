@@ -35,4 +35,13 @@ class Test_Fact < Test::Unit::TestCase
     assert ! ( a == b )
     assert b == c
   end
+
+  def test_slots
+    a = Clips::Fact.new 'human', %w(x y z)
+    assert a.slots
+    assert_equal a.slots, ['x', 'y', 'z']
+
+    a = Clips::Fact.new 'human', [30, :ahoj, 'zdar', 4.2]
+    assert_equal a.slots, [30, :ahoj, 'zdar', 4.2]
+  end
 end

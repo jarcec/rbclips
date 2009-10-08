@@ -70,7 +70,18 @@ VALUE cl_fact_initialize_ordered(VALUE self, VALUE first, VALUE second)
   rb_iv_set(self, "@template", first);
   rb_iv_set(self, "@slots", second);
 
+  rb_define_singleton_method(self, "slots", cl_fact_slots, 0);
+
   return Qtrue;
+}
+
+/**
+ * Return slot list in case of ordered fact
+ */
+VALUE cl_fact_slots(VALUE self)
+{
+  VALUE slots = rb_iv_get(self, "@slots");
+  return rb_ary_dup(slots);
 }
 
 /**
