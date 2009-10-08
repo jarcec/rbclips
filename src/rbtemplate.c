@@ -120,6 +120,12 @@ VALUE cl_template_initialize_hash(VALUE self, VALUE hash)
         return Qnil;
       }
 
+      if( !cl_generic_check_clips_symbol(entry) )
+      {
+        rb_raise(cl_eArgError, "Clips::Template#intialize Name '%s' is not valid CLIPS template name .", CL_STR(entry));
+        return Qnil;
+      }
+
       rb_hash_aset(s, entry, rb_hash_new());
     }
   }
@@ -186,6 +192,11 @@ int cl_template_initialize_hash_each(VALUE key, VALUE value, VALUE s)
   {
     rb_raise(cl_eArgError, "Clips::Template#initialize :slots key request another hash as an value but '%s' have class '%s'.", CL_STR(value), CL_STR_CLASS(value));
     return ST_STOP;
+  }
+  if( !cl_generic_check_clips_symbol(key) )
+  {
+    rb_raise(cl_eArgError, "Clips::Template#intialize Name '%s' is not valid CLIPS template name .", CL_STR(key));
+    return Qnil;
   }
 
   // Transfer type if necessary
@@ -514,6 +525,12 @@ VALUE cl_template_creator_slot(int argc, VALUE *argv, VALUE self)
     {
       rb_raise(cl_eArgError, "Clips::Template::Creator#slot second argument have to be hash but '%s' have class '%s'.", CL_STR(argv[1]), CL_STR_CLASS(argv[1]));
       return Qfalse;
+    }
+
+    if( !cl_generic_check_clips_symbol(argv[0]) )
+    {
+      rb_raise(cl_eArgError, "Clips::Template#intialize Name '%s' is not valid CLIPS template name .", CL_STR(argv[0]));
+      return Qnil;
     }
   } else {
     rb_raise(cl_eArgError, "Clips::Template::Creator#slot needs one or two arguments.");
