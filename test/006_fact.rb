@@ -49,18 +49,21 @@ class Test_Fact < Test::Unit::TestCase
   end
 
   def test_to_s
+    c = Clips::Fact.new 'human', %w(jarek 30)
+    assert_equal c.to_s, '(human "jarek" "30")'
+
     template = get_animal
     assert template.save
     
     c = Clips::Fact.new template, :name => 'ales', :age => 30, 'race' => 'pes'
-    assert_equal c.to_s, "(animal (name ales) (age 30) (race pes))"
+    assert_equal c.to_s, '(animal (name "ales") (age 30) (race "pes"))'
 
     c = Clips::Fact.new template, :name => 'ales', :race => 'pes'
-    assert_equal c.to_s, "(animal (name ales) (race pes))"
+    assert_equal c.to_s, '(animal (name "ales") (race "pes"))'
 
     # Array ~= multifield
     c = Clips::Fact.new template, :name => 'ales', :race => %w(pes dog)
-    assert_equal c.to_s, "(animal (name ales) (race pes dog))"
+    assert_equal c.to_s, '(animal (name "ales") (race "pes" "dog"))'
 
     assert template.destroy!
   end

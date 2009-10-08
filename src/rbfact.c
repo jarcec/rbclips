@@ -177,7 +177,7 @@ VALUE cl_fact_to_s_ordered(VALUE self)
   long len = RARRAY_LEN(slots);
   int i;
   for(i = 0; i < len; i++)
-    rb_str_catf(ret, " %s", CL_STR(rb_ary_entry(slots, i)) );
+    rb_str_catf(ret, " %s", CL_STR_ESCAPE(rb_ary_entry(slots, i)) );
 
   rb_str_cat2(ret, ")");
   return ret;
@@ -213,14 +213,14 @@ int cl_fact_to_s_nonordered_each(VALUE key, VALUE value, VALUE target)
     long len = RARRAY_LEN(value);
     int i;
     for(i = 0; i < len; i++)
-      rb_str_catf(target, " %s", CL_STR(rb_ary_entry(value, i)) );
+      rb_str_catf(target, " %s", CL_STR_ESCAPE(rb_ary_entry(value, i)) );
 
     rb_str_cat2(target, ")");
     return ST_CONTINUE;
   } 
 
   // Normal object, convert it to string
-  rb_str_catf(target, " (%s %s)", CL_STR(key), CL_STR(value));
+  rb_str_catf(target, " (%s %s)", CL_STR(key), CL_STR_ESCAPE(value));
 
   return ST_CONTINUE;
 }

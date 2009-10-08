@@ -75,6 +75,9 @@ extern cl_sIds cl_vIds;
 //! Call update object inner structures
 #define CL_UPDATE(v)      rb_funcall( (v), cl_vIds.update, 0)
 
+//! Return escaped string - mean that string object have quotes
+#define CL_STR_ESCAPE(source) (TYPE(source) == T_STRING) ? CL_STR(rb_sprintf("\"%s\"", CL_STR(source))) : CL_STR(source)
+
 /** Easy writing equal methods
  * Macro for easy writing equal methods
  */
