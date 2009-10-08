@@ -205,6 +205,21 @@ VALUE cl_fact_to_s_nonordered(VALUE self)
  */
 int cl_fact_to_s_nonordered_each(VALUE key, VALUE value, VALUE target)
 {
+  // If its array ~= multifield value, do it one by one
+  if(TYPE(value) == T_ARRAY)
+  {
+    rb_str_catf(target, " (%s", CL_STR(key));
+
+    long len = RARRAY_LEN(value);
+    int i;
+    for(i = 0; i < len; i++)
+      rb_str_catf(target, " %s", CL_STR(rb_ary_entry(value, i)) );
+
+    rb_str_cat2(target, ")");
+    return ST_CONTINUE;
+  } 
+
+  // Normal object, convert it to string
   rb_str_catf(target, " (%s %s)", CL_STR(key), CL_STR(value));
 
   return ST_CONTINUE;
