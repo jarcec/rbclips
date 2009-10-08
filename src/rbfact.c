@@ -115,10 +115,54 @@ VALUE cl_fact_to_s_ordered(VALUE self)
 }
 
 /**
+ * Duplicate this object
+ */
+VALUE cl_fact_clone(VALUE self)
+{
+  CL_UPDATE(self);
+
+  cl_sTemplateWrap *selfwrap = DATA_PTR(self);
+  cl_sTemplateWrap *wrap = calloc( 1, sizeof(*wrap) );
+  
+  wrap->ptr = selfwrap->ptr;
+
+  VALUE ret = Data_Wrap_Struct(cl_cFact, NULL, free, wrap);
+
+  VALUE argv[2];
+  argv[0] = rb_iv_get(self, "@template");
+  argv[1] = rb_iv_get(self, "@slots");
+
+  rb_obj_call_init(ret, 2, argv);
+
+  return ret;
+}
+
+/**
+ * Represent this two objects same CLIPS fact?
+ */
+VALUE cl_fact_equal(VALUE a, VALUE b)
+{
+  CL_UPDATE(a);
+  CL_UPDATE(b);
+
+  CL_EQUAL_DEFINE;
+  
+  CL_EQUAL_CHECK_IV("@template");
+  CL_EQUAL_CHECK_IV("@slots");
+  
+  CL_EQUAL_DEFINE_WRAP(cl_sFactWrap);
+  CL_EQUAL_CHECK_PTR;
+
+  return Qtrue;
+}
+
+/**
  * Save fact to CLIPS environment
  */
 VALUE cl_fact_save(VALUE self)
 {
+  CL_UPDATE(self);
+
   cl_sFactWrap *wrap = DATA_PTR(self);
   if( !wrap )
   {
@@ -140,9 +184,9 @@ VALUE cl_fact_save(VALUE self)
 }
 
 /**
- * Remove fact from CLIPS environment
+ * Update inner structures from CLIPS environment
  */
-VALUE cl_fact_destroy(VALUE self)
+VALUE cl_fact_update(VALUE self)
 {
   cl_sFactWrap *wrap = DATA_PTR(self);
   if( !wrap )
@@ -153,7 +197,24 @@ VALUE cl_fact_destroy(VALUE self)
 
   // Valid?
   if ( !FactExistp(wrap->ptr) )
-    wrap->ptr = NULL;
+   wrap->ptr = NULL;
+
+  return Qtrue;
+}
+
+/**
+ * Remove fact from CLIPS environment
+ */
+VALUE cl_fact_destroy(VALUE self)
+{
+  CL_UPDATE(self);
+
+  cl_sFactWrap *wrap = DATA_PTR(self);
+  if( !wrap )
+  {
+      rb_raise(cl_eUseError, "Oops, wrap structure don't exists!");
+      return Qnil;
+  }
 
   // if NULL return (don't rectract something that is not saved)
   if( !wrap->ptr ) return Qfalse;

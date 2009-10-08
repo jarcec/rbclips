@@ -20,8 +20,17 @@ VALUE cl_fact_initialize(VALUE, VALUE, VALUE);
 //! Clips::Fact\#to_s
 VALUE cl_fact_to_s(VALUE);
 
+//! Clips::Fact\#clone
+VALUE cl_fact_clone(VALUE);
+
+//! Clips::Fact\#to_s
+VALUE cl_fact_equal(VALUE, VALUE);
+
 //! Clips::Fact\#save
 VALUE cl_fact_save(VALUE);
+
+//! Clips::Fact\#update
+VALUE cl_fact_update(VALUE);
 
 //! Clips::Fact\#destroy
 VALUE cl_fact_destroy(VALUE);

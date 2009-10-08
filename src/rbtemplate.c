@@ -411,17 +411,18 @@ VALUE cl_template_save(VALUE self)
  */
 VALUE cl_template_destroy(VALUE self)
 {
-  // May be dangerous - rather firstly update everything
-  rb_funcall(self, cl_vIds.update, 0);
+  CL_UPDATE(self);
 
   cl_sTemplateWrap *wrap = DATA_PTR(self);
 
-  if( !wrap || !wrap->ptr )
+  if( !wrap )
   {
-      rb_raise(cl_eUseError, "Cannot destroy not saved template.");
+      rb_raise(cl_eUseError, "Inner structure not found");
       return Qnil;
   }
 
+  if( !wrap->ptr) return Qfalse;
+ 
   // Return
   VALUE ret = Qfalse;
 

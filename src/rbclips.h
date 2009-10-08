@@ -71,6 +71,9 @@ extern cl_sIds cl_vIds;
 //! Get C string of given class of given VALUE (wrapper)
 #define CL_STR_CLASS(v)   CL_STR(rb_obj_class(v))
 
+//! Call update object inner structures
+#define CL_UPDATE(v)      rb_funcall( (v), cl_vIds.update, 0)
+
 /** Easy writing equal methods
  * Macro for easy writing equal methods
  */

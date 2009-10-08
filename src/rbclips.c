@@ -80,9 +80,15 @@ void Init_rbclips()
   rb_define_singleton_method(cl_cFact, "new", cl_fact_new, -1);
   rb_define_method(cl_cFact, "initialize", cl_fact_initialize, 2);
   rb_define_method(cl_cFact, "to_s", cl_fact_to_s, 0);
+  rb_define_method(cl_cFact, "clone", cl_fact_clone, 0);
+  rb_define_alias(cl_cFact, "dup", "clone");
+  rb_define_method(cl_cFact, "==", cl_fact_equal, 1);
+  rb_define_alias(cl_cFact, "equal?", "==");
+  rb_define_alias(cl_cFact, "eql?", "==");
   rb_define_method(cl_cFact, "save", cl_fact_save, 0);
   rb_define_method(cl_cFact, "destroy!", cl_fact_destroy, 0);
   rb_define_method(cl_cFact, "ordered?", cl_fact_ordered, 0);
+  rb_define_method(cl_cFact, "update", cl_fact_update, 0);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
