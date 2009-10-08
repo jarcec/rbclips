@@ -323,10 +323,8 @@ int cl_template_to_s_slot(VALUE key, VALUE value, VALUE target)
       else if (s == cl_vIds.none)     rb_str_cat2(target, "?NONE)");
       else                            rb_str_catf(target, "%s)", CL_STR(default_));
 
-    } else if(TYPE(default_) == T_STRING)
-        rb_str_catf(target, "\"%s\")", CL_STR(default_));
-      else
-        rb_str_catf(target, "%s)", CL_STR(default_));
+    } else
+        rb_str_catf(target, "%s)", CL_STR_ESCAPE(default_));
   }
 
   // Constraint
