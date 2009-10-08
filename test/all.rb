@@ -1,6 +1,8 @@
 #!/usr/bin/ruby
 # Run all test
 
+require 'rbclips'
+
 require '001_module.rb'
 require '002_base.rb'
 require '003_environment.rb'

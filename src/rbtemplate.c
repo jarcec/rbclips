@@ -356,6 +356,8 @@ VALUE cl_template_to_s(VALUE self)
  */
 VALUE cl_template_clone(VALUE self)
 {
+  CL_UPDATE(self);
+
   cl_sTemplateWrap *selfwrap = DATA_PTR(self);
   cl_sTemplateWrap *wrap = calloc( 1, sizeof(*wrap) );
   
@@ -378,6 +380,9 @@ VALUE cl_template_clone(VALUE self)
  */
 VALUE cl_template_equal(VALUE a, VALUE b)
 {
+  CL_UPDATE(a);
+  CL_UPDATE(b);
+
   CL_EQUAL_DEFINE;
   
   CL_EQUAL_CHECK_IV("@name");
