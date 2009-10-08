@@ -67,6 +67,7 @@ void Init_rbclips()
   rb_define_alias(cl_cTemplate, "equal?", "==");
   rb_define_alias(cl_cTemplate, "eql?", "==");
   rb_define_method(cl_cTemplate, "save", cl_template_save, 0);
+  rb_define_method(cl_cTemplate, "saved?", cl_template_saved, 0);
   rb_define_method(cl_cTemplate, "destroy!", cl_template_destroy, 0);
   rb_define_method(cl_cTemplate, "update", cl_template_update, 0);
 
@@ -115,6 +116,7 @@ void Init_rbclips()
   cl_vIds.update              = rb_intern("update");
   cl_vIds.eqq                 = rb_intern("===");
   cl_vIds.ordered             = rb_intern("ordered?");
+  cl_vIds.saved               = rb_intern("saved?");
   cl_vIds.type                = rb_intern("type");
   cl_vIds.values              = rb_intern("values");
   cl_vIds.range               = rb_intern("range");

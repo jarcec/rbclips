@@ -173,4 +173,12 @@ class Test_Template < Test::Unit::TestCase
     t.call :name => 'humana', :slots => { :a => { :default => 30, :default_dynamic => true } }
     t.call :name => 'humana', :slots => { :a => { :constraint => { :type => :integer, :cardinality => 2..23}, :multislot => true } }
   end
+
+  def test_saved
+    a = Clips::Template.new :name => 'animal', :slots => %w(race age)
+    assert a.save
+    assert a.saved?
+    assert a.destroy!
+    assert !a.saved?
+  end
 end

@@ -41,6 +41,9 @@ VALUE cl_template_equal(VALUE, VALUE);
 //! Clips::Template\#save
 VALUE cl_template_save(VALUE);
 
+//! Clips::Template\#saved
+VALUE cl_template_saved(VALUE);
+
 //! Clips::Template\#destroy!
 VALUE cl_template_destroy(VALUE);
 

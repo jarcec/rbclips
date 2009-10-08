@@ -412,6 +412,19 @@ VALUE cl_template_save(VALUE self)
 }
 
 /**
+ * Is the template saved in CLIPS?
+ */
+VALUE cl_template_saved(VALUE self)
+{
+  CL_UPDATE(self);
+  cl_sTemplateWrap *wrap = DATA_PTR(self);
+
+  if( !wrap || !wrap->ptr ) return Qfalse;
+
+  return Qtrue;
+}
+
+/**
  * Remove template from CLIPS if there is.
  */
 VALUE cl_template_destroy(VALUE self)

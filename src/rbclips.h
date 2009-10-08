@@ -21,6 +21,7 @@ struct _cl_sIds
   ID update;
   ID eqq;
   ID ordered;
+  ID saved;
 
   // Mostly hash keys
   ID type;

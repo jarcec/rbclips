@@ -24,6 +24,9 @@ VALUE cl_fact_to_s_ordered(VALUE);
 //! to_s method for nonordered fact
 VALUE cl_fact_to_s_nonordered(VALUE);
 
+//! Foreach method for creating nonordered fact
+int cl_fact_initialize_nonordered_each(VALUE, VALUE, VALUE);
+
 /**
  * Creating new object - wrap struct
  */
@@ -89,7 +92,59 @@ VALUE cl_fact_slots(VALUE self)
  */
 VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
 {
+  if( TYPE( rb_funcall(first, cl_vIds.saved, 0) ) != T_TRUE)
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#initialize template is not saved!.");
+    return ST_STOP;
+  }
+
+  rb_iv_set(self, "@template", first);
+  rb_iv_set(self, "@slots", rb_hash_new());
+
+  // Check if slot exists
+  rb_hash_foreach(second, cl_fact_initialize_nonordered_each, self);
+
   return Qtrue;
+}
+
+/**
+ * Set slots from given hash (maybe more check later) (constraints?)
+ */
+int cl_fact_initialize_nonordered_each(VALUE key, VALUE value, VALUE self)
+{
+  if(TYPE(key) != T_STRING && TYPE(key) != T_SYMBOL)
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#initialize slot assignement accept only strings or symbols as keys but '%s' have class '%s'.", CL_STR(key), CL_STR_CLASS(key));
+    return ST_STOP;
+  }
+
+  VALUE template = rb_iv_get(self, "@template");
+  VALUE slots    = rb_iv_get(self, "@slots");
+  VALUE tslots   = rb_iv_get(template, "@slots");
+
+  // Transfer type if necessary
+  if(TYPE(key) == T_STRING)
+    key =  rb_funcall(key, cl_vIds.to_sym, 0);
+
+  // Does the slot exists in template?
+  VALUE c  = rb_hash_lookup(tslots, key);
+  if( NIL_P(c) )
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#initialize template don't have slot '%s'.", CL_STR(key));
+    return ST_STOP;
+  }
+
+  // It shouldn't be defined already
+  c  = rb_hash_lookup(slots, key);
+  if( !NIL_P(c) )
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#initialize slot '%s' already filled up.", CL_STR(key));
+    return ST_STOP;
+  }
+
+  rb_hash_aset(slots, key, value);
+
+  return ST_CONTINUE;
 }
 
 /**
@@ -132,8 +187,8 @@ VALUE cl_fact_clone(VALUE self)
 {
   CL_UPDATE(self);
 
-  cl_sTemplateWrap *selfwrap = DATA_PTR(self);
-  cl_sTemplateWrap *wrap = calloc( 1, sizeof(*wrap) );
+  cl_sFactWrap *selfwrap = DATA_PTR(self);
+  cl_sFactWrap *wrap = calloc( 1, sizeof(*wrap) );
   
   wrap->ptr = selfwrap->ptr;
 
