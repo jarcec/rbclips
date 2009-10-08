@@ -32,6 +32,7 @@ class Test_Fact < Test::Unit::TestCase
     a.save
     assert ! ( a.eql? b )
     assert ! ( a.equal? b )
-    assert ! ( a === b )
+    assert ! ( a == b )
+    assert b == c
   end
 end

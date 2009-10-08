@@ -138,7 +138,4 @@ void Init_rbclips()
   cl_vIds.instance            = rb_intern("instance");
   cl_vIds.external_address    = rb_intern("external_address");
   cl_vIds.fact_address        = rb_intern("fact_address");
-
-  // Initialization of routering system
-  cl_router_init();
 }

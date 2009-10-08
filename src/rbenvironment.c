@@ -2,6 +2,7 @@
 #include <ruby.h>
 #include "clips/clips.h"
 #include "rbclips.h"
+#include "rbrouter.h"
 #include "rbenvironment.h"
 #include "rbexception.h"
 
@@ -21,7 +22,14 @@ VALUE cl_environment_new(VALUE self)
   // Little workaround - CreateEnvironment set the created environment as
   // current one, which is not good for ruby design.
   void *oldenv = GetCurrentEnvironment();
+
+  // Creating new environment
   wrap->ptr = CreateEnvironment();
+
+  // Environment-aware code - put our router into new environment as well
+  cl_router_init();
+
+  // Taking back the old one
   SetCurrentEnvironment(oldenv);
 
   VALUE ret = Data_Wrap_Struct(self, NULL, free, wrap);
