@@ -26,8 +26,11 @@ VALUE cl_fact_clone(VALUE);
 //! Clips::Fact\#to_s
 VALUE cl_fact_equal(VALUE, VALUE);
 
-//! Clips::Fact\#slots
+//! Clips::Fact\#slots (ordered only)
 VALUE cl_fact_slots(VALUE);
+
+//! Clips::Fact\#slot (nonordered only)
+VALUE cl_fact_slot(VALUE, VALUE);
 
 //! Clips::Fact\#save
 VALUE cl_fact_save(VALUE);

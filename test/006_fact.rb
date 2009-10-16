@@ -92,4 +92,19 @@ class Test_Fact < Test::Unit::TestCase
     a = Clips::Fact.new 'human', [30, :ahoj, 'zdar', 4.2]
     assert_equal a.slots, [30, :ahoj, 'zdar', 4.2]
   end
+
+  def test_slot
+    template = get_animal
+    assert template.save
+
+    a = Clips::Fact.new template, :name => "Bruno", :age => 30
+    assert_equal a.slot(:name), "Bruno"
+    assert_equal a.slot(:age), 30
+    assert_equal a.slot(:race), nil
+    assert_raise(Clips::ArgumentError) { a.slot(:bulb) }
+    assert_raise(Clips::ArgumentError) { a.slot(30) }
+    assert_raise(Clips::ArgumentError) { a.slot(2.4) }
+
+    assert template.destroy!
+  end
 end

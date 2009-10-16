@@ -76,6 +76,7 @@ VALUE cl_fact_initialize_ordered(VALUE self, VALUE first, VALUE second)
   rb_iv_set(self, "@template", first);
   rb_iv_set(self, "@slots", second);
 
+  // Define singleton methods
   rb_define_singleton_method(self, "slots", cl_fact_slots, 0);
 
   return Qtrue;
@@ -88,6 +89,31 @@ VALUE cl_fact_slots(VALUE self)
 {
   VALUE slots = rb_iv_get(self, "@slots");
   return rb_ary_dup(slots);
+}
+
+/**
+ * Return value of given slot (nonordered fact)
+ */
+VALUE cl_fact_slot(VALUE self, VALUE slot)
+{
+  VALUE template  = rb_iv_get(self, "@template");
+  VALUE fslots    = rb_iv_get(self, "@slots");
+  VALUE tslots    = rb_iv_get(template, "@slots");
+
+  VALUE c  = rb_hash_lookup(tslots, slot);
+  if(NIL_P(c))
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#slot Given slot don't exists");
+    return ST_STOP;
+  }
+  
+  return rb_hash_lookup(fslots, slot);
+/*
+  TODO: 
+    - toto
+    - name (pro ordered variantu)
+    - template pro nonordered variantu
+*/
 }
 
 /**
@@ -106,6 +132,9 @@ VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
 
   // Check if slot exists
   rb_hash_foreach(second, cl_fact_initialize_nonordered_each, self);
+
+  // Define singleton methods
+  rb_define_singleton_method(self, "slot", cl_fact_slot, 1);
 
   return Qtrue;
 }
