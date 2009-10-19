@@ -107,4 +107,20 @@ class Test_Fact < Test::Unit::TestCase
 
     assert template.destroy!
   end
+
+  def test_name
+    # Ordered variant
+    a = Clips::Fact.new "human", %w(jedna dve tri)
+    assert_equal a.name, "human"
+    
+    # Nonordered variant
+    template = get_animal
+    assert template.save
+
+    a = Clips::Fact.new template, :name => "Bruno", :age => 30
+    assert_equal a.template, template
+
+    assert template.destroy!
+  end
+
 end

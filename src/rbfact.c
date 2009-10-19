@@ -78,6 +78,31 @@ VALUE cl_fact_initialize_ordered(VALUE self, VALUE first, VALUE second)
 
   // Define singleton methods
   rb_define_singleton_method(self, "slots", cl_fact_slots, 0);
+  rb_define_singleton_method(self, "name", cl_fact_template, 0);
+
+  return Qtrue;
+}
+
+/**
+ * Initialize a nonordered fact
+ */
+VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
+{
+  if( TYPE( rb_funcall(first, cl_vIds.saved, 0) ) != T_TRUE)
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#initialize template is not saved!.");
+    return ST_STOP;
+  }
+
+  rb_iv_set(self, "@template", first);
+  rb_iv_set(self, "@slots", rb_hash_new());
+
+  // Check if slot exists
+  rb_hash_foreach(second, cl_fact_initialize_nonordered_each, self);
+
+  // Define singleton methods
+  rb_define_singleton_method(self, "slot", cl_fact_slot, 1);
+  rb_define_singleton_method(self, "template", cl_fact_template, 0);
 
   return Qtrue;
 }
@@ -108,35 +133,16 @@ VALUE cl_fact_slot(VALUE self, VALUE slot)
   }
   
   return rb_hash_lookup(fslots, slot);
-/*
-  TODO: 
-    - toto
-    - name (pro ordered variantu)
-    - template pro nonordered variantu
-*/
 }
 
 /**
- * Initialize a nonordered fact
+ * If it's ordered fact, returns name of fact, otherwise return template object.
+ * Basically return @template.
  */
-VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
+VALUE cl_fact_template(VALUE self)
 {
-  if( TYPE( rb_funcall(first, cl_vIds.saved, 0) ) != T_TRUE)
-  {
-    rb_raise(cl_eArgError, "Clips::Fact#initialize template is not saved!.");
-    return ST_STOP;
-  }
-
-  rb_iv_set(self, "@template", first);
-  rb_iv_set(self, "@slots", rb_hash_new());
-
-  // Check if slot exists
-  rb_hash_foreach(second, cl_fact_initialize_nonordered_each, self);
-
-  // Define singleton methods
-  rb_define_singleton_method(self, "slot", cl_fact_slot, 1);
-
-  return Qtrue;
+  VALUE ret = rb_iv_get(self, "@template");
+  return rb_funcall(ret, cl_vIds.clone, 0);
 }
 
 /**

@@ -32,6 +32,9 @@ VALUE cl_fact_slots(VALUE);
 //! Clips::Fact\#slot (nonordered only)
 VALUE cl_fact_slot(VALUE, VALUE);
 
+//! Clips::Fact\#name, template (get name or template (@template) from fact)
+VALUE cl_fact_template(VALUE);
+
 //! Clips::Fact\#save
 VALUE cl_fact_save(VALUE);
 

@@ -117,6 +117,7 @@ void Init_rbclips()
   cl_vIds.eqq                 = rb_intern("===");
   cl_vIds.ordered             = rb_intern("ordered?");
   cl_vIds.saved               = rb_intern("saved?");
+  cl_vIds.clone               = rb_intern("clone");
   cl_vIds.type                = rb_intern("type");
   cl_vIds.values              = rb_intern("values");
   cl_vIds.range               = rb_intern("range");
