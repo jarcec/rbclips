@@ -30,6 +30,12 @@ int cl_fact_initialize_nonordered_each(VALUE, VALUE, VALUE);
 //! Foreach method for string conversion
 int cl_fact_to_s_nonordered_each(VALUE, VALUE, VALUE);
 
+//! Foreach method for creating slot accessors
+int cl_fact_initialize_attr_slot(VALUE, VALUE, VALUE);
+
+//! Method body (block) for creating
+VALUE cl_fact_initialize_attr_slot_block(VALUE, VALUE, int, VALUE *);
+
 /**
  * Creating new object - wrap struct
  */
@@ -104,6 +110,10 @@ VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
   rb_define_singleton_method(self, "slot", cl_fact_slot, 1);
   rb_define_singleton_method(self, "template", cl_fact_template, 0);
 
+  // Define slot accessors
+  VALUE slots = rb_iv_get(first, "@slots");
+  rb_hash_foreach(slots, cl_fact_initialize_attr_slot, self);
+
   return Qtrue;
 }
 
@@ -133,6 +143,28 @@ VALUE cl_fact_slot(VALUE self, VALUE slot)
   }
   
   return rb_hash_lookup(fslots, slot);
+}
+
+/**
+ * Block represenatation for wrapping slot(name) method (body)
+ */
+VALUE cl_fact_initialize_attr_slot_block(VALUE yield, VALUE ary, int argc, VALUE *argv)
+{
+  return rb_funcall(rb_ary_entry(ary, 0), rb_intern("slot"), 1, rb_ary_entry(ary, 1));
+}
+
+/**
+ * For each method for creating slot attributes
+ */
+int cl_fact_initialize_attr_slot(VALUE key, VALUE value, VALUE self)
+{
+  VALUE ary = rb_ary_new();
+  rb_ary_push(ary, self);
+  rb_ary_push(ary, key);
+
+  rb_block_call(self, rb_intern("define_singleton_method"), 1, &key, cl_fact_initialize_attr_slot_block, ary);
+
+  return ST_CONTINUE;
 }
 
 /**

@@ -105,6 +105,10 @@ class Test_Fact < Test::Unit::TestCase
     assert_raise(Clips::ArgumentError) { a.slot(30) }
     assert_raise(Clips::ArgumentError) { a.slot(2.4) }
 
+    assert_equal a.name, "Bruno"
+    assert_equal a.age, 30
+    assert_equal a.race, nil
+
     assert template.destroy!
   end
 
