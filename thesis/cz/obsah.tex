@@ -1,0 +1,96 @@
+%=========================================================================
+\chapter{Úvod}
+%=========================================================================
+TODO: Dopsat zvnaneni proc jsme se rozhodli napsat tento wrapper, popsat jednotlive kapitoly
+
+%=========================================================================
+\chapter{Pou¾ité technologie}
+%=========================================================================
+
+\section{Ruby}
+Ruby\cite{webRuby} je relativnì nový dynamický skriptovací jazyk vytvoøený japonským in¾enýrem jménem Yukihiro Matsumoto známym pod pøezdívkou Matz (pou¾ito dále v textu). V souèasné dobì neexistuje ¾ádná specifikace èi norma jako je tomu napøíklad u jazykù C/C++ a dal¹ích. Z tohoto dùvodu se jako reference jazyka bere samotný interpret napsaný Matzem - MRI (Mat'z ruby intepreter). Interpretù existuje více a jejich zkrácený seznam je uveden dále v textu. Absence existujícího standartu vedla v roce 2008 k vytvoøení skupiny pro standardizaci tohoto jazyka v rámci japonské organizace IPA (Information-technology Promotion Agency), která vychází z MRI verze 1.8.7. V souèasné dobì je k dispozici ji¾ návrh standartdu\cite{webRubySpec}, který má být navr¾en ke schválení prvnì v japonsku u Japanese Industrial Standards Committee (JISC) a následnì i u mezinárodní organizace ISO.
+
+\subsection{Historie}
+První verze interpretu ruby vytvoøená Matzem byla zveøejnìna u¾ v roce 1995 (velice zajimavý je fakt, ¾e jméno nového jazyka u¾ bylo vybráno v roce 1993, tedy o cele dva roky døíve), ov¹em oficální webové stránky jazyka (interpretu) v angliètinì byly k dispozici a¾ o tøi roky pozdìji - tedy v roce 1998. Absence kvalitních materiálù v angliètinì je jedním z hlavních dùvodù, proè se ruby stal populárním prvnì pouze v japonsku a velice pomalu se dostával i do ostatních státu svìta. V dne¹ní dobì u¾ na¹tìstí není problém najít kvalitní zdroje informací ani v angliètinì ani v èe¹tinì (èi dál¹ích jazycích) a to jak ve webové tak i v kni¾ní podobì.
+
+Matz vytvoøil nový jazyk\cite{webMatzInterview}, proto¾e ho nadchly mo¾nosti skriptovacích jazyku a ¾adný z tehdy dostupných jazykù ho nezaujal - chtìl jazyk mocnìj¹í ne¾ perl a více objektì orientovaný ne¾ python.  Na otázku, proè vytvoøil dal¹í skriptovací jazyk, Matz je¹tì èasto dodává dùvody syntaxe - programovacích jazyku je mnoho a jsou svým zpùsobem velice podobné co se do mo¾ností týèe. Matz chtìl jazyk, ve kterém ho bude bavit psát a nebude se muset pøíli¹ trápit se zápisem jednotlivých konstrukcí (syntaxe by mìla být podøízena èlovìku jako¾to pisateli jazyka, nikoliv opaènì poèítaèi jako¾to interpretu jazyka).
+
+Nìkolik zajímavých dat z historie\cite{webRubyHistory}:
+\begin{description}
+ \item[1993] Vybráno jméno
+ \item[1995] První zveøejnìná verze interpretu (verze 0.95)
+ \item[1996] Verze 1.0
+ \item[1997] Matz zamìstnán jako full-time ruby programátor (tedy jako programátor v jazyce, který si sam vytvoøil)
+ \item[1998] Webové stránky v angliètinì a vznik anglicky psaného mailing listu 
+ \item[1999] První kniha o ruby (psána japonsky)
+ \item[2000] Zaèátek roz¹iøování povìdomí o ruby mimo hranice Japonska
+ \item[2001] YARPC - Yet Another Ruby and Perl Conference
+ \end{description}
+
+V souèasné verze se udr¾ují dvì hlavní vìtve MRI - verze 1.8 a 1.9. Vìtev 1.8 je pova¾ována za stabilní a ji¾ se pouze udr¾uje (opravují se chyby), vývoj probíhá ve vìtvi 1.9.
+
+\subsection{Vlastnosti ruby}
+Ruby je dynamický skriptovací jazyk mnoha ruzných paradigmat - je plnì objektovì orientovaný, ale lze v nìm bez problémù psát i imperativnì èi funkcionálnì. Následuje popis vybraných vlastností, které bych rád vyzdvihl èi na nì jen upozornil. Podle poøeby budu dále v textu srovnávat Ruby s jazyky Java a C++.
+
+\subsubsection{Objektovost}
+Ruby je plnì objektovì orientovaný jazyk (byl mimo jiné inspirován i Smalltalkem), co¾ znamená, ¾e v¹e v ruby je objekt. Nejsou zde ¾ádná datová primitiva jako napøíklad v Jave (int, double). \u{C}íselné konstanty jsou interpretem pøevádìny na instance pøíslu¹ných tøíd okam¾ite a automaticky:
+
+\begin{verbatim}
+ 123.class # => Fixnum
+\end{verbatim}
+
+Konstanta 123 je lexikálním analyzátorem pøevedena na objekt pøíslu¹ného typu (zde instance tøídy Fixnum), na který okam¾itì mohu volat metodu (v pøíkladì volám metodu pro zji¹tìní tøídy ke které objekt nále¾í).
+
+Interpret ruby po svém startu vytvoøí bezejmenou instanci tøídy Object a v jejím kontextu poté vykonává pøedaný skript. Není zde tedy nutnost vytváøet tøídu a jednu veøejnou metodu, která se spustí po startu aplikace jako je tomu napøíklád v Jave èi funkci main() jako u C++. Ukázkový ``Hello world!'' program, který v ruby vypadá takto: \verb|puts "Hello world!"|, je tedy objektový k\'{o}d, i kdy¾ se tak na první pohled nezdá - toto lze dokazát vypsaním tøídy aktualního objektu \verb|puts self.class|, která vratí ``Object'' i kdy¾ pro pisatele v ¾ádném objektu není (\verb|self| je obdoba ukazatele \verb|this| z jazyka C++, tedy ``ukazatel'' na aktuální objekt),
+
+Dal¹í a pro mì v dobì, kdy jsem s ruby poprvé seznamoval, velice pøekvapivý dùsledek plné objektovosti je fakt, ¾e tøídy samy jsou objekty. Tuto skuteènost jsem ji¾ vysvìtloval mnoha lidem a èasto jsem byl nepochopen, proto toto tvrzení rozvedu tro¹ku více. Objekt (instance) je neformálnì øeèeno mno¾ina promìných daného objektu a mno¾ina method, které na nìm lze volat (z formálnìj¹íh hlediska mno¾ina zpráv, kterým objekt rozumí). Ka¾dy objekt patøí nìjaké tøídì - tøída tedy urèitým zpùsobem popisuje mno¾inu objektù (napøíklad seznam zpráv/metod, kterým v¹echny objekty dané tøídy rozumí). Pro lep¹í vysvìtlení mohu øíci, ¾e promìné existují v objektu (pro ka¾dý objekt mohou být jiné nebo nabývat jiných hodnot) a metody existují ve tøídì (proto¾e jsou sdílené mezi v¹emi objekty této tøídy). 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8cm,keepaspectratio]{fig/fig-ruby-inst_obj.png}
+  \caption{Promìné, metody a jejich umístìní v instancích a tøídách}
+  \label{fig_ruby_inst_obj}
+\end{figure}
+
+Tøídy jsou v ruby také objekty (instance jiné tøídy - konkrétnì tøídy Class) - mají tedy své instanèní promìné a lze na nich volat metody (které jsou umístìny v tøídì dané tøídy).
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=12cm,keepaspectratio]{fig/fig-ruby-inst_obj_2.png}
+  \caption{Tøída je také objekt}
+  \label{fig_ruby_inst_obj_2}
+\end{figure}
+
+Z urèitého hlediska se na tuto vlastnost lze koukat jako na statické promìné a metody u jazyku C++, i kdy¾ bych u toho pøirovnání byl opatrný. Praktické vyu¾ítí této vlastnosti zmíním v odstavci o dynamiènosti ruby.
+
+\subsubsection{Volná syntaxe}
+TODO
+
+\subsubsection{Dynamiènost}
+TODO
+
+\subsubsection{Bloky}
+TODO
+
+\section{TODOs}
+Vlastnosti = objektovost, rozdili od ostatnich jazyku
+Seznam interpretu a jejich vlastnosti
+Moznosti rozsireni
+Metaporogramovi = dynamicita, podkapitola
+Nejznamejsi projekty v ruby?
+
+\section{Expertní systémy}
+TODO: Popsat co jsou vlastne expertni systemy, jak se s nimi pracuje, cim se lisi od ostatnich, trochu historie.
+
+\subsection{Clips}
+TODO: Popsat historii CLIPS, co to je v dnesni dobe. Prakticke ukazky jak se v clips pracuje. Zahrnout kapitolu o rozsiritelnosti.
+
+%=========================================================================
+\chapter{rbClips}
+%=========================================================================
+TODO: Par vet o tom co jsme se rozhodli vytvorit a proc (proc wrapper nad necim co uz existuje).
+TODO: Vlastni text...
+
+%=========================================================================
+\chapter{Závìr}
+%=========================================================================
+TODO: Taky by se hodil ze jo... ;-)
