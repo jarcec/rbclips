@@ -30,10 +30,10 @@ Nìkolik zajímavých dat z historie\cite{webRubyHistory}:
 V souèasné verze se udr¾ují dvì hlavní vìtve MRI - verze 1.8 a 1.9. Vìtev 1.8 je pova¾ována za stabilní a ji¾ se pouze udr¾uje (opravují se chyby), vývoj probíhá ve vìtvi 1.9.
 
 \subsection{Vlastnosti ruby}
-Ruby je dynamický skriptovací jazyk mnoha ruzných paradigmat - je plnì objektovì orientovaný, ale lze v nìm bez problémù psát i imperativnì èi funkcionálnì. Následuje popis vybraných vlastností, které bych rád vyzdvihl èi na nì jen upozornil. Podle poøeby budu dále v textu srovnávat Ruby s jazyky Java a C++.
+Ruby je dynamický skriptovací jazyk mnoha ruzných paradigmat - je plnì objektovì orientovaný, ale lze v nìm bez problémù psát i imperativnì èi funkcionálnì. Následuje popis vybraných vlastností, které bych rád vyzdvihl èi na nì upozornil. Podle poøeby budu dále v textu srovnávat Ruby s jazyky Java a C/C++.
 
 \subsubsection{Objektovost}
-Ruby je plnì objektovì orientovaný jazyk (byl mimo jiné inspirován i Smalltalkem), co¾ znamená, ¾e v¹e v ruby je objekt. Nejsou zde ¾ádná datová primitiva jako napøíklad v Jave (int, double). \u{C}íselné konstanty jsou interpretem pøevádìny na instance pøíslu¹ných tøíd okam¾ite a automaticky:
+Ruby je plnì objektovì orientovaný jazyk (byl mimo jiné inspirován i Smalltalkem), co¾ znamená, ¾e v¹e v ruby je objekt. Nejsou zde ¾ádná datová primitiva jako napøíklad v Jave (int, double). \u{C}íselné a jiné konstanty jsou interpretem pøevádìny na instance pøíslu¹ných tøíd okam¾ite a automaticky:
 
 \begin{verbatim}
  123.class # => Fixnum
@@ -63,7 +63,34 @@ Tøídy jsou v ruby také objekty (instance jiné tøídy - konkrétnì tøídy Class) - m
 Z urèitého hlediska se na tuto vlastnost lze koukat jako na statické promìné a metody u jazyku C++, i kdy¾ bych u toho pøirovnání byl opatrný. Praktické vyu¾ítí této vlastnosti zmíním v odstavci o dynamiènosti ruby.
 
 \subsubsection{Volná syntaxe}
-TODO
+Matz chtìl od zaèátku vytvoøit jazyk, ve ktém by ho bavilo programovat\cite{webMatzInterview} - ve kterém by nemusel poøád pøemý¹let na syntaxí, který by byl krásnì èitelný a hlavnì pokud mo¾no co nejbli¾¹í bì¾nému lidskému jazyku. Ukázky k\'{o}du pøi ètení opravdu pøipomínájí anglické vìty, popisující co se vlastnì má dìlat:
+
+\begin{description}
+ \item \verb|3.times do puts 'Ahoj'| 3x vypi¹ ``Ahoj''
+ \item \verb|puts "Ahoj" if name == "jarcec"| Vypi¹ ahoj pokud se jmenuju jarcec
+\end{description}
+
+Závorky oddìlující název metody od jejich parametrù jsou v místech kde to není syntakticky nejednoznaèné volitelné, mohu tedy zavolat metodu \verb|naDruhou| s parametrem 5 tak jak je zvykem v Javì/C/C++ \verb|naDruhou(5)| nebo na mnoha místech více èitelnìji \verb|naDruhou 5|. Volání metod bez závorek vypadá na mnoha místech jako klíèové slovo, které deklaruje spí¹e ne¾ volání metody - na první pohled se mù¾e jevit spí¹e jako matoucí, ale uvedu pøíklad z webového frameworku Ruby on Rails (dále v textu RoR):
+
+\begin{verbatim}
+class Human < ActiveRecord::Base
+  has_many     :articles
+  belongs_to   :department
+end
+\end{verbatim} 
+
+I èlovìk bez znalosti ruby nebo RoR, ale se znalostí jiných programovacích jazykù, je schopen s velkou úspì¹ností odhadnout, ¾e prezentovaný pøíklad vytváøí tøídu Human, s nìjakým typem závislosti na oddìlení (department) a který napsal mnoho rùzných èlánkù (articles). Tento spí¹e sociální efekt (``Jedná se o metodu nebo klíèové slovo?'') jde velice hluboko - mnohdy lze u¾ úvodních tutoriálech k Ruby najít zmínku o klíèovém slovu \verb|puts|, slou¾ícím pro výpis na standartní výstup (obdoba \verb|printf()| z C, \verb|echo| z bashe nebo \verb|print| z perlu). Ve skuteènosti se ov¹em nejedná o klíèové slovo, ale o metodu modulu Kernel, který ka¾dy objekt dìdí a proto je na ka¾dém místì programu dostupná - jedná se tedy plnohodnotnou metodu a jde stejnì jako jakákoliv jíná v pøípade potøeby pøetí¾it nebo z objektu odstranit...
+
+Odstranìní nutnosti v¹ude psát závorky beru jako velice kladnou vlastnost, kterou velice èasto a rád vyu¾ívám, na druhou stranu ov¹em musím upozornit na její dopady - i pouhá mezera mù¾e zmìnit logiku kódu s jakou bude zpracován:
+
+\begin{verbatim*}
+puts naDruhou(1+2)*2
+puts naDruhou (1+2)*2
+\end{verbatim*}
+ 
+Oba pøíklady se li¹í pouhou mezerou mezi koncem názvu metody a otevírající závorkou. V prvním pøípadì syntaktický analyzátor najde ihned za názvem metody závorku a tak ví, ¾e uvnitø jsou parametry se kterými se poté metoda zavolá a následnì vrácená hodnota se vynasobí dvìmi. Výsledek bude tedy $18$ (=$3^2  * 2$). V druhém pøíkladì syntaktický analyzátor najde za názvem metody mezeru a tedy ví, ¾e následuje seznam argumentù oddìlený èárkami (závorky okolo argumentù jsou vynechány). Na øádce se ¾ádná èárka nenachazí a tedy celý výraz $(1+2)*2$ je metodì pøedán jako argument s výsledkem $36$ (=$((1+2) * 2)^2$)!
+
+Ruby neumo¾nuje pojmenovat argumenty metody jako je mo¾né napøíklad v pythonu, ov¹em volná syntaxe pro vytvoøení hashe (asociativního pole) je hojnì vyu¾ívaná k napodobení této schopnosti - pøíkladem mù¾e být tøeba volání fiktivní metody pro hledání: \verb|find :name => 'Jarek', :surname => 'Cecho'|, kde opticky pøedávám dva parametry - name, surname. Ve skuteènosti je tento zápis reprezentován jako tvorba asociativního pole s klièi name a surname (s pøíslu¹nými hodnotami) a¾ naslednì toto pole je jako jeden argument pøedáno metodì \verb|find|. Webový framework Ruby on Rails tento pøístup pou¾ívá snad úplnì v¹ude.
 
 \subsubsection{Dynamiènost}
 TODO
