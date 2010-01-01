@@ -135,22 +135,92 @@ V definici tøídy chybí deklarace method \verb|name| a \verb|surname| a pøesto da
 O metaprogramování v ruby byla napsána velice pìkná kniha - Metaprogrammin Ruby\cite{metaprogrammingRuby} - psaná spí¹e laickým stylem a na praktických pøíkladech popisující co pøesnì se pod pojmem metapogramovaní skrývá a jak toho v ruby co nejefektivnìji vyu¾ít.
 
 \subsubsection{Bloky}
+Blok je podobnì jako v C/C++ nebo Jave mno¾ina pøíkazù ohranièená slo¾enymí závorkami (nebo v pøípadì ruby je je¹tì mo¾né blok ohranièit klíèovými slovy \verb|do| a \verb|end|). Na rozdíl od zmínìných jazykù v ruby jde s bloky dìlat o dost vìt¹í kouzla a proto je zmi\v{n}uji v samostatné kapitole. Jako první dùle¾itý rozdíl je mo¾nost pøedat bloku parametry (a ten se pak vlastnì chová jako taková malá bezejmená funkce). Druhý velice dùle¾itý rozdíl je schopnost bloky v ruby pøedávát do method. Pøíkladem mù¾e být zámìna velikosti písmen v poli øetezcù:
+
+\begin{verbatim}
+["AHOJ", "NAZDAR", "HI"].map{|prvek| prvek.downcase}
+    # => ["ahoj", "nazdar", "hi"]
+\end{verbatim}
+
+\verb|map| je metoda tøídy pole, která pøijímá blok akceptující jeden parametr a pro ka¾dý prvek v poli tento blok zavolá. Návratovou hodnotu bloku (v ruby je v¹e výraz a tak i bloky vracejí své hodnoty, ale tato vlastnost je popsána ní¾e) ulo¾í do pole na místo volaného prvku. Ukázka tedy zmen¹í velikost písmen pro kazdý prvek v poli.
+
+S bloky se pojí jeden dùle¾íty pojem - uzávìr (anglicky closure). Ka¾dý blok si s sebou nese vazby na lokální promìné známe v dobì jeho vzniku (anglicky bindings). Osvìtlující pøíklad:
+
+\begin{verbatim}
+def foo
+  a = 10
+  yield # Zavolej predany blok
+end
+
+a = 30
+foo { puts a } # Vytiskne hodnotu promene a, ale ktere? 10 nebo 30?
+\end{verbatim} 
+
+Blok si ``pamatuje`` svou lokální promìnou \verb|a| (s hodnotou 30) a nese si ji s sebou i do metody \verb|foo|, odkud je poté zavolán (pomocí klíèového slova \verb|yield|). Ukázka výpí¹e èíslo 30, proto¾e \verb|a| je lokální promìná z kontextu, ve kterém byl pøedaný blok vytvoøen. Pokud by chtìla metoda \verb|foo| vytisknout svou hodnotu promìné \verb|a|, musela by ji pøedat jako parametr.
+
+\subsubsection{Drobnosti}
+U¾ bych se chtìl u¾ jenom krátce zmínit o nìkolika málo dal¹ích vlastnostech ruby, které popisem nevydají na samostatnou kapitolu, ale pøesto si myslím, ¾e by zde mìly být uvedeny.
+
+Mimo toho, ¾e v¹e je v ruby objekt, je ka¾dá jazyková konstrukce výraz (má svou hodnotu). Tedy i øídicí konstrukce (\verb|if|, \verb|while|, ...) nìco vrací - podle funkce pøíslu¹né konstrukce je to tøeba poslední vykonaný pøíkaz nebo \verb|nil|. Pøiklad z øádkového interpretu ruby \verb|irb|:
+
+\begin{verbatim}
+irb(main):001:0> if 1 == 2
+irb(main):002:1>   puts "1 == 2"
+irb(main):003:1> end
+=> nil
+\end{verbatim} 
+
+Ruby je plnì objektový a v¹e je objekt nebo jeho metoda -- i aritmetické operátory jsou ve skuteènosti metody a jejich zápis bez pøístupové teèky je jen ''syntax sugar`` (jak se uvádí v knize  The Ruby Programming Language\cite{rubyProgrammingLanguage}). Jde je tedy podobnì jako v C++ pøetí¾it nebo z daného objektu úplnì odstranit:
+
+\begin{verbatim}
+irb(main):001:0> class Fixnum
+irb(main):002:1>   def +(oth)
+irb(main):003:2>     self * oth
+irb(main):004:2>   end
+irb(main):005:1> end
+=> nil
+irb(main):006:0> 4 + 2
+=> 8
+\end{verbatim} 
+
+Ruby podporuje pouze jednoduchou dìdiènost (tøída mù¾e mít maximálnì jednoho pøedka), ale absenci implementaènì slo¾ité vícenásobné dìdiènosti vynahrazuje mo¾ností vkládat do sebe moduly (modul je jednodu¹e øeèeno kolekce metod):
+
+\begin{verbatim}
+irb(main):001:0> module Ahoj
+irb(main):002:1>   def ahoj
+irb(main):003:2>     puts "Ahoj"
+irb(main):004:2>   end
+irb(main):005:1> end
+=> nil
+irb(main):006:0> class Pozdravy
+irb(main):007:1>   include Ahoj
+irb(main):008:1> end
+=> Pozdravy
+irb(main):009:0> p = Pozdravy.new
+=> #<Pozdravy:0x82945b4>
+irb(main):010:0> p.ahoj
+Ahoj
+\end{verbatim}
+
+Na rozdíl od C/C++ èi Javy jsou v ruby povoleny na konci metod jiné znaky ne¾ jen znaky anglické abecedy. Co¾ má veliký dopad na zlep¹enou èitelnost k\'{o}du, jeliko¾ podle konvencí metody vracející booleanovskou hodnotu (true/false) jsou ukonèeny znakem otázníku (napøíklad \verb|Object#nil?|) a metody mìnící stav samotného objektu jsou pro zmìnu ukonèeny vykøièníkem (napøíklad \verb|Array#map!|).
+
+\subsection{Ostatní implementace ruby}
+Nejznámìj¹í a asi i nejvíce pou¾ívanou implementací jazyka Ruby je interpret MRI (Mat'z ruby interpreter) od autora jazyka. Ten má ov¹em své nedostatky (není nejrychlìj¹í, neumo¾nujì opravdový paralerismus proto¾e obsahuje ''Global interpreter lock`` - v jednu chvíli mù¾e bì¾et maximálnì jedno vlákno). Jako podklad pro tento list jsem pou¾il seznam rùzných interpretù a jejich krásné srovnání na webu igvita\cite{webIgvitaInterprets}.
+
+\subsubsection{Ruby Enterprise edition}
+Jde o fork MRI implementace verze 1.8.7\cite{webRubyEE} s vylep¹enou správou pamìti a vymìnìným garbage collectorem (MRI vyu¾ívá mark-and-sweep GC). Vznikl jako potøeba optimalizovat ruby pro bìh na serverech pro webové aplikace postavené na Ruby on Rails a je pro nì optimalizován. Je plnì kompatibilní s ruby verze 1.8.7 a podle oficiálních stránek v urèitých pøípadech a¾ o 33\% rychlej¹í.
+
+\subsubsection{JRuby}
+Je implementace ruby v Jave\cite{webJRuby} a vyu¾ívající mo¾ností Java VM - obsahuje plnou paralerizaci (¾ádný GIL), v souèastosti se pracuje na podpoøe ruby verze 1.9. Velmi ¾ivý projekt se 7 aktivními vývojáøi (MRI z nejvìt¹í èásti vyvíjí jeden èlovìk).
+
+\subsubsection{BlueRuby}
+Jedná se o implementaci ruby bì¾ícího uvnitø SAP NetWeaver a SAP ERP produktù, tedy dal¹í mo¾nost jak roz¹íøit SAP mimo jazykù ABAP a Java. Zatím je projekt pouze ve stádiu experimentální implementace\cite{webBlueRuby} a nehodí se pro reálné nasazení - je naimplementováno pouze okolo 75\% vlastní ruby podle ruby specs.
+
+\subsubsection{Rubinius}
+Zajimavý nápad napsat co nejvìt¹í èást ruby v samotném ruby\cite{webRubinius} - jedná se o pøepsaní nezbytnì nutných èástí interpretu do C++ a zbývajícího k\'{o}du do ruby (jako napøíklad standartní tøídy - String, Array, Hash, ...). Intepret obsahuje JIT kompilátor - parsovaný skript kompiluje na místì do binárního k\'{o}du spustitelném na dané platformì a a¾ ten následnì spou¹tí, èím¾ dosahuje zrychlení oproti MRI. Díky kompilaci do nativního k\'{o}du není zatí¾en GIL a tedy umo¾nuje paralerismus. V souèasné dobì je tento projekt stále ve vývoji - nìkolik gemù a aplikací v nìm ji¾ bì¾í, ale pro reálné nasazení není vhodný.
+
+\subsection{Mo¾nosti binárního roz¹íøení}
 TODO
-Co je to blok,
-Closure
-
-\subsection{Drobnosti}
-Vse je vyraz
-sugar v pripade +, - -- vse jsou metody
-Single inheritance, ale include
-
-Projit oficialni web na dalsi drobnosti
-
-\section{TODOs}
-Seznam interpretu a jejich vlastnosti
-Moznosti rozsireni
-Metaporogramovi = dynamicita, podkapitola
-Nejznamejsi projekty v ruby?
 
 
 \section{Expertní systémy}
