@@ -30,7 +30,9 @@ Nìkolik zajímavých dat z historie\cite{webRubyHistory}:
 V souèasné verze se udr¾ují dvì hlavní vìtve MRI - verze 1.8 a 1.9. Vìtev 1.8 je pova¾ována za stabilní a ji¾ se pouze udr¾uje (opravují se chyby), vývoj probíhá ve vìtvi 1.9.
 
 \subsection{Vlastnosti ruby}
-Ruby je dynamický skriptovací jazyk mnoha ruzných paradigmat - je plnì objektovì orientovaný, ale lze v nìm bez problémù psát i imperativnì èi funkcionálnì. Následuje popis vybraných vlastností, které bych rád vyzdvihl èi na nì upozornil. Podle poøeby budu dále v textu srovnávat Ruby s jazyky Java a C/C++.
+Ruby je dynamický skriptovací jazyk mnoha ruzných paradigmat - je plnì objektovì orientovaný, ale lze v nìm bez problémù psát i imperativnì èi funkcionálnì. Následuje popis vybraných vlastností, které bych rád vyzdvihl èi na nì upozornil. Podle poøeby budu dále v textu srovnávat Ruby s dal¹ímy jazyky které znám - Java, C/C++, python a perl.
+
+Ní¾e uvedený popis vlastní jsem èerpal ze své osobní zku¹enosti s tímto programovacím jazykem, z velice obsáhleho popisu jazyka napsaného samotným autorem ruby The Ruby programming language\cite{rubyProgrammingLanguage} (co¾ je zrevidování a roz¹íøení døíve vydané knihy, která je v ruby svìtì známa pod názvem Ruby in Nutshel\cite{rubyInNutshel}) a z knihy Metaprogramming Ruby\cite{metaprogrammingRuby}, která se zabývá nejen metaprogramováním v ruby, ale take velice èitelným zpùsobem vysvìtluje objektový model ruby a jeho jiné aspekty.
 
 \subsubsection{Objektovost}
 Ruby je plnì objektovì orientovaný jazyk (byl mimo jiné inspirován i Smalltalkem), co¾ znamená, ¾e v¹e v ruby je objekt. Nejsou zde ¾ádná datová primitiva jako napøíklad v Jave (int, double). \u{C}íselné a jiné konstanty jsou interpretem pøevádìny na instance pøíslu¹ných tøíd okam¾ite a automaticky:
@@ -92,18 +94,64 @@ Oba pøíklady se li¹í pouhou mezerou mezi koncem názvu metody a otevírající závor
 
 Ruby neumo¾nuje pojmenovat argumenty metody jako je mo¾né napøíklad v pythonu, ov¹em volná syntaxe pro vytvoøení hashe (asociativního pole) je hojnì vyu¾ívaná k napodobení této schopnosti - pøíkladem mù¾e být tøeba volání fiktivní metody pro hledání: \verb|find :name => 'Jarek', :surname => 'Cecho'|, kde opticky pøedávám dva parametry - name, surname. Ve skuteènosti je tento zápis reprezentován jako tvorba asociativního pole s klièi name a surname (s pøíslu¹nými hodnotami) a¾ naslednì toto pole je jako jeden argument pøedáno metodì \verb|find|. Webový framework Ruby on Rails tento pøístup pou¾ívá snad úplnì v¹ude.
 
-\subsubsection{Dynamiènost}
-TODO
+\subsubsection{Dynamiènost a otevøenost}
+Dynamiènost je velmi obsáhle slovo, zde je my¹leno jako jazyk provádìjící mnoho èinností a¾ za bìhu programu ne¾ pøi jeho pøekladu (èi v pøípadì skriptovacího jazyka zpracovávání). Vzhledem k plné objektovosti nemá moc smysl mluvit o typovosti jazyka (v¹e je objekt a ty mezi sebou komunikují pomocí zasílání zpráv).
+
+Mnohem zajimavìj¹í a ne a¾ tak bì¾nou vlastní je otevøenost ruby. Ka¾dý objekt mù¾e být za bìhu otevøen a roz¹íøen o nové metody podobnì jako JavaScript. \u{C}asto se toho vyu¾ívá u tøíd (napøíklad roz¹íøením vìstavìné tøídy o nové metody). Tuto vlastnost by do urèité míry ¹lo nahradit dìdièností (nové metody ulo¾it do potomka), ale jen pokud se bavíme o tøídách. Jak jsem uvedl vý¹e, v¹e v ruby je objekt (tedy i tøídy), tak¾e roz¹íøit jdou nejen tøídy, ale i instance jednotlivých tøíd, co¾ byl pro mì jako¾to programátora v C++ docela ¹ok pøi seznamování se s tímto jazykem. Mo¾nosti roz¹íøení instancí o nové metody pou¾ívám i v rbClips, co¾ je popsáno ní¾e v kapitole o Faktech. 
+
+\begin{verbatim}
+class A
+  def metodaA
+    4
+  end
+end
+
+a = A.new
+a.metodaA # => 4
+
+b = A.new
+def b.metodaB
+  5
+end
+b.metodaB # => 5
+a.metodaB # => Exception NoMethodError
+\end{verbatim}
+Uvedený pøíklad schopnost roz¹íøit instance objektù ukazuje v praxi.
+
+Díky dynamiènosti a otevøenosti se v ruby velice pìknì metaprogramuje (co¾ je dál¹í mnohoznaèný výráz - zde ve významu psaní k\'{o}du, který generuje dal¹í k\'{o}d). Jedná se o velice èasto vyu¾ívanou schopnost jazyka a velké projekty v ruby jsou metaprogramováním dosti ovlivnìny. Pøíkladem mù¾e být projekt ActiveRecords, který zapouzdøuje èinnost s relaèními databázemi tak, aby se u¾ivatel se SQL vùbec nesetkal (v¹e má krásnì naservírované v objektech):
+
+\begin{verbatim}
+class Human < ActiveRecords::Base
+end
+
+jarcec = Human.new
+jarcec.name = "Jarek"
+jarcec.surname = "Cecho"
+jarcec.save
+\end{verbatim}
+
+V definici tøídy chybí deklarace method \verb|name| a \verb|surname| a pøesto daný k\'{o}d bude fungovat. Konstruktor tøídy se toti¾ pøi inicializaci podívá do databáze na strukturu tabulky kterou popisuje, v tomto pøípadì tabulky \verb|humans| (popis ActiveRecords a jejich jmenných konvencí jsou nad rámec této práce, v¹e lze najít v oficiální dokumentaci\cite{webActiveRecord}, pìkné vysvìtlení je v guides k RoR\cite{webRubyGuides} a taky v nìkolika kapitolách Metaprogramming Ruby\cite{metaprogrammingRuby}) a vytvoøí ke v¹em nalezeným sloupcùm pøíslu¹né metody (jak pro ètení, tak pro zápis). Tento pøístup usnad\u{n}uje údr¾bu k\'{o}du - v definice tøídy není seznam sloupcù jednotlivých tabulek a proto pøi zmìnì databázového schéma není nutné v¹e upravovat a zvedat tak pravdìpodobnost zavleèení chyby (nekonzistence seznamu sloupcù v databázi a v definici tøídy).
+
+O metaprogramování v ruby byla napsána velice pìkná kniha - Metaprogrammin Ruby\cite{metaprogrammingRuby} - psaná spí¹e laickým stylem a na praktických pøíkladech popisující co pøesnì se pod pojmem metapogramovaní skrývá a jak toho v ruby co nejefektivnìji vyu¾ít.
 
 \subsubsection{Bloky}
 TODO
+Co je to blok,
+Closure
+
+\subsection{Drobnosti}
+Vse je vyraz
+sugar v pripade +, - -- vse jsou metody
+Single inheritance, ale include
+
+Projit oficialni web na dalsi drobnosti
 
 \section{TODOs}
-Vlastnosti = objektovost, rozdili od ostatnich jazyku
 Seznam interpretu a jejich vlastnosti
 Moznosti rozsireni
 Metaporogramovi = dynamicita, podkapitola
 Nejznamejsi projekty v ruby?
+
 
 \section{Expertní systémy}
 TODO: Popsat co jsou vlastne expertni systemy, jak se s nimi pracuje, cim se lisi od ostatnich, trochu historie.
