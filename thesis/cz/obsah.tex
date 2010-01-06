@@ -217,7 +217,7 @@ Je implementace ruby v Jave\cite{webJRuby} a vyu¾ívající mo¾ností Java VM - obsa
 Jedná se o implementaci ruby bì¾ícího uvnitø SAP NetWeaver a SAP ERP produktù, tedy dal¹í mo¾nost jak roz¹íøit SAP mimo jazykù ABAP a Java. Zatím je projekt pouze ve stádiu experimentální implementace\cite{webBlueRuby} a nehodí se pro reálné nasazení - je naimplementováno pouze okolo 75\% vlastní ruby podle ruby specs.
 
 \subsubsection{Rubinius}
-Zajimavý nápad napsat co nejvìt¹í èást ruby v samotném ruby\cite{webRubinius} - jedná se o pøepsaní nezbytnì nutných èástí interpretu do C++ a zbývajícího k\'{o}du do ruby (jako napøíklad standartní tøídy - String, Array, Hash, ...). Intepret obsahuje JIT kompilátor - parsovaný skript kompiluje na místì do binárního k\'{o}du spustitelném na dané platformì a a¾ ten následnì spou¹tí, èím¾ dosahuje zrychlení oproti MRI. Díky kompilaci do nativního k\'{o}du není zatí¾en GIL a tedy umo¾nuje paralerismus. V souèasné dobì je tento projekt stále ve vývoji - nìkolik gemù a aplikací v nìm ji¾ bì¾í, ale pro reálné nasazení není vhodný.
+Zajimavý nápad napsat co nejvìt¹í èást ruby v samotném ruby\cite{webRubinius} - jedná se o pøepsaní nezbytnì nutných èástí interpretu do C++ a zbývajícího k\'{o}du do ruby (jako napøíklad standartní tøídy - String, Array, Hash, ...). Intepret obsahuje JIT kompilátor - parsovaný skript kompiluje na místì do binárního k\'{o}du spustitelném na dané platformì a a¾ ten následnì spou¹tí, èím¾ dosahuje zrychlení oproti MRI. Díky kompilaci do nativního k\'{o}du není zatí¾en GIL a tedy umo¾nuje paralerismus. V souèasné dobì je tento projekt stále ve vývoji - nìkolik gemù a aplikací v nìm ji¾ bì¾í, ale pro reálné nasazení není pøíli¹ vhodný.
 
 \subsection{Mo¾nosti binárního roz¹íøení}
 TODO
