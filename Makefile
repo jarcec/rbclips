@@ -13,9 +13,9 @@ test:
 thesis:
 	make -C thesis/cz/
 
-.PHONY: thesis
-
 clean:
 	make -C src/ clean
 	make -C thesis/cz/ clean
 	rm -rf src/clips/*.o libclips.a
+
+.PHONY: thesis test rbclips clips clean
