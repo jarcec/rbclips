@@ -473,6 +473,9 @@ VALUE cl_template_destroy(VALUE self)
  * Template objects keeps inside pointers to CLIPS structures and that's problematic -
  * The pointer don't have to be valid, update function update the ruby object as is saved
  * in CLIPS.
+ *
+ * This code will so far loose information about constraints on given slot
+ * TODO: Add creation of constraint objects for slots!
  */
 VALUE cl_template_update(VALUE self)
 {
@@ -482,6 +485,32 @@ VALUE cl_template_update(VALUE self)
 
   wrap->ptr = FindDeftemplate( STR2CSTR(name) );
 
+  // The deftemplate don't have to be saved
+  if( !wrap->ptr ) return Qfalse;
+
+  // New slots names
+  VALUE slots = rb_hash_new();
+
+  // Getting slot list from CLIPS
+  DATA_OBJECT slotNames;
+  DeftemplateSlotNames(wrap->ptr, &slotNames);
+  if(GetType(slotNames) != MULTIFIELD)
+  {
+    rb_raise(cl_eInternError, "slotNames should be a multifield value and it's not.");
+    return Qnil;
+  }
+
+  // Transcoding CLIPS slotnames to ruby names and saving them into slot list
+  int i;
+  void *mf = GetValue(slotNames);
+  for(i = GetDOBegin(slotNames); i <= GetDOEnd(slotNames); i++)
+  {
+    VALUE slot = cl_generic_convert_dataobject_mf( mf, i );
+    rb_hash_aset(slots, slot, rb_hash_new());
+  }
+
+  // Saving new slot list and c'es tout
+  rb_iv_set(self, "@slots", slots);
   return Qtrue;
 }
 

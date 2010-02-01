@@ -9,4 +9,7 @@ const char const * rb_generic_clipstype_str(ID);
 //! Check if given string is valid clips symbol (regexp based)
 int cl_generic_check_clips_symbol(VALUE);
 
+//! Convert one value from multifield DATA_OBJECT to VALUE
+VALUE cl_generic_convert_dataobject_mf(void *, int);
+
 #endif // _RBGENERIC_H_

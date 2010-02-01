@@ -1,4 +1,5 @@
 #include <ruby.h>
+#include "clips/clips.h"
 #include "rbclips.h"
 #include "rbgeneric.h"
 
@@ -41,4 +42,33 @@ int cl_generic_check_clips_symbol(VALUE s)
   if(TYPE(ret) == T_TRUE) return true;
   
   return false;
+}
+
+/**
+ * Convert value on index from multifield DATA_OBJECT to corresponding
+ * object in ruby world and return it
+ */
+VALUE cl_generic_convert_dataobject_mf(void *mf, int index)
+{
+  void *value = GetMFValue(mf, index);
+
+  switch(GetMFType(mf, index))
+  {
+    case INTEGER:
+      return INT2NUM( ValueToInteger(value) );
+
+    case SYMBOL:
+      return ID2SYM( rb_intern( ValueToString(value) ) );
+
+    case STRING:
+      return rb_str_new_cstr( ValueToString(value) );
+
+    case FLOAT:
+      return rb_float_new( ValueToDouble(value) );
+
+    default:
+      break;
+  }
+
+  return Qfalse;
 }
