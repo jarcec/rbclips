@@ -198,4 +198,20 @@ class Test_Template < Test::Unit::TestCase
     assert a.destroy!
     assert !a.saved?
   end
+
+  def test_load
+    a = Clips::Template.new :name => 'animal', :slots => %w(race age)
+    assert a.save
+    
+    b = Clips::Template.load 'animal'
+    assert_equal a, b
+    c = Clips::Template.load :animal
+    assert_equal a, c
+
+    assert_nil Clips::Template.load 'non-existent'
+
+    assert c.destroy!
+    assert !a.destroy!
+    assert !b.destroy!
+  end
 end
