@@ -156,6 +156,18 @@ class Test_Template < Test::Unit::TestCase
     t.call :name => 'human', :slots => { :a => { :default => 30, :default_dynamic => true } }
     t.call :name => 'human', :slots => { :a => { :constraint => { :type => :integer, :cardinality => 2..23} } }
   end
+  
+  def test_destroy
+    t = Clips::Template.new :name => 'animal', :slots => %w(name)
+    t.save
+
+    f = Clips::Fact.new t, :name => "Azor"
+    f.save
+
+    assert_raise(Clips::InUseError)  { t.destroy! }
+    assert f.destroy!
+    assert t.destroy!
+  end
 
   def test_saving
     t = Proc.new do |hash|

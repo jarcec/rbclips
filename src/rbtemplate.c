@@ -444,12 +444,19 @@ VALUE cl_template_destroy(VALUE self)
 
   if( !wrap )
   {
-      rb_raise(cl_eUseError, "Inner structure not found");
-      return Qnil;
+    rb_raise(cl_eUseError, "Inner structure not found");
+    return Qnil;
   }
 
   if( !wrap->ptr) return Qfalse;
  
+  // Template cannot be in use when deleting
+  if( !IsDeftemplateDeletable(wrap->ptr) )
+  {
+    rb_raise(cl_eInUseError, "Template is used, cannot be deleted");
+    return Qnil;
+  }
+
   // Return
   VALUE ret = Qfalse;
 
