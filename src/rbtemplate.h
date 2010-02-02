@@ -29,6 +29,9 @@ VALUE cl_template_new(int, VALUE *, VALUE);
 //! Clips::Template::load
 VALUE cl_template_load(VALUE, VALUE);
 
+//! Clips::Template::all
+VALUE cl_template_all(VALUE);
+
 //! Clips::Template\#initialize
 VALUE cl_template_initialize(int, VALUE *, VALUE);
 

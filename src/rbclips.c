@@ -60,6 +60,7 @@ void Init_rbclips()
   cl_cTemplate = rb_define_class_under(cl_mClips, "Template", rb_cObject);
   rb_define_singleton_method(cl_cTemplate, "new", cl_template_new, -1);
   rb_define_singleton_method(cl_cTemplate, "load", cl_template_load, 1);
+  rb_define_singleton_method(cl_cTemplate, "all", cl_template_all, 0);
   rb_define_method(cl_cTemplate, "initialize", cl_template_initialize, -1);
   rb_define_method(cl_cTemplate, "to_s", cl_template_to_s, 0);
   rb_define_method(cl_cTemplate, "clone", cl_template_clone, 0);

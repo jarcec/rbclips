@@ -70,6 +70,39 @@ VALUE cl_template_load(VALUE self, VALUE name)
 }
 
 /**
+ * Return array with all templates that are saved in CLIPS
+ */
+VALUE cl_template_all(VALUE self)
+{
+  VALUE ret = rb_ary_new();
+
+  void *template = NULL;
+
+  while( template = GetNextDeftemplate(template) )
+  {
+    // Skip implied templates (it's not real template)
+    if( ((struct deftemplate*)template)->implied ) continue;
+    
+    // I'm not interested in default/initial deftemplate
+    char *name = GetDeftemplateName(template);
+    if(strcmp(name, "initial-fact") == 0) continue;
+
+    // Creating the object
+    cl_sTemplateWrap *wrap = calloc(1, sizeof(*wrap));
+    VALUE obj = Data_Wrap_Struct(cl_cTemplate, NULL, free, wrap);
+  
+    // Building it's content
+    rb_iv_set(obj, "@name", rb_str_new_cstr(name));
+    CL_UPDATE(obj);
+
+    rb_ary_push(ret, obj);
+  }
+
+  // C'est tout
+  return ret;
+}
+
+/**
  * Constructor that accept hash or name with config block
  */
 VALUE cl_template_initialize(int argc, VALUE *argv, VALUE self)

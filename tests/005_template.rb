@@ -214,4 +214,16 @@ class Test_Template < Test::Unit::TestCase
     assert !a.destroy!
     assert !b.destroy!
   end
+
+  def test_all
+    a = Clips::Template.new :name => 'animal', :slots => %w(race age)
+    assert a.save
+    b = Clips::Template.new :name => 'mammal', :slots => %w(race age)
+    assert b.save
+
+    assert_equal Clips::Template.all, [a, b]
+
+    assert a.destroy!
+    assert b.destroy!
+  end
 end
