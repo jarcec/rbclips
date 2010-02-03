@@ -375,7 +375,31 @@ VALUE cl_fact_update(VALUE self)
 
   // Valid?
   if ( !FactExistp(wrap->ptr) )
-   wrap->ptr = NULL;
+  {
+    wrap->ptr = NULL;
+    return Qtrue;
+  }
+
+  // Load template name
+  void *template = FactDeftemplate(wrap->ptr);
+  if( ((struct deftemplate*)template)->implied )
+  {
+    // Ordered fact
+    rb_iv_set(self, "@name", rb_str_new_cstr(GetDeftemplateName(template)) );
+
+    DATA_OBJECT slot;
+    if( !GetFactSlot(wrap->ptr, NULL, &slot) )
+    {
+      rb_raise(cl_eInternError, "Cannot get implied slot of ordered fact, wtf?");
+      return Qnil;
+    }
+    rb_iv_set(self, "@slots", cl_generic_convert_dataobject(slot) );
+
+  } else {
+    // Non ordered
+    rb_raise(cl_eNotImplError, "Updating nonordered fact is not possible yet.");
+    return Qnil;
+  }
 
   return Qtrue;
 }

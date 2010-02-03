@@ -12,4 +12,7 @@ int cl_generic_check_clips_symbol(VALUE);
 //! Convert one value from multifield DATA_OBJECT to VALUE
 VALUE cl_generic_convert_dataobject_mf(void *, int);
 
+//! Convert CLIPS DATA_OBJECT to ruby object
+VALUE cl_generic_convert_dataobject(DATA_OBJECT);
+
 #endif // _RBGENERIC_H_

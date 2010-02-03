@@ -99,6 +99,7 @@ void Init_rbclips()
   cl_eUseError = rb_define_class_under(cl_mClips, "UsageError", cl_eException);
   cl_eInUseError = rb_define_class_under(cl_mClips, "InUseError", cl_eException);
   cl_eInternError = rb_define_class_under(cl_mClips, "InternalError", cl_eException);
+  cl_eNotImplError = rb_define_class_under(cl_mClips, "NotImplementedError", cl_eException);
 
   // Initialization of internal list of environments
   cl_vEnvironments = rb_ary_new();

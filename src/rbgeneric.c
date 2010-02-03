@@ -72,3 +72,45 @@ VALUE cl_generic_convert_dataobject_mf(void *mf, int index)
 
   return Qfalse;
 }
+
+/**
+ * Convert supplied DATA_OBJECT to 
+ */
+VALUE cl_generic_convert_dataobject(DATA_OBJECT value)
+{
+  switch(GetType(value))
+  {
+    case INTEGER:
+      return INT2NUM( DOToInteger(value) );
+
+    case SYMBOL:
+      return ID2SYM( rb_intern( DOToString(value) ) );
+
+    case STRING:
+      return rb_str_new_cstr( DOToString(value) );
+
+    case FLOAT:
+      return rb_float_new( DOToDouble(value) );
+
+    case MULTIFIELD:
+    {
+      VALUE ret = rb_ary_new();
+
+      int i;
+      void *mf = GetValue(value);
+      for(i = GetDOBegin(value); i <= GetDOEnd(value); i++)
+      {
+        VALUE slot = cl_generic_convert_dataobject_mf( mf, i );
+        rb_ary_push(ret, slot);
+      }
+
+      return ret;
+    }
+
+    default:
+      break;
+  }
+
+  return Qfalse;
+}
+
