@@ -23,6 +23,7 @@ struct _cl_sIds
   ID ordered;
   ID saved;
   ID clone;
+  ID load;
 
   // Mostly hash keys
   ID type;

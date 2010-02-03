@@ -33,6 +33,9 @@ int cl_fact_to_s_nonordered_each(VALUE, VALUE, VALUE);
 //! Foreach method for creating slot accessors
 int cl_fact_initialize_attr_slot(VALUE, VALUE, VALUE);
 
+//! Foreach method for updating fact
+int cl_fact_update_each(VALUE, VALUE, VALUE);
+
 //! Method body (block) for creating
 VALUE cl_fact_initialize_attr_slot_block(VALUE, VALUE, int, VALUE *);
 
@@ -272,6 +275,10 @@ VALUE cl_fact_to_s_nonordered(VALUE self)
  */
 int cl_fact_to_s_nonordered_each(VALUE key, VALUE value, VALUE target)
 {
+  // Skip this slot, if it's value is nil
+  if(NIL_P(value))
+    return ST_CONTINUE;
+
   // If its array ~= multifield value, do it one by one
   if(TYPE(value) == T_ARRAY)
   {
@@ -397,11 +404,43 @@ VALUE cl_fact_update(VALUE self)
 
   } else {
     // Non ordered
-    rb_raise(cl_eNotImplError, "Updating nonordered fact is not possible yet.");
-    return Qnil;
+    VALUE template_obj = rb_funcall(cl_cTemplate, cl_vIds.load, 1, rb_str_new_cstr(GetDeftemplateName(template)));
+    rb_iv_set(self, "@name", template_obj);
+    
+    VALUE value_slots = rb_hash_new();
+    rb_iv_set(self, "@slots", value_slots);
+
+    VALUE key_slots = rb_iv_get(template_obj, "@slots");
+    rb_hash_foreach(key_slots, cl_fact_update_each, self);
   }
 
   return Qtrue;
+}
+
+/**
+ * Foreach function that goes throw all slots and load it's values from
+ * CLIPS and store them inside object
+ */
+int cl_fact_update_each(VALUE key, VALUE value, VALUE self)
+{
+  cl_sFactWrap *wrap = DATA_PTR(self);
+  if( !wrap )
+  {
+      rb_raise(cl_eUseError, "Oops, wrap structure don't exists!");
+      return ST_STOP;
+  }
+
+  DATA_OBJECT slot;
+  if( !GetFactSlot(wrap->ptr, CL_STR(key) , &slot) )
+  {
+    rb_raise(cl_eInternError, "Cannot get implied slot of ordered fact, wtf?");
+    return ST_STOP;
+  }
+
+  VALUE slots = rb_iv_get(self, "@slots");
+  rb_hash_aset(slots, key, cl_generic_convert_dataobject(slot));
+
+  return ST_CONTINUE;
 }
 
 /**

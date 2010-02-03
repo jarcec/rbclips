@@ -58,8 +58,12 @@ VALUE cl_generic_convert_dataobject_mf(void *mf, int index)
       return INT2NUM( ValueToInteger(value) );
 
     case SYMBOL:
-      return ID2SYM( rb_intern( ValueToString(value) ) );
+    {
+      char *s = ValueToString(value);
+      if(strcmp(s, "nil") == 0 ) return Qnil;
 
+      return ID2SYM( rb_intern(s) );
+    }
     case STRING:
       return rb_str_new_cstr( ValueToString(value) );
 
@@ -84,7 +88,12 @@ VALUE cl_generic_convert_dataobject(DATA_OBJECT value)
       return INT2NUM( DOToInteger(value) );
 
     case SYMBOL:
-      return ID2SYM( rb_intern( DOToString(value) ) );
+    {
+      char *s = DOToString(value);
+      if(strcmp(s, "nil") == 0 ) return Qnil;
+
+      return ID2SYM( rb_intern(s) );
+    }
 
     case STRING:
       return rb_str_new_cstr( DOToString(value) );
