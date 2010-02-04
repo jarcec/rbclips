@@ -53,6 +53,32 @@ VALUE cl_fact_new(int argc, VALUE *argv, VALUE self)
 }
 
 /**
+ * Build and return back array with all facts
+ */
+VALUE cl_fact_all(VALUE self)
+{
+  VALUE ret = rb_ary_new();
+
+  void *fact = NULL;
+
+  while( fact = GetNextFact(fact) )
+  {
+    // Creating the object
+    cl_sFactWrap *wrap = calloc(1, sizeof(*wrap));
+    VALUE obj = Data_Wrap_Struct(cl_cFact, NULL, free, wrap);
+  
+    // Building it's content
+    wrap->ptr = fact;
+    CL_UPDATE(obj);
+
+    rb_ary_push(ret, obj);
+  }
+
+  // C'est tout
+  return ret;
+}
+
+/**
  * Constructor - initialize
  */
 VALUE cl_fact_initialize(VALUE self, VALUE first, VALUE second)
@@ -392,7 +418,7 @@ VALUE cl_fact_update(VALUE self)
   if( ((struct deftemplate*)template)->implied )
   {
     // Ordered fact
-    rb_iv_set(self, "@name", rb_str_new_cstr(GetDeftemplateName(template)) );
+    rb_iv_set(self, "@template", rb_str_new_cstr(GetDeftemplateName(template)) );
 
     DATA_OBJECT slot;
     if( !GetFactSlot(wrap->ptr, NULL, &slot) )
@@ -405,7 +431,7 @@ VALUE cl_fact_update(VALUE self)
   } else {
     // Non ordered
     VALUE template_obj = rb_funcall(cl_cTemplate, cl_vIds.load, 1, rb_str_new_cstr(GetDeftemplateName(template)));
-    rb_iv_set(self, "@name", template_obj);
+    rb_iv_set(self, "@template", template_obj);
     
     VALUE value_slots = rb_hash_new();
     rb_iv_set(self, "@slots", value_slots);
