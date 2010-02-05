@@ -156,6 +156,18 @@ class Test_Template < Test::Unit::TestCase
     t.call :name => 'human', :slots => { :a => { :default => 30, :default_dynamic => true } }
     t.call :name => 'human', :slots => { :a => { :constraint => { :type => :integer, :cardinality => 2..23} } }
   end
+  
+  def test_destroy
+    t = Clips::Template.new :name => 'animal', :slots => %w(name)
+    t.save
+
+    f = Clips::Fact.new t, :name => "Azor"
+    f.save
+
+    assert_raise(Clips::InUseError)  { t.destroy! }
+    assert f.destroy!
+    assert t.destroy!
+  end
 
   def test_saving
     t = Proc.new do |hash|
@@ -185,5 +197,33 @@ class Test_Template < Test::Unit::TestCase
     assert a.saved?
     assert a.destroy!
     assert !a.saved?
+  end
+
+  def test_load
+    a = Clips::Template.new :name => 'animal', :slots => %w(race age)
+    assert a.save
+    
+    b = Clips::Template.load 'animal'
+    assert_equal a, b
+    c = Clips::Template.load :animal
+    assert_equal a, c
+
+    assert_nil Clips::Template.load 'non-existent'
+
+    assert c.destroy!
+    assert !a.destroy!
+    assert !b.destroy!
+  end
+
+  def test_all
+    a = Clips::Template.new :name => 'animal', :slots => %w(race age)
+    assert a.save
+    b = Clips::Template.new :name => 'mammal', :slots => %w(race age)
+    assert b.save
+
+    assert_equal Clips::Template.all, [a, b]
+
+    assert a.destroy!
+    assert b.destroy!
   end
 end

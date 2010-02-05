@@ -8,3 +8,6 @@
 VALUE cl_eException;
 VALUE cl_eArgError;
 VALUE cl_eUseError;
+VALUE cl_eInUseError;
+VALUE cl_eInternError;
+VALUE cl_eNotImplError;

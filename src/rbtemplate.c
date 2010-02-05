@@ -42,6 +42,67 @@ VALUE cl_template_new(int argc, VALUE *argv, VALUE self)
 }
 
 /**
+ * Load template with given name from CLIPS and create it's 
+ * representation in ruby
+ */
+VALUE cl_template_load(VALUE self, VALUE name)
+{
+  if(TYPE(name) != T_STRING && TYPE(name) != T_SYMBOL)
+  {
+    rb_raise(cl_eArgError, "Clips::Template::load expect argument of type symbol or string, but '%s' have class '%s'", CL_STR(name), CL_STR_CLASS(name));
+    return Qnil;
+  }
+
+  // Looking for the template
+  void *template = FindDeftemplate( CL_STR(name) );
+  if(!template) return Qnil;
+
+  // Creating the object
+  cl_sTemplateWrap *wrap = calloc(1, sizeof(*wrap));
+  VALUE ret = Data_Wrap_Struct(cl_cTemplate, NULL, free, wrap);
+  
+  // Building it's content
+  rb_iv_set(ret, "@name", CL_TO_S(name));
+  CL_UPDATE(ret);
+
+  // C'est tout
+  return ret;
+}
+
+/**
+ * Return array with all templates that are saved in CLIPS
+ */
+VALUE cl_template_all(VALUE self)
+{
+  VALUE ret = rb_ary_new();
+
+  void *template = NULL;
+
+  while( template = GetNextDeftemplate(template) )
+  {
+    // Skip implied templates (it's not real template)
+    if( ((struct deftemplate*)template)->implied ) continue;
+    
+    // I'm not interested in default/initial deftemplate
+    char *name = GetDeftemplateName(template);
+    if(strcmp(name, "initial-fact") == 0) continue;
+
+    // Creating the object
+    cl_sTemplateWrap *wrap = calloc(1, sizeof(*wrap));
+    VALUE obj = Data_Wrap_Struct(cl_cTemplate, NULL, free, wrap);
+  
+    // Building it's content
+    rb_iv_set(obj, "@name", rb_str_new_cstr(name));
+    CL_UPDATE(obj);
+
+    rb_ary_push(ret, obj);
+  }
+
+  // C'est tout
+  return ret;
+}
+
+/**
  * Constructor that accept hash or name with config block
  */
 VALUE cl_template_initialize(int argc, VALUE *argv, VALUE self)
@@ -444,12 +505,19 @@ VALUE cl_template_destroy(VALUE self)
 
   if( !wrap )
   {
-      rb_raise(cl_eUseError, "Inner structure not found");
-      return Qnil;
+    rb_raise(cl_eUseError, "Inner structure not found");
+    return Qnil;
   }
 
   if( !wrap->ptr) return Qfalse;
  
+  // Template cannot be in use when deleting
+  if( !IsDeftemplateDeletable(wrap->ptr) )
+  {
+    rb_raise(cl_eInUseError, "Template is used, cannot be deleted");
+    return Qnil;
+  }
+
   // Return
   VALUE ret = Qfalse;
 
@@ -466,6 +534,9 @@ VALUE cl_template_destroy(VALUE self)
  * Template objects keeps inside pointers to CLIPS structures and that's problematic -
  * The pointer don't have to be valid, update function update the ruby object as is saved
  * in CLIPS.
+ *
+ * This code will so far loose information about constraints on given slot
+ * TODO: Add creation of constraint objects for slots!
  */
 VALUE cl_template_update(VALUE self)
 {
@@ -475,6 +546,32 @@ VALUE cl_template_update(VALUE self)
 
   wrap->ptr = FindDeftemplate( STR2CSTR(name) );
 
+  // The deftemplate don't have to be saved
+  if( !wrap->ptr ) return Qfalse;
+
+  // New slots names
+  VALUE slots = rb_hash_new();
+
+  // Getting slot list from CLIPS
+  DATA_OBJECT slotNames;
+  DeftemplateSlotNames(wrap->ptr, &slotNames);
+  if(GetType(slotNames) != MULTIFIELD)
+  {
+    rb_raise(cl_eInternError, "slotNames should be a multifield value and it's not.");
+    return Qnil;
+  }
+
+  // Transcoding CLIPS slotnames to ruby names and saving them into slot list
+  int i;
+  void *mf = GetValue(slotNames);
+  for(i = GetDOBegin(slotNames); i <= GetDOEnd(slotNames); i++)
+  {
+    VALUE slot = cl_generic_convert_dataobject_mf( mf, i );
+    rb_hash_aset(slots, slot, rb_hash_new());
+  }
+
+  // Saving new slot list and c'es tout
+  rb_iv_set(self, "@slots", slots);
   return Qtrue;
 }
 

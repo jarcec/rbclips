@@ -1,4 +1,5 @@
 #include <ruby.h>
+#include "clips/clips.h"
 #include "rbclips.h"
 #include "rbgeneric.h"
 
@@ -42,3 +43,83 @@ int cl_generic_check_clips_symbol(VALUE s)
   
   return false;
 }
+
+/**
+ * Convert value on index from multifield DATA_OBJECT to corresponding
+ * object in ruby world and return it
+ */
+VALUE cl_generic_convert_dataobject_mf(void *mf, int index)
+{
+  void *value = GetMFValue(mf, index);
+
+  switch(GetMFType(mf, index))
+  {
+    case INTEGER:
+      return INT2NUM( ValueToInteger(value) );
+
+    case SYMBOL:
+    {
+      char *s = ValueToString(value);
+      if(strcmp(s, "nil") == 0 ) return Qnil;
+
+      return ID2SYM( rb_intern(s) );
+    }
+    case STRING:
+      return rb_str_new_cstr( ValueToString(value) );
+
+    case FLOAT:
+      return rb_float_new( ValueToDouble(value) );
+
+    default:
+      break;
+  }
+
+  return Qfalse;
+}
+
+/**
+ * Convert supplied DATA_OBJECT to 
+ */
+VALUE cl_generic_convert_dataobject(DATA_OBJECT value)
+{
+  switch(GetType(value))
+  {
+    case INTEGER:
+      return INT2NUM( DOToInteger(value) );
+
+    case SYMBOL:
+    {
+      char *s = DOToString(value);
+      if(strcmp(s, "nil") == 0 ) return Qnil;
+
+      return ID2SYM( rb_intern(s) );
+    }
+
+    case STRING:
+      return rb_str_new_cstr( DOToString(value) );
+
+    case FLOAT:
+      return rb_float_new( DOToDouble(value) );
+
+    case MULTIFIELD:
+    {
+      VALUE ret = rb_ary_new();
+
+      int i;
+      void *mf = GetValue(value);
+      for(i = GetDOBegin(value); i <= GetDOEnd(value); i++)
+      {
+        VALUE slot = cl_generic_convert_dataobject_mf( mf, i );
+        rb_ary_push(ret, slot);
+      }
+
+      return ret;
+    }
+
+    default:
+      break;
+  }
+
+  return Qfalse;
+}
+

@@ -127,4 +127,24 @@ class Test_Fact < Test::Unit::TestCase
     assert template.destroy!
   end
 
+  def test_all
+    template = get_animal
+    template.save
+
+    a = Clips::Fact.new template, :name => 'Azor'
+    b = Clips::Fact.new template, :age => 30
+    c = Clips::Fact.new 'windows', %w(I don't like them)
+
+    assert a.save
+    assert b.save
+    assert c.save
+
+    assert_equal Clips::Fact.all, [a, b, c]
+
+    assert a.destroy!
+    assert b.destroy!
+    assert c.destroy!
+
+    assert template.destroy!
+  end
 end

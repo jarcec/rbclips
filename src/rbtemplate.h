@@ -26,6 +26,12 @@ typedef struct _cl_sTemplateCreatorWrap cl_sTemplateCreatorWrap;
 //! Clips::Template::new
 VALUE cl_template_new(int, VALUE *, VALUE);
 
+//! Clips::Template::load
+VALUE cl_template_load(VALUE, VALUE);
+
+//! Clips::Template::all
+VALUE cl_template_all(VALUE);
+
 //! Clips::Template\#initialize
 VALUE cl_template_initialize(int, VALUE *, VALUE);
 
@@ -41,7 +47,7 @@ VALUE cl_template_equal(VALUE, VALUE);
 //! Clips::Template\#save
 VALUE cl_template_save(VALUE);
 
-//! Clips::Template\#saved
+//! Clips::Template\#saved?
 VALUE cl_template_saved(VALUE);
 
 //! Clips::Template\#destroy!

@@ -10,4 +10,13 @@ extern VALUE cl_eArgError;
 //! Clips::UsageError
 extern VALUE cl_eUseError;
 
+//! Clips::InUseException
+extern VALUE cl_eInUseError;
+
+//! Clips::InternalError
+extern VALUE cl_eInternError;
+
+//! Clips::NotImplementedError
+extern VALUE cl_eNotImplError;
+
 #endif // _RBEXCEPTION_H_

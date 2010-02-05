@@ -59,6 +59,8 @@ void Init_rbclips()
   // Clips::Template
   cl_cTemplate = rb_define_class_under(cl_mClips, "Template", rb_cObject);
   rb_define_singleton_method(cl_cTemplate, "new", cl_template_new, -1);
+  rb_define_singleton_method(cl_cTemplate, "load", cl_template_load, 1);
+  rb_define_singleton_method(cl_cTemplate, "all", cl_template_all, 0);
   rb_define_method(cl_cTemplate, "initialize", cl_template_initialize, -1);
   rb_define_method(cl_cTemplate, "to_s", cl_template_to_s, 0);
   rb_define_method(cl_cTemplate, "clone", cl_template_clone, 0);
@@ -79,6 +81,7 @@ void Init_rbclips()
   // Clips::Fact
   cl_cFact = rb_define_class_under(cl_mClips, "Fact", rb_cObject);
   rb_define_singleton_method(cl_cFact, "new", cl_fact_new, -1);
+  rb_define_singleton_method(cl_cFact, "all", cl_fact_all, 0);
   rb_define_method(cl_cFact, "initialize", cl_fact_initialize, 2);
   rb_define_method(cl_cFact, "to_s", cl_fact_to_s, 0);
   rb_define_method(cl_cFact, "clone", cl_fact_clone, 0);
@@ -95,6 +98,9 @@ void Init_rbclips()
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
   cl_eArgError = rb_define_class_under(cl_mClips, "ArgumentError", cl_eException);
   cl_eUseError = rb_define_class_under(cl_mClips, "UsageError", cl_eException);
+  cl_eInUseError = rb_define_class_under(cl_mClips, "InUseError", cl_eException);
+  cl_eInternError = rb_define_class_under(cl_mClips, "InternalError", cl_eException);
+  cl_eNotImplError = rb_define_class_under(cl_mClips, "NotImplementedError", cl_eException);
 
   // Initialization of internal list of environments
   cl_vEnvironments = rb_ary_new();
@@ -118,6 +124,7 @@ void Init_rbclips()
   cl_vIds.ordered             = rb_intern("ordered?");
   cl_vIds.saved               = rb_intern("saved?");
   cl_vIds.clone               = rb_intern("clone");
+  cl_vIds.load                = rb_intern("load");
   cl_vIds.type                = rb_intern("type");
   cl_vIds.values              = rb_intern("values");
   cl_vIds.range               = rb_intern("range");

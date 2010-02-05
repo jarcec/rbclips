@@ -14,6 +14,9 @@ typedef struct _cl_sFactWrap cl_sFactWrap;
 //! Clips::Fact::new
 VALUE cl_fact_new(int, VALUE *, VALUE);
 
+//! Clips::Fact::all
+VALUE cl_fact_all(VALUE);
+
 //! Clips::Fact\#initialize
 VALUE cl_fact_initialize(VALUE, VALUE, VALUE);
 

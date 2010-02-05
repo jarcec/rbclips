@@ -72,7 +72,7 @@ Matz chtìl od zaèátku vytvoøit jazyk, ve ktém by ho bavilo programovat\cite{webM
  \item \verb|puts "Ahoj" if name == "jarcec"| Vypi¹ ahoj pokud se jmenuju jarcec
 \end{description}
 
-Závorky oddìlující název metody od jejich parametrù jsou v místech kde to není syntakticky nejednoznaèné volitelné, mohu tedy zavolat metodu \verb|naDruhou| s parametrem 5 tak jak je zvykem v Javì/C/C++ \verb|naDruhou(5)| nebo na mnoha místech více èitelnìji \verb|naDruhou 5|. Volání metod bez závorek vypadá na mnoha místech jako klíèové slovo, které deklaruje spí¹e ne¾ volání metody - na první pohled se mù¾e jevit spí¹e jako matoucí, ale uvedu pøíklad z webového frameworku Ruby on Rails (dále v textu RoR):
+Závorky oddìlující název metody od jejich parametrù jsou v místech kde to není syntakticky nejednoznaèné volitelné, mohu tedy zavolat metodu \verb|naDruhou| s parametrem 5 tak jak je zvykem v Javì/C/C++ \verb|naDruhou(5)| nebo na mnoha místech více èitelnìji \verb|naDruhou 5|. Volání metod bez závorek vypadá na mnoha místech jako klíèové slovo, které deklaruje spí¹e ne¾ volání metody - na první pohled se mù¾e jevit spí¹e jako matoucí, ale uvedu pøíklad z webového frameworku Ruby on Rails (dále v textu pou¾ívám zkratku RoR):
 
 \begin{verbatim}
 class Human < ActiveRecord::Base
@@ -93,6 +93,12 @@ puts naDruhou (1+2)*2
 Oba pøíklady se li¹í pouhou mezerou mezi koncem názvu metody a otevírající závorkou. V prvním pøípadì syntaktický analyzátor najde ihned za názvem metody závorku a tak ví, ¾e uvnitø jsou parametry se kterými se poté metoda zavolá a následnì vrácená hodnota se vynasobí dvìmi. Výsledek bude tedy $18$ (=$3^2  * 2$). V druhém pøíkladì syntaktický analyzátor najde za názvem metody mezeru a tedy ví, ¾e následuje seznam argumentù oddìlený èárkami (závorky okolo argumentù jsou vynechány). Na øádce se ¾ádná èárka nenachazí a tedy celý výraz $(1+2)*2$ je metodì pøedán jako argument s výsledkem $36$ (=$((1+2) * 2)^2$)!
 
 Ruby neumo¾nuje pojmenovat argumenty metody jako je mo¾né napøíklad v pythonu, ov¹em volná syntaxe pro vytvoøení hashe (asociativního pole) je hojnì vyu¾ívaná k napodobení této schopnosti - pøíkladem mù¾e být tøeba volání fiktivní metody pro hledání: \verb|find :name => 'Jarek', :surname => 'Cecho'|, kde opticky pøedávám dva parametry - name, surname. Ve skuteènosti je tento zápis reprezentován jako tvorba asociativního pole s klièi name a surname (s pøíslu¹nými hodnotami) a¾ naslednì toto pole je jako jeden argument pøedáno metodì \verb|find|. Webový framework Ruby on Rails tento pøístup pou¾ívá snad úplnì v¹ude.
+
+Podobnì jako perl umo¾nuje ruby otoèení zápisu podmínky a její akce:
+\begin{verbatim}
+if osoba == 'jarcec' then print "Ahoj Jarcec"; end
+print "Ahoj Jarcec" if osoba == 'jarcec'
+\end{verbatim}
 
 \subsubsection{Dynamiènost a otevøenost}
 Dynamiènost je velmi obsáhle slovo, zde je my¹leno jako jazyk provádìjící mnoho èinností a¾ za bìhu programu ne¾ pøi jeho pøekladu (èi v pøípadì skriptovacího jazyka zpracovávání). Vzhledem k plné objektovosti nemá moc smysl mluvit o typovosti jazyka (v¹e je objekt a ty mezi sebou komunikují pomocí zasílání zpráv).
