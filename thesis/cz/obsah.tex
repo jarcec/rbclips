@@ -25,7 +25,7 @@ Nìkolik zajímavých dat z historie\cite{webRubyHistory}:
  \item[1999] První kniha o ruby (psána japonsky)
  \item[2000] Zaèátek roz¹iøování povìdomí o ruby mimo hranice Japonska
  \item[2001] YARPC - Yet Another Ruby and Perl Conference
- \end{description}
+\end{description}
 
 V souèasné verze se udr¾ují dvì hlavní vìtve MRI - verze 1.8 a 1.9. Vìtev 1.8 je pova¾ována za stabilní a ji¾ se pouze udr¾uje (opravují se chyby), vývoj probíhá ve vìtvi 1.9.
 
@@ -220,10 +220,97 @@ Jedná se o implementaci ruby bì¾ícího uvnitø SAP NetWeaver a SAP ERP produktù, t
 Zajimavý nápad napsat co nejvìt¹í èást ruby v samotném ruby\cite{webRubinius} - jedná se o pøepsaní nezbytnì nutných èástí interpretu do C++ a zbývajícího k\'{o}du do ruby (jako napøíklad standartní tøídy - String, Array, Hash, ...). Intepret obsahuje JIT kompilátor - parsovaný skript kompiluje na místì do binárního k\'{o}du spustitelném na dané platformì a a¾ ten následnì spou¹tí, èím¾ dosahuje zrychlení oproti MRI. Díky kompilaci do nativního k\'{o}du není zatí¾en GIL a tedy umo¾nuje paralerismus. V souèasné dobì je tento projekt stále ve vývoji - nìkolik gemù a aplikací v nìm ji¾ bì¾í, ale pro reálné nasazení není pøíli¹ vhodný.
 
 \subsection{Mo¾nosti binárního roz¹íøení}
-MRI verze ruby, kterou jsme se rozhodli pou¾ít, proto¾e se jedná o referenèní implementaci ruby, je napsán v jazyce C a souèástí tarballu je i README soubor obsahující rychlý úvod do psaní binárních roz¹íøení. Jako dal¹í zdroj informací odkud jsem èerpal uvedu vyèerpávající popis ruby The Ruby programming language\cite{rubyProgrammingLanguage}.
+MRI verze ruby, kterou jsme se rozhodli pou¾ít, proto¾e se jedná o referenèní implementaci ruby, je napsán v jazyce C a souèástí distribuèního tarballu je i README soubor obsahující rychlý úvod do psaní binárních roz¹íøení. Jako dal¹í zdroj informací odkud jsem èerpal uvedu vyèerpávající popis ruby The Ruby programming language\cite{rubyProgrammingLanguage}.
 
 \subsubsection{VALUE}
-\verb|VALUE| je datový typ, který v C reprezentuje objekt. V ruby je v¹e objekt, tak¾e se tento datový typ pou¾ívá v¹ude - ka¾dá funkce, která je volatelná z ruby, vrací \verb|VALUE| jako svou návratovou hodnotu. Ve skuteènosti je se jedná o pøejmenování datového typu \verb|long|.
+\verb|VALUE| je datový typ, který v C reprezentuje ruby objekt. V ruby je v¹e objekt, tak¾e se tento datový typ pou¾ívá v¹ude - ka¾dá funkce, která je volatelná z ruby, vrací \verb|VALUE| jako svou návratovou hodnotu. Ve skuteènosti je se jedná o pøejmenování datového typu \verb|unsigned long| obsahujícího adresu struktury, která daný objekt reprezentuje - ve vìt¹inì pøípadù se tedy jedná o ukazatel. Ov¹em ne ve v¹ech pøípadech - interpret vyu¾ívá faktu, ¾e ukazatele jsou na platformì x86 v pamìti zarovnány - nejni¾¹í dva bity jsou pro ukazatele v¾dy nulové (platí pro 32 bitovou architekturu, pro 64 bitù se zarovnává na 8 bytù - tedy poslední ètyøi bity ukazatele jsou nulové). Napøíklad objekty tøídy \verb|Fixnum| (reprezentující celá èísla), nemají svou strukturu pro popis objektu jako ostatní objekty, ale jejich hodnota je zak\'{o}dována pøímo do promìné typu \verb|VALUE|, tak ¾e nultý bit (LSB, Least significant bit, nejménì významný bit) je nastaven na jednièku a ostatní bit jsou pou¾ity pro ulo¾ení vlastní hodnoty èísla. Tímto pøístup se u¹etøí dereferencování ukazatele pøi práci s celými èísly. Samozøejmì zobrazitelný rozsah èísel je tímto pøístupem omezený na 31 bitù (èíslo je ulo¾eno v pamìti jako znaménkové v dopl\v{n}kovém k\'{o}du) a proto ruby pro ''velká`` èísla (ov¹em stále celá) nabízí ruby je¹tì tøídu \verb|Bignum|, její¾ hodnota není reprezentována pøímo v míste ukazatele a proto má o dost vìt¹í rozsah. 
+
+Tato optimalizace není pou¾ita jen u celých èísel, ale také u singleton promìných významých a èasto pou¾ívaných tøíd. Singleton (èesky jsem na¹el pøeklad ''jedináèek`` nebo ''unikát``) je oznaèení situace kdy existuje právì jedna (popøípadnì maximálnì jedna) instance tøídy v celém programu. V ruby se jedná o instance tøíd \verb|TrueClass| (instance se jmenuje \verb|true|), \verb|FalseClass| (instancí je objekt \verb|false|) nebo \verb|NilClass| (instance je \verb|nil|, obdoba \verb|NULL| v jazyce C, ''prazdný`` nebo také ''¾ádný`` objekt). V¹echny tyto objekty tedy nemají reprezentující strukturu, ale jejich obsah je pøím zak'{o}dován do typu \verb|VALUE| pro rychlej¹í interpretaci skriptu.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=13.5cm,keepaspectratio]{./fig/ruby_value_diagram.png}
+  \caption{Diagram pro reprezentaci hodnoty v promìné VALUE (pøevzatý obrázek \cite{webRubyValue})}
+  \label{fig_ruby_value_diagram}
+\end{figure}
+
+\subsubsection{Pøeklad roz¹íøení}
+Binární roz¹íøení se v ruby pøekládají pomocí pøíkazu \verb|make|, tak jak je tomu u vìt¹iny ostatních projektù v prostøedí linuxu, ov¹em na rozdíl od nich není pou¾ita sada programù autotools (skript ./configure pro generaci souboru Makefile). Makefile popisující jak se má roz¹íøení pøelo¾it a nainstalovat toti¾ vygeneruje samo ruby - existuje modul \verb|mkmf| (MaKe MakeFile), pomocí jeho¾ metod programátor popí¹e na vysoké úrovní abstrakce, jak pøelo¾it jeho roz¹íøení a tento skript potom distribuuje spolu se zdrojovými k\'{o}dy. Celý sled pøíkazù pro pøeklad a instalaci poté vypadá takto:
+
+\begin{verbatim}
+ruby extconf.rb
+make
+make install
+\end{verbatim} 
+
+Modul \verb|mkmf| slou¾í hlavnì k nastavení dùle¾itých cest pro pøeklad automaticky a nezávisle na dané verzi èi distribuci operaèního systemu (cesta k hlavièkovým souborùm ruby, jeho knihovnám). Mimo této èinnosti modul nabízí metody, které umo¾nují podobné èinnosti jako skript ./configure - nalezat cesty k systémovým knihovnám, ovìøováním zda-li obsahují po¾adované symboly (funkce, promìné, ...) a dal¹í podobné funkce. Takto vytvoøený skript je samozøejmì plnìhodnotný program v ruby, lze tedy pou¾ít ve¹keré jeho mo¾nosti vèetnì pou¾ití dal¹ích ruby knihoven (lze napøíklad distribuovat pouze skript bez zdrojových k\'{o}dù, který si prvnì stáhnì nejnovìj¹í verzi projektu a a¾ poté bude pokraèovat ve své obvyklé èinnosti).
+
+\subsubsection{Symboly}
+\verb|Symbol| je jeden z  datových typù ruby, jeho¾ popis patøí spí¹e do sekce o vlastnostech, ale kvùli velké návaznosti na jeho vnitøní implementaci jsem se rozhodl zaøadit zmínku o nìm a¾ v této kapitole. \verb|Symbol| je textový øetìzec podobný øetìzcùm tøídy \verb|String|, který se pro odli¹ení pí¹e s dvojteèkou pøed vlastním øetezcem. Pokud je symbol navíc slo¾en pouze z písmen, je mo¾né vynechat i jindy povinné uvozovky èi apostrofy:
+
+\begin{verbatim}
+irb(main):001:0> :ahoj.class # => Symbol
+irb(main):002:0> :'ahoj'.class # => Symbol
+irb(main):003:0> :'ahoj, tady jezisek'.class # => Symbol
+irb(main):004:0> :'4'.class # => Symbol
+\end{verbatim} 
+
+Symboly v ruby mají nìkolik odli¹ných vlastností od tøídy \verb|String| - za prvé se jedná o objekty pouze pro ètení (nejde zmìnit hodnota, text symbolu) a druhý a podstatnìj¹í rozdíl je v rovnosti a identitì. Uvedu vysvìtlující pøíklad:
+
+\begin{verbatim}
+irb(main):001:0> 'ahoj' == 'ahoj' # => true
+irb(main):002:0> 'ahoj'.object_id == 'ahoj'.object_id # => false
+
+irb(main):003:0> :ahoj == :ahoj # => true
+irb(main):004:0> :ahoj.object_id == :ahoj.object_id # => true
+\end{verbatim} 
+
+Provádím dvì dvojice porovnání, porovnávám mezi sebou vlastnosti objektù tøíd \verb|String| a \verb|Symbol|. V prvním testu porovnávám objekty zda-li se rovnají (mají-li ted stejný obsah). Druhý test se ptá na ID (jednoznaèný identifikátor objektu) objektu a testuje tedy identitu objektu. Testy na rovnost samozøejmì v¾dy uspìjí, proto¾e jak symbol tak øetìzec obsahují stejné hodnoty. Ov¹em test na identitu v pøípadì øetìzce sel¾e, proto¾e se jedná o dva rùzné objekty (vytvoøené interpretem pøi parsování zdrojového k\'{o}du programu). Symboly jsou si ov¹em identické - jedná se o jednu instanci. Tato dùle¾itá vlastnost symboly pøedurèuje k pou¾ítí na místech konstant èí klíèù do asociativních polí - symbol s daným textem existuje v pamìti maximalnì jednou, bez ohledu na poèet výskytù v programu, co¾ vede k ¹etøení pamìtí a zvý¹ení výkonu aplikace.
+
+Na úrovní zdrojových k\'{o}du MRI se jedná o tabulku, která jednoznaènì pøevádí textovou reprezentaci symbolu na datový typ \verb|ID| (co¾ je pøedefinovaný typ \verb|unsigned long|). Ve¹kerá porovnávání na rovnost symbolu jsou tedy ve skuteènosti celoèíselná porovnání, která jsou rychlej¹í ne¾ øetìzcová, èím¾ se dosahuje dal¹í optimalizace. Symbol je podobnì jako Fixnum pøímo zak\'{o}dován do typu \verb|VALUE|, nedochazí zde tedy k dereferencování ukazatele pro získaní této èíselné hodnoty a ta je získána pouze jednou pøi tvorbì objektu.
+
+Pro práci se symboly nabízí MRI binarním roz¹íøení nìkolik funkcí:
+\begin{itemize}
+ \item \texttt{ID rb\_intern(const char *)} Pøevod libovolného øetìzce na \verb|ID|
+ \item \texttt{ID rb\_to\_id(VALUE)} Pøevede hodnotu v ruby objektu tøídy \verb|String| nebo \verb|Symbol| na \verb|ID|
+ \item \texttt{VALUE ID2SYM(ID)} Zpìtný pøevod \verb|ID| na objekt tøídy \verb|String|
+\end{itemize}
+
+\subsubsection{Shrnutí API}
+Zde jen sepí¹u seznam dle mého názoru nejdùle¾itìj¹ích funkcí, které jsou interpretem nabízeny k pou¾ití v binárních roz¹íøeních. Mým cílem není podat jejich vyèerpávající seznam, ale pouze krátké shrnutí ukazující jakým zpùsobem se roz¹íøení v ruby pí¹í a jaké mají mo¾nosti, dal¹í dostupnì funkce lze najít v dokumentaci a zdrojích zmínìných na zaèatku kapitoly.
+
+\paragraph{Vytváøení nových tøíd a metod}
+\begin{itemize}
+ \item \texttt{VALUE rb\_define\_class(const char *name, VALUE super)} Vytvoøí novou tøídu se jménem \verb|name| a tøídou \verb|super| jako rodièem.
+ \item \texttt{VALUE rb\_define\_module(const char *name)} Vytvoøí nový modul s jménem \verb|name|.
+ \item \texttt{rb\_define\_method(VALUE klass, const char *name, VALUE (*f)(), int argc)} Definuje metodu v tøídì \verb|klass| jména \verb|name|. Pøi jejím zavolání z ruby se zavolá funkce \verb|f()|, metoda jejího volání závisí na argument \verb|argc|, který je vysvìtlen ní¾e.
+ \item \texttt{rb\_define\_module\_function(VALUE m, const char *name, VALUE (*f)(), int argc)} Vytvoøí metodu v modulu s podobnou sémantikou jako pøedchozí funkce.
+ \item \texttt{rb\_define\_singleton\_method(VALUE o, const char *name, VALUE (*f)(), int argc)} Vytvoøí tøídní metodu (pøíkladem mù¾e být tøeba èasto pou¾ívaná metoda \verb|new| volaná na tøídì jako takové).
+ \item \texttt{VALUE rb\_iv\_get(VALUE obj, const char *name)} Vra\v{t}í hodnotu instaèní promìné jména \verb|name| z objektu \verb|obj|.
+ \item \texttt{VALUE rb\_iv\_set(VALUE obj, const char *name, VALUE val)} Nastaví hodnotu instaèní promìné \verb|name| objektu \verb|obj| na hodnotu \verb|val|.
+\end{itemize}
+
+Argument \verb|argc| u tìchto funkcí znamená poèet a tvar argumentù pøedaných funkci \verb|f()| pøi volání. Kladná hodnota znaèí poèet pøedavaných argumentù (maximálnì ov¹em 17, v¹echny budou typu \verb|VALUE|. V pøípadì záporné hodnoty bude funkce voláná jedním ze dvou zpùsobù - v pøípádì -1 jí bude pøedáno pole argumentù v jazyce C (\texttt{f(int argc, VALUE *argv, VALUE self)}) nebo v pøípadì -2 ji budou argument pøedaný v jednom ruby poli (\texttt{f(VALUE argv, VALUE self)}).
+
+\paragraph{Obecnì u¾iteèné funkce}
+\begin{itemize}
+ \item \texttt{VALUE rb\_funcall(VALUE recv, ID mid, int narg, ...)} Zavolá metodu \verb|mid| objektu \verb|recv|, lze také chápat jako poslání zprávy \verb|mid| objektu \verb|recv|.
+ \item \texttt{VALUE rb\_eval\_string(const char *str)} Pustí pøedaný øe\v{t}ezec jako ruby k\'{o}d v aktualním kontextu (lze z nìho tedy pøístupovat k lokálním èi instaèním promìným).
+\end{itemize}
+
+\paragraph{Makra a funkce pro práci s typy}
+\begin{itemize}
+ \item \texttt{TYPE(value)} Vrací typ objektu (pro vestavìné tøídy \verb|T_STRING|, \verb|T_ARRAY|,... pro jiné tøídy \verb|T_OBJECT|).
+ \item \texttt{FIXNUM\_P(value)} Rychlej¹í varianta pouze kontrolující zda-li se jedná o èíslo tøídy \verb|Fixnum|.
+ \item \texttt{NIL\_P(value)} Dal¹í rychlej¹í varianta, pouze zji¹tuje zda-li se jedná o \verb|nil| objekt.
+ \item \texttt{FIX2LONG(value)} Konverze celého èísla (tøídy \verb|Fixnum|) na C typ \verb|long|.
+ \item \texttt{rb\_float\_new(f)} Vytvoøení objektu reprezentujicího èíslo v plovoucí øadové èárce.
+ \item \texttt{StringValueCStr(value)} Získání øe\v{t}ezce z ruby objektu tøídy \verb|String| (tedy získání \verb|const char *| ukazatele na øe\v{t}ezec).
+\end{itemize}
+
+OPTIONAL TODO: Popis toho co to je EigenClass
+OPTIONAL TODO: Rozdily mezi moduly a tridy
+OPTIONAL TODO: Zapouzrení a moznosti jeho obejiti - private je jen doporuceni na implicitni save, objekt#instance_eval
 
 \section{Expertní systémy}
 TODO: Popsat co jsou vlastne expertni systemy, jak se s nimi pracuje, cim se lisi od ostatnich, trochu historie.
