@@ -7,6 +7,7 @@
 #include "rbconstraint.h"
 #include "rbtemplate.h"
 #include "rbfact.h"
+#include "rbrule.h"
 
 /* Definitions */
 VALUE cl_mClips;
@@ -93,6 +94,15 @@ void Init_rbclips()
   rb_define_method(cl_cFact, "destroy!", cl_fact_destroy, 0);
   rb_define_method(cl_cFact, "ordered?", cl_fact_ordered, 0);
   rb_define_method(cl_cFact, "update", cl_fact_update, 0);
+
+  // Clips::Rule
+  cl_cRule = rb_define_class_under(cl_mClips, "Rule", rb_cObject);
+  rb_define_singleton_method(cl_cRule, "new", cl_rule_new, -1);
+  rb_define_method(cl_cRule, "initialize", cl_rule_initialize, 1);
+
+  // Clips::Rule::Creator
+  cl_cRuleCreator = rb_define_class_under(cl_cRule, "Creator", rb_cObject);
+  rb_define_method(cl_cRuleCreator, "initialize", cl_rule_creator_initialize, 0);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);
