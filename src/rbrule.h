@@ -32,6 +32,12 @@ VALUE cl_rule_initialize(VALUE, VALUE);
 //! Clips::Rule\#to_s
 VALUE cl_rule_to_s(VALUE);
 
+//! Clips::Rule\#save
+VALUE cl_rule_save(VALUE);
+
+//! Clips::Rule\#destroy!
+VALUE cl_rule_destroy(VALUE);
+
 //! Clips::Rule::Creator\#initialize
 VALUE cl_rule_creator_initialize(VALUE);
 

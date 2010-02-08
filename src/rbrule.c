@@ -48,6 +48,7 @@ VALUE cl_rule_initialize(VALUE self, VALUE name)
   rb_obj_call_init(creator, 0, NULL);
   rb_yield(creator);
 
+  rb_iv_set(self, "@name", CL_TO_S(name));
 
   // Rule is too complex to hold values in memory parsed, so current design is
   // to transfer given rule to CLIPS fragment here and keep only this fragment
@@ -80,6 +81,57 @@ VALUE cl_rule_to_s(VALUE self)
 {
   VALUE str = rb_iv_get(self, "@to_s");
   return rb_str_dup(str);
+}
+
+/**
+ * Saving rule to CLIPS
+ */
+VALUE cl_rule_save(VALUE self)
+{
+  // This return false if exception was raised
+  VALUE ret = cl_base_insert_command(Qnil, rb_iv_get(self, "@to_s"));
+
+  if(TYPE(ret) != T_FALSE)
+  {
+    cl_sRuleWrap *wrap = DATA_PTR(self);
+    wrap->ptr = FindDefrule( CL_STR(rb_iv_get(self, "@name" )) );
+  }
+
+  return Qtrue;
+}
+
+/**
+ * Remove rule from CLIPS environment
+ */
+VALUE cl_rule_destroy(VALUE self)
+{
+  cl_sRuleWrap *wrap = DATA_PTR(self);
+
+  if( !wrap )
+  {
+    rb_raise(cl_eUseError, "Inner structure not found");
+    return Qnil;
+  }
+
+  if( !wrap->ptr) return Qfalse;
+ 
+  // Template cannot be in use when deleting
+  if( !IsDefruleDeletable(wrap->ptr) )
+  {
+    rb_raise(cl_eInUseError, "Rule cannot be deleted right now");
+    return Qnil;
+  }
+
+  // Return
+  VALUE ret = Qfalse;
+
+  if( Undefrule(wrap->ptr) )
+    ret = Qtrue;
+
+  // It doesn't matter how the undeftemplate ends - the template is not in CLIPS anyway...
+  wrap->ptr = NULL;
+
+  return ret;
 }
 
 /**

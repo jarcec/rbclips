@@ -18,4 +18,15 @@ class Test_Rule < Test::Unit::TestCase
     end  
     assert_equal rule.to_s, "(defrule animal-mammal (animal ?a) (child-of ?a ?b) => (assert (animal ?b)))"
   end
+
+  def test_save_destroy!
+    rule = Clips::Rule.new 'animal-mammal' do |r|
+      r.pattern "(animals ?a)"
+      r.pattern "(child-of ?a ?b)"
+      r.rhs "(assert (animals ?b))"
+    end  
+    assert rule.save
+    assert rule.destroy!
+    assert !rule.destroy!
+  end
 end
