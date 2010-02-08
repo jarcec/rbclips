@@ -99,10 +99,13 @@ void Init_rbclips()
   cl_cRule = rb_define_class_under(cl_mClips, "Rule", rb_cObject);
   rb_define_singleton_method(cl_cRule, "new", cl_rule_new, -1);
   rb_define_method(cl_cRule, "initialize", cl_rule_initialize, 1);
+  rb_define_method(cl_cRule, "to_s", cl_rule_to_s, 0);
 
   // Clips::Rule::Creator
   cl_cRuleCreator = rb_define_class_under(cl_cRule, "Creator", rb_cObject);
   rb_define_method(cl_cRuleCreator, "initialize", cl_rule_creator_initialize, 0);
+  rb_define_method(cl_cRuleCreator, "pattern", cl_rule_creator_pattern, -1);
+  rb_define_method(cl_cRuleCreator, "rhs", cl_rule_creator_rhs, 1);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);

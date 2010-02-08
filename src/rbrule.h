@@ -29,7 +29,17 @@ VALUE cl_rule_new(int, VALUE *, VALUE);
 //! Clips::Rule\#initialize
 VALUE cl_rule_initialize(VALUE, VALUE);
 
+//! Clips::Rule\#to_s
+VALUE cl_rule_to_s(VALUE);
+
 //! Clips::Rule::Creator\#initialize
 VALUE cl_rule_creator_initialize(VALUE);
+
+//! Clips::Rule::Creator\#pattern
+VALUE cl_rule_creator_pattern(int, VALUE *, VALUE);
+
+//! Clips::Rule::Creator\#rhs
+VALUE cl_rule_creator_rhs(VALUE, VALUE);
+
 
 #endif // _RBRULE_H_

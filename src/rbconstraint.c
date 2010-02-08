@@ -107,7 +107,7 @@ int cl_constraint_initialize_setup_variable(VALUE key, VALUE value, VALUE self)
       case T_ARRAY:
           {
             long len = RARRAY_LEN(value);
-            int i;
+            long i;
             for(i = 0; i < len; i++)
               if( !cl_constraint_check_clipstype( rb_ary_entry(value, i), false ) )
               {

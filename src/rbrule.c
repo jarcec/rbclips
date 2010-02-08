@@ -45,9 +45,41 @@ VALUE cl_rule_initialize(VALUE self, VALUE name)
   wrap->ptr = self;
 
   VALUE creator = Data_Wrap_Struct(cl_cRuleCreator, NULL, free, wrap);
+  rb_obj_call_init(creator, 0, NULL);
   rb_yield(creator);
 
+
+  // Rule is too complex to hold values in memory parsed, so current design is
+  // to transfer given rule to CLIPS fragment here and keep only this fragment
+  long len, i;
+  VALUE side;
+
+  VALUE rule = rb_sprintf("(defrule %s", CL_STR(name));
+
+  side = rb_iv_get(creator, "@lhs");
+  len = RARRAY_LEN(side);
+  for(i = 0; i < len; i++)
+    rb_str_catf(rule, " %s", CL_STR(rb_ary_entry(side, i)));
+
+  rb_str_cat2(rule, " =>");
+
+  side = rb_iv_get(creator, "@rhs");
+  len = RARRAY_LEN(side);
+  for(i = 0; i < len; i++)
+    rb_str_catf(rule, " %s", CL_STR(rb_ary_entry(side, i)));
+
+  rb_str_cat2(rule, ")");
+  rb_iv_set(self, "@to_s", rule);
   return Qtrue;
+}
+
+/**
+ * Return string representation of a rule, currently return only @to_s
+ */
+VALUE cl_rule_to_s(VALUE self)
+{
+  VALUE str = rb_iv_get(self, "@to_s");
+  return rb_str_dup(str);
 }
 
 /**
@@ -59,9 +91,52 @@ VALUE cl_rule_creator_initialize(VALUE self)
   cl_sRuleCreatorWrap *wrap = DATA_PTR(self);
   if( !wrap || !wrap->ptr )
   {
-      rb_raise(cl_eUseError, "Direct creation of Clips::Rule::Creator is prohibited.");
-      return Qnil;
+    rb_raise(cl_eUseError, "Direct creation of Clips::Rule::Creator is prohibited.");
+    return Qnil;
   }
 
+  // Creating internal variables
+  rb_iv_set(self, "@lhs", rb_ary_new());
+  rb_iv_set(self, "@rhs", rb_ary_new());
+
+  return Qtrue;
+}
+
+/**
+ * Declare searching pattern of the rule (LHS)
+ */
+VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
+{
+  if(argc == 0)
+  {
+    rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#pattern without arguments is prohibited. See manual for all allowed posibilities.");
+    return Qnil;
+  }
+
+  if(argc == 1 && TYPE(argv[0]) == T_STRING)
+  {
+    VALUE lhs = rb_iv_get(self, "@lhs");
+    rb_ary_push(lhs, argv[0]);
+    return Qtrue;
+  }
+
+  rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#pattern with unknown parameter set. See manual for all allowed posibilities.");
+  return Qnil;
+}
+
+/**
+ * Direct inserting of CLIPS fragment into right hand side of a rule
+ */
+VALUE cl_rule_creator_rhs(VALUE self, VALUE str)
+{
+  if(TYPE(str) != T_STRING)
+  {
+    rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#rhs expect string parameter, but given '%s' have class '%s'.", CL_STR(str), CL_STR_CLASS(str));
+    return Qnil;
+  }
+  
+  VALUE rhs = rb_iv_get(self, "@rhs");
+  rb_ary_push(rhs, str);
+  
   return Qtrue;
 }
