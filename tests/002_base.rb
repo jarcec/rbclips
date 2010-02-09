@@ -20,4 +20,13 @@ class Test_Base < Test::Unit::TestCase
     assert_raise(Clips::Exception) { Clips::Base.insert_command("(microsoft on mars)") }
     assert_raise(Clips::Exception) { Clips::Base.insert_command("(microsoft on mars") }
   end
+
+  def test_run
+    assert_raise(Clips::ArgumentError)  { Clips::Base.run "ahoj" }
+    assert_raise(Clips::ArgumentError)  { Clips::Base.run 3.5  }
+
+    assert_equal 0, Clips::Base.run(1)
+    assert_equal 0, Clips::Base.run(-1)
+    assert_equal 0, Clips::Base.run
+  end
 end

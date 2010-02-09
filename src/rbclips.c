@@ -25,6 +25,7 @@ void Init_rbclips()
   // Clips::Base
   cl_cBase = rb_define_class_under(cl_mClips, "Base", rb_cObject);
   rb_define_singleton_method(cl_cBase, "insert_command", cl_base_insert_command, 1);
+  rb_define_singleton_method(cl_cBase, "run", cl_base_run, -1);
 
   // Clips::Environment
   cl_cEnvironment = rb_define_class_under(cl_mClips, "Environment", rb_cObject);

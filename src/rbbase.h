@@ -9,5 +9,8 @@ extern VALUE cl_cBase;
 //! Base::insert_command
 VALUE cl_base_insert_command(VALUE, VALUE);
 
+//! Base::run
+VALUE cl_base_run(int, VALUE *, VALUE);
+
 #endif // _RBBASE_H_
 

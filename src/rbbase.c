@@ -49,3 +49,23 @@ VALUE cl_base_insert_command(VALUE self, VALUE cmd)
   // Returning output (if any)
   return cl_router_get_content_d();
 }
+
+/**
+ * Start firing rules
+ */
+VALUE cl_base_run(int argc, VALUE *argv, VALUE self)
+{
+  if( !(argc == 0 || (argc == 1 && (TYPE(argv[0]) == T_FIXNUM || TYPE(argv[0]) == T_BIGNUM))) )
+  {
+    rb_raise(cl_eArgError, "Base::run accept only Fixnum or Bignum as parametr!");
+    return Qnil;
+  }
+
+  long long count = -1;
+  if(argc == 1)
+    count = NUM2LONG(argv[0]);
+
+  count = Run(count);
+
+  return INT2NUM(count);
+}
