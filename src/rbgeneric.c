@@ -27,6 +27,30 @@ const char const * rb_generic_clipstype_str(ID id)
   return "";
 }
 
+
+/**
+ * Convert given variable into string and do conversion if needed
+ */
+const char const * rb_generic_slot_value(VALUE value)
+{
+  if(TYPE(value) == T_SYMBOL)
+  {
+    // Check for reserved values
+    ID sym = rb_to_id(value);
+    if(sym == cl_vIds.one) return "?";
+    if(sym == cl_vIds.all) return "$?";
+
+    // Conversion to variable
+    VALUE pom = rb_str_new_cstr("?");
+    rb_str_catf(pom, "%s", CL_STR(value));
+
+    return CL_STR(pom);
+  }
+
+  // Default case
+  return CL_STR_ESCAPE(value);
+}
+
 /**
  * Check if given value is valid CLIPS symbol (don't have spaces)
  */

@@ -44,6 +44,9 @@ VALUE cl_rule_creator_initialize(VALUE);
 //! Clips::Rule::Creator\#pattern
 VALUE cl_rule_creator_pattern(int, VALUE *, VALUE);
 
+//! Clips::Rule::Creator\#retract
+VALUE cl_rule_creator_retract(int, VALUE *, VALUE);
+
 //! Clips::Rule::Creator\#rhs
 VALUE cl_rule_creator_rhs(VALUE, VALUE);
 

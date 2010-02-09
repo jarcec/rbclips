@@ -107,6 +107,7 @@ void Init_rbclips()
   cl_cRuleCreator = rb_define_class_under(cl_cRule, "Creator", rb_cObject);
   rb_define_method(cl_cRuleCreator, "initialize", cl_rule_creator_initialize, 0);
   rb_define_method(cl_cRuleCreator, "pattern", cl_rule_creator_pattern, -1);
+  rb_define_method(cl_cRuleCreator, "retract", cl_rule_creator_retract, -1);
   rb_define_method(cl_cRuleCreator, "rhs", cl_rule_creator_rhs, 1);
 
   // Exception classes
@@ -128,6 +129,8 @@ void Init_rbclips()
   // Creating symbol list
   cl_vIds.any                 = rb_intern("any");
   cl_vIds.unknown             = rb_intern("unknown");
+  cl_vIds.one                 = rb_intern("one");
+  cl_vIds.all                 = rb_intern("all");
   cl_vIds.to_s                = rb_intern("to_s");
   cl_vIds.to_sym              = rb_intern("to_sym");
   cl_vIds.begin               = rb_intern("begin");

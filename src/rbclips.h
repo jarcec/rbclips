@@ -10,6 +10,8 @@ struct _cl_sIds
   // General
   ID any;
   ID unknown;
+  ID one;
+  ID all;
 
   // Ruby methods
   ID to_s;

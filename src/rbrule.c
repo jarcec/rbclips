@@ -11,6 +11,9 @@
 VALUE cl_cRule;
 VALUE cl_cRuleCreator;
 
+//! Transform array of params representing ordered fact into searchable form
+VALUE cl_rule_creator_transform_ordered_fact(int, VALUE *);
+
 /**
  * Creating new object - just wrapping structrue
  */
@@ -159,21 +162,36 @@ VALUE cl_rule_creator_initialize(VALUE self)
  */
 VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
 {
+  VALUE lhs = rb_iv_get(self, "@lhs");
+
   if(argc == 0)
   {
     rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#pattern without arguments is prohibited. See manual for all allowed posibilities.");
     return Qnil;
   }
 
+  if(argc > 1 && (TYPE(argv[0]) == T_STRING || TYPE(argv[0]) == T_SYMBOL))
+  {
+    // Assume we're searching for ordered fact
+    rb_ary_push(lhs, cl_rule_creator_transform_ordered_fact(argc, argv) );
+    return Qtrue;
+  }
+
   if(argc == 1 && TYPE(argv[0]) == T_STRING)
   {
-    VALUE lhs = rb_iv_get(self, "@lhs");
     rb_ary_push(lhs, argv[0]);
     return Qtrue;
   }
 
   rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#pattern with unknown parameter set. See manual for all allowed posibilities.");
   return Qnil;
+}
+
+/**
+ * Declare searching and destroying pattern
+ */
+VALUE cl_rule_creator_retract(int argc, VALUE *argv, VALUE self)
+{
 }
 
 /**
@@ -191,4 +209,20 @@ VALUE cl_rule_creator_rhs(VALUE self, VALUE str)
   rb_ary_push(rhs, str);
   
   return Qtrue;
+}
+
+/**
+ * Helper: Transform given array of parameters into searchable pattern
+ * for left hand side of the rule definition.
+ */
+VALUE cl_rule_creator_transform_ordered_fact(int argc, VALUE *argv)
+{
+  VALUE ret = rb_sprintf("(%s", CL_STR(argv[0]));
+
+  int i;
+  for(i = 1; i < argc; i++)
+    rb_str_catf(ret, " %s", rb_generic_slot_value(argv[i]));
+
+  rb_str_cat2(ret, ")");
+  return ret;
 }
