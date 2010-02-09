@@ -18,6 +18,7 @@ typedef struct _cl_sRuleWrap cl_sRuleWrap;
 struct _cl_sRuleCreatorWrap
 {
   VALUE ptr;
+  unsigned counter;
 };
 typedef struct _cl_sRuleCreatorWrap cl_sRuleCreatorWrap;
 

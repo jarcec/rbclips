@@ -17,7 +17,9 @@ class Test_Rule < Test::Unit::TestCase
       r.rhs "(assert (animal ?b))"
     end  
     assert_equal rule.to_s, "(defrule animal-mammal (animal ?a) (child-of ?a ?b) => (assert (animal ?b)))"
+  end
 
+  def test_creator_patter
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.pattern 'animal', :a
       r.rhs '(assert (animal ?a))'
@@ -38,6 +40,19 @@ class Test_Rule < Test::Unit::TestCase
       r.pattern 'animal', 1, "ahoj", 2.3
     end
     assert_equal rule.to_s, '(defrule animal-mammal (animal 1 "ahoj" 2.3) =>)'
+  end
+
+  def test_creator_retract
+    rule = Clips::Rule.new 'animal-mammal' do |r|
+      r.retract 'animal', :a
+    end
+    assert_equal rule.to_s, '(defrule animal-mammal ?rbclips-0 <- (animal ?a) => (retract ?rbclips-0))'
+    rule = Clips::Rule.new 'animal-mammal' do |r|
+      r.retract 'animal', :a
+      r.retract 'mammal', :a
+      r.retract 'child-of', :a
+    end
+    assert_equal rule.to_s, '(defrule animal-mammal ?rbclips-0 <- (animal ?a) ?rbclips-1 <- (mammal ?a) ?rbclips-2 <- (child-of ?a) => (retract ?rbclips-0) (retract ?rbclips-1) (retract ?rbclips-2))'
   end
 
   def test_save_destroy!

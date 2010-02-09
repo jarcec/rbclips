@@ -192,6 +192,36 @@ VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
  */
 VALUE cl_rule_creator_retract(int argc, VALUE *argv, VALUE self)
 {
+  cl_sRuleCreatorWrap *wrap = DATA_PTR(self);
+  if( !wrap )
+  {
+    rb_raise(cl_eUseError, "Inner structure not found");
+    return Qnil;
+  }
+
+  VALUE lhs = rb_iv_get(self, "@lhs");
+  VALUE rhs = rb_iv_get(self, "@rhs");
+
+  if(argc == 0)
+  {  
+    rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#retract without arguments is prohibited. See manual for all allowed posibilities.");
+    return Qnil;
+  }
+
+  if(argc > 1 && (TYPE(argv[0]) == T_STRING || TYPE(argv[0]) == T_SYMBOL))
+  {
+    // Assume we're searching for ordered fact
+    VALUE pom = rb_sprintf("?rbclips-%u <- %s", wrap->counter, CL_STR(cl_rule_creator_transform_ordered_fact(argc, argv)));
+
+    rb_ary_push(lhs, pom);
+    rb_ary_push(rhs, rb_sprintf("(retract ?rbclips-%u)", wrap->counter));
+    
+    wrap->counter++;
+    return Qtrue;
+  }
+
+  rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#retract with unknown parameter set. See manual for all allowed posibilities.");
+  return Qnil;
 }
 
 /**
