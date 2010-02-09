@@ -29,23 +29,23 @@ class Test_Rule < Test::Unit::TestCase
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.pattern 'animal', :one
     end
-    assert_equal rule.to_s, "(defrule animal-mammal (animal ?) =>)"
+    assert_equal rule.to_s, "(defrule animal-mammal (animal ?) => )"
 
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.pattern 'animal', :all
     end
-    assert_equal rule.to_s, "(defrule animal-mammal (animal $?) =>)"
+    assert_equal rule.to_s, "(defrule animal-mammal (animal $?) => )"
 
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.pattern 'animal', 1, "ahoj", 2.3
     end
-    assert_equal rule.to_s, '(defrule animal-mammal (animal 1 "ahoj" 2.3) =>)'
+    assert_equal rule.to_s, '(defrule animal-mammal (animal 1 "ahoj" 2.3) => )'
 
     t = Clips::Template.new :name => 'human', :slots => %w(age name)
     rule = Clips::Rule.new 'humanize' do |r|
       r.pattern t, :age => :a, :name => 'jarcec'
     end
-    assert_equal rule.to_s, '(defrule humanize (human (age ?a) (name "jarcec")) =>)'
+    assert_equal rule.to_s, '(defrule humanize (human (age ?a) (name "jarcec")) => )'
 
     assert_raise(Clips::ArgumentError)  do
       Clips::Rule.new 'human' do |r|

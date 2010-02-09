@@ -62,22 +62,16 @@ VALUE cl_rule_initialize(VALUE self, VALUE name)
 
   // Rule is too complex to hold values in memory parsed, so current design is
   // to transfer given rule to CLIPS fragment here and keep only this fragment
-  long len, i;
+  VALUE rule = rb_sprintf("(defrule %s", CL_STR(name));
   VALUE side;
 
-  VALUE rule = rb_sprintf("(defrule %s", CL_STR(name));
-
   side = rb_iv_get(creator, "@lhs");
-  len = RARRAY_LEN(side);
-  for(i = 0; i < len; i++)
-    rb_str_catf(rule, " %s", CL_STR(rb_ary_entry(side, i)));
+  rb_str_catf(rule, " %s", CL_STR(rb_ary_join(side, rb_str_new_cstr(" "))));
 
   rb_str_cat2(rule, " =>");
 
   side = rb_iv_get(creator, "@rhs");
-  len = RARRAY_LEN(side);
-  for(i = 0; i < len; i++)
-    rb_str_catf(rule, " %s", CL_STR(rb_ary_entry(side, i)));
+  rb_str_catf(rule, " %s", CL_STR(rb_ary_join(side, rb_str_new_cstr(" "))));
 
   rb_str_cat2(rule, ")");
   rb_iv_set(self, "@to_s", rule);
