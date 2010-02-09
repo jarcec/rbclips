@@ -40,6 +40,18 @@ class Test_Rule < Test::Unit::TestCase
       r.pattern 'animal', 1, "ahoj", 2.3
     end
     assert_equal rule.to_s, '(defrule animal-mammal (animal 1 "ahoj" 2.3) =>)'
+
+    t = Clips::Template.new :name => 'human', :slots => %w(age name)
+    rule = Clips::Rule.new 'humanize' do |r|
+      r.pattern t, :age => :a, :name => 'jarcec'
+    end
+    assert_equal rule.to_s, '(defrule humanize (human (age ?a) (name "jarcec")) =>)'
+
+    assert_raise(Clips::ArgumentError)  do
+      Clips::Rule.new 'human' do |r|
+        r.pattern t, :nick => 'jarcec'
+      end
+    end
   end
 
   def test_creator_retract
@@ -47,12 +59,20 @@ class Test_Rule < Test::Unit::TestCase
       r.retract 'animal', :a
     end
     assert_equal rule.to_s, '(defrule animal-mammal ?rbclips-0 <- (animal ?a) => (retract ?rbclips-0))'
+
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.retract 'animal', :a
       r.retract 'mammal', :a
       r.retract 'child-of', :a
     end
     assert_equal rule.to_s, '(defrule animal-mammal ?rbclips-0 <- (animal ?a) ?rbclips-1 <- (mammal ?a) ?rbclips-2 <- (child-of ?a) => (retract ?rbclips-0) (retract ?rbclips-1) (retract ?rbclips-2))'
+
+    t = Clips::Template.new :name => 'human', :slots => %w(age name)
+    rule = Clips::Rule.new 'humanize' do |r|
+      r.retract t, :age => :a, :name => 'jarcec'
+    end
+    assert_equal rule.to_s, '(defrule humanize ?rbclips-0 <- (human (age ?a) (name "jarcec")) => (retract ?rbclips-0))'
+
   end
 
   def test_save_destroy!

@@ -6,6 +6,7 @@
 #include "rbgeneric.h"
 #include "rbexception.h"
 #include "rbbase.h"
+#include "rbtemplate.h"
 
 /* Definitions */
 VALUE cl_cRule;
@@ -13,6 +14,12 @@ VALUE cl_cRuleCreator;
 
 //! Transform array of params representing ordered fact into searchable form
 VALUE cl_rule_creator_transform_ordered_fact(int, VALUE *);
+
+//! Transform parameters representing nonordered fact into searchable form
+VALUE cl_rule_creator_transform_nonordered_fact(VALUE, VALUE);
+
+//! Foreach method for transforming nonordered fact into searchable form
+int cl_rule_creator_transform_nonordered_fact_each(VALUE, VALUE, VALUE);
 
 /**
  * Creating new object - just wrapping structrue
@@ -170,6 +177,12 @@ VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
     return Qnil;
   }
 
+  if(argc == 2 && rb_obj_class(argv[0]) == cl_cTemplate && TYPE(argv[1]) == T_HASH)
+  {
+    rb_ary_push(lhs, cl_rule_creator_transform_nonordered_fact(argv[0], argv[1]) );
+    return Qtrue;
+  }
+
   if(argc > 1 && (TYPE(argv[0]) == T_STRING || TYPE(argv[0]) == T_SYMBOL))
   {
     // Assume we're searching for ordered fact
@@ -206,6 +219,18 @@ VALUE cl_rule_creator_retract(int argc, VALUE *argv, VALUE self)
   {  
     rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#retract without arguments is prohibited. See manual for all allowed posibilities.");
     return Qnil;
+  }
+
+  if(argc == 2 && rb_obj_class(argv[0]) == cl_cTemplate && TYPE(argv[1]) == T_HASH)
+  {
+    VALUE pom = rb_sprintf("?rbclips-%u <- %s", wrap->counter, CL_STR(cl_rule_creator_transform_nonordered_fact(argv[0], argv[1])));
+
+    rb_ary_push(lhs, pom);
+    rb_ary_push(rhs, rb_sprintf("(retract ?rbclips-%u)", wrap->counter));
+
+    wrap->counter++;
+    return Qtrue;
+    return Qtrue;
   }
 
   if(argc > 1 && (TYPE(argv[0]) == T_STRING || TYPE(argv[0]) == T_SYMBOL))
@@ -255,4 +280,43 @@ VALUE cl_rule_creator_transform_ordered_fact(int argc, VALUE *argv)
 
   rb_str_cat2(ret, ")");
   return ret;
+}
+
+/**
+ * Helper: Transform two arguments into searchable pattern
+ * for left hand side of rule definition.
+ */
+VALUE cl_rule_creator_transform_nonordered_fact(VALUE template, VALUE slots)
+{
+  VALUE t = rb_iv_get(template, "@name");
+  VALUE tslots = rb_iv_get(template, "@slots");
+  VALUE ret = rb_sprintf("(%s", CL_STR(t));
+
+  VALUE ary = rb_ary_new();
+  rb_ary_push(ary, tslots);
+  rb_ary_push(ary, ret);
+
+  rb_hash_foreach(slots, cl_rule_creator_transform_nonordered_fact_each, ary);
+
+  rb_str_cat2(ret, ")");
+  return ret;
+}
+
+/**
+ * Helper: Foreach function for transforming
+ */
+int cl_rule_creator_transform_nonordered_fact_each(VALUE key, VALUE value, VALUE ar)
+{
+  VALUE tslots =    rb_ary_entry(ar, 0);
+  VALUE ret =       rb_ary_entry(ar, 1);
+
+  VALUE c  = rb_hash_lookup(tslots, key);
+  if(NIL_P(c))
+  {
+    rb_raise(cl_eArgError, "Given slot '%s' don't exists.", CL_STR(key));
+    return ST_STOP;
+  }
+
+  rb_str_catf(ret, " (%s %s)", CL_STR(key), rb_generic_slot_value(value));
+  return ST_CONTINUE;
 }
