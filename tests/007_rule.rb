@@ -41,6 +41,11 @@ class Test_Rule < Test::Unit::TestCase
     end
     assert_equal rule.to_s, '(defrule animal-mammal (animal 1 "ahoj" 2.3) => )'
 
+    assert_raise(Clips::UsageError)  do
+      Clips::Rule.new 'x' do |r|
+      end
+    end
+
     t = Clips::Template.new :name => 'human', :slots => %w(age name)
     rule = Clips::Rule.new 'humanize' do |r|
       r.pattern t, :age => :a, :name => 'jarcec'
@@ -72,7 +77,36 @@ class Test_Rule < Test::Unit::TestCase
       r.retract t, :age => :a, :name => 'jarcec'
     end
     assert_equal rule.to_s, '(defrule humanize ?rbclips-0 <- (human (age ?a) (name "jarcec")) => (retract ?rbclips-0))'
+  end
 
+  def test_creator_or_and_not
+    rule = Clips::Rule.new 'x' do |r|
+      r.retract 'a', :a
+      r.or do |o|
+        o.retract 'b', :a
+        o.retract 'c', :a
+      end
+    end
+    assert_equal rule.to_s, '(defrule x ?rbclips-0 <- (a ?a) (or ?rbclips-1 <- (b ?a) ?rbclips-2 <- (c ?a)) => (retract ?rbclips-0) (retract ?rbclips-1) (retract ?rbclips-2))'
+
+    rule = Clips::Rule.new 'x' do |r|
+      r.retract 'a', :a
+      r.or do |o|
+        o.retract 'b', :a
+        o.and do |a|
+          a.retract 'c', :a
+          a.retract 'd', :a
+        end
+      end
+      r.retract 'd', :a
+      r.not {|n| n.retract 'e', :a }
+    end
+
+    assert_raise(Clips::UsageError)  do
+      Clips::Rule.new 'x' do |r|
+        r.or {|o| }
+      end
+    end
   end
 
   def test_save_destroy!

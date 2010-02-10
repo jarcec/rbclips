@@ -21,6 +21,9 @@ VALUE cl_rule_creator_transform_nonordered_fact(VALUE, VALUE);
 //! Foreach method for transforming nonordered fact into searchable form
 int cl_rule_creator_transform_nonordered_fact_each(VALUE, VALUE, VALUE);
 
+//! Generic and/or/not method for shared functionality
+VALUE cl_rule_creator_generic_andornot(VALUE, char *);
+
 /**
  * Creating new object - just wrapping structrue
  */
@@ -66,6 +69,12 @@ VALUE cl_rule_initialize(VALUE self, VALUE name)
   VALUE side;
 
   side = rb_iv_get(creator, "@lhs");
+  long size   = NUM2LONG(rb_funcall(side, cl_vIds.size, 0));
+  if(size == 0)
+  {
+    rb_raise(cl_eUseError, "Clips::Rule::new called without specifiyng any patterns.");
+    return Qnil;
+  }
   rb_str_catf(rule, " %s", CL_STR(rb_ary_join(side, rb_str_new_cstr(" "))));
 
   rb_str_cat2(rule, " =>");
@@ -313,4 +322,81 @@ int cl_rule_creator_transform_nonordered_fact_each(VALUE key, VALUE value, VALUE
 
   rb_str_catf(ret, " (%s %s)", CL_STR(key), rb_generic_slot_value(value));
   return ST_CONTINUE;
+}
+
+/**
+ * Create OR block in LHS of a rule
+ */
+VALUE cl_rule_creator_or(VALUE self)
+{
+  return cl_rule_creator_generic_andornot(self, "or");
+}
+
+/**
+ * Create AND block in LHS of a rule
+ */
+VALUE cl_rule_creator_and(VALUE self)
+{
+  return cl_rule_creator_generic_andornot(self, "and");
+}
+
+/**
+ * Create NOT block in LHS of a rule
+ */
+VALUE cl_rule_creator_not(VALUE self)
+{
+  return cl_rule_creator_generic_andornot(self, "not");
+}
+
+/**
+ * Common code for 'or', 'and' and 'not' blocks
+ */
+VALUE cl_rule_creator_generic_andornot(VALUE self, char *func)
+{
+  cl_sRuleCreatorWrap *wrap = DATA_PTR(self);
+  if( !wrap )
+  {
+    rb_raise(cl_eUseError, "Inner structure not found");
+    return Qnil;
+  }
+
+  if( !rb_block_given_p() )
+  {
+    rb_raise(cl_eArgError, "Clips::Rule#%s called without block!", func);
+    return Qnil;
+  }
+
+  // Creating new Creator object
+  cl_sRuleCreatorWrap *newWrap = calloc(1, sizeof(*newWrap));
+  newWrap->ptr = self;
+  newWrap->counter = wrap->counter;
+
+  VALUE creator = Data_Wrap_Struct(cl_cRuleCreator, NULL, free, newWrap);
+  rb_obj_call_init(creator, 0, NULL);
+
+  // Calling creator to build new block
+  rb_yield(creator);
+
+  // Proceeding results and saving in current block
+  VALUE side;
+  VALUE rhs = rb_iv_get(self, "@rhs");
+  VALUE lhs = rb_iv_get(self, "@lhs");
+
+  // LHS
+  side = rb_iv_get(creator, "@lhs");
+  long size   = NUM2LONG(rb_funcall(side, cl_vIds.size, 0));
+  if(size == 0)
+  {
+    rb_raise(cl_eUseError, "Clips::Rule#%s called without specifiyng any patterns.", func);
+    return Qnil;
+  }
+  rb_ary_push(lhs, rb_sprintf("(%s %s)",func,  CL_STR(rb_ary_join(side, rb_str_new_cstr(" ")))));
+
+  // RHS
+  side = rb_iv_get(creator, "@rhs");
+  rb_ary_push(rhs, rb_sprintf("%s", CL_STR(rb_ary_join(side, rb_str_new_cstr(" ")))));
+
+  // We probably change inner counter, so move the value from outside block to inner block
+  wrap->counter = newWrap->counter;
+  return Qtrue;
 }
