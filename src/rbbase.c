@@ -69,3 +69,13 @@ VALUE cl_base_run(int argc, VALUE *argv, VALUE self)
 
   return INT2NUM(count);
 }
+
+/**
+ * Call CLIPS function of same name
+ */
+VALUE cl_base_reset(VALUE self)
+{
+  Reset();
+  return Qnil;
+}
+
