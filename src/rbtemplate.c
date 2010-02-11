@@ -13,11 +13,14 @@
 VALUE cl_cTemplate;
 VALUE cl_cTemplateCreator;
 
-//! Creating new Constraint object using block
+//! Creating new Template object using block
 VALUE cl_template_initialize_block(VALUE, VALUE);
 
-//! Creating new Constraint object using hash
+//! Creating new Template object using hash
 VALUE cl_template_initialize_hash(VALUE, VALUE);
+
+//! Creating new Template object using String and hash or array
+VALUE cl_template_initialize_string(VALUE, VALUE, VALUE);
 
 //! Go throw configuring hash with slots
 int cl_template_initialize_hash_each(VALUE, VALUE, VALUE);
@@ -117,7 +120,12 @@ VALUE cl_template_initialize(int argc, VALUE *argv, VALUE self)
     return cl_template_initialize_hash(self, argv[0]);
   }
 
-  rb_raise(cl_eArgError, "Clips::Template#initialize called with wrong arguments, required is one Hash argument or one String argument with block.");
+  if(argc == 2 && TYPE(argv[0]) == T_STRING && (TYPE(argv[1]) == T_HASH || TYPE(argv[1]) == T_ARRAY))
+  {
+    return cl_template_initialize_string(self, argv[0], argv[1]);
+  }
+
+  rb_raise(cl_eArgError, "Clips::Template#initialize called with wrong arguments, required is one Hash argument, one String argument with block or one String and one Hash or Array.");
   return Qnil;
 }
 
@@ -133,25 +141,34 @@ VALUE cl_template_initialize_hash(VALUE self, VALUE hash)
 
   if( ! (size == 2 && !NIL_P(name) && !NIL_P(slots)) )
   {
-    rb_raise(cl_eArgError, "Clips::Template#intialize called with hash need hash with two compulsory keys :name and :slots.");
+    rb_raise(cl_eArgError, "Clips::Template#initialize called with hash need hash with two compulsory keys :name and :slots.");
     return Qnil;
   }
 
+  return cl_template_initialize_string(self, name, slots);
+}
+
+/**
+ * Build template from configuring name and slots
+ */
+VALUE cl_template_initialize_string(VALUE self, VALUE name, VALUE slots)
+{
+
   if( TYPE(name) != T_STRING)
   {
-    rb_raise(cl_eArgError, "Clips::Template#intialize :name needs an String as parametr but '%s' of class '%s' was given.", CL_STR(name), CL_STR_CLASS(name));
+    rb_raise(cl_eArgError, "Clips::Template#initialize :name needs an String as parametr but '%s' of class '%s' was given.", CL_STR(name), CL_STR_CLASS(name));
     return Qnil;
   }
 
   if( !cl_generic_check_clips_symbol(name) )
   {
-    rb_raise(cl_eArgError, "Clips::Template#intialize Name '%s' is not valid CLIPS template name .", CL_STR(name));
+    rb_raise(cl_eArgError, "Clips::Template#initialize Name '%s' is not valid CLIPS template name .", CL_STR(name));
     return Qnil;
   }
 
   if( TYPE(slots) != T_ARRAY && TYPE(slots) != T_HASH)
   {
-    rb_raise(cl_eArgError, "Clips::Template#intialize :slots needs an Hash or Array as parametr but '%s' of class '%s' was given.", CL_STR(slots), CL_STR_CLASS(slots));
+    rb_raise(cl_eArgError, "Clips::Template#initialize :slots needs an Hash or Array as parametr but '%s' of class '%s' was given.", CL_STR(slots), CL_STR_CLASS(slots));
     return Qnil;
   }
 
@@ -223,7 +240,7 @@ VALUE cl_template_initialize_block(VALUE self, VALUE name)
 
   if( !cl_generic_check_clips_symbol(name) )
   {
-    rb_raise(cl_eArgError, "Clips::Template#intialize Name '%s' is not valid CLIPS template name .", CL_STR(name));
+    rb_raise(cl_eArgError, "Clips::Template#initialize Name '%s' is not valid CLIPS template name .", CL_STR(name));
     return Qnil;
   }
 

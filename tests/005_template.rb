@@ -74,6 +74,24 @@ class Test_Template < Test::Unit::TestCase
     assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
   end
 
+  def test_new_string
+    a = Clips::Template.new 'human', [:name, 'age']
+    assert_equal a.instance_eval { @name }, 'human'
+    assert_equal a.instance_eval { @slots }, { :name => {}, :age => {} }
+
+    a = Clips::Template.new 'human', %w(name age)
+    assert_equal a.instance_eval { @name }, 'human'
+    assert_equal a.instance_eval { @slots }, { :name => {}, :age => {} }
+
+    a = Clips::Template.new 'human', {:name => { :multislot => false}, :age => { :default => 30}}
+    assert_equal a.instance_eval { @name }, 'human'
+    assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
+
+    a = Clips::Template.new 'human', {:name => { :multislot => false}, :age => { 'default' => 30}}
+    assert_equal a.instance_eval { @name }, 'human'
+    assert_equal a.instance_eval { @slots }, { :name => {:multislot => false}, :age => {:default => 30} }
+  end
+
   def test_new_redefinitions
     assert_raise(Clips::ArgumentError) { Clips::Template.new :name => 'human', :slots => %w(ahoj ahoj) }
     assert_raise(Clips::ArgumentError) { Clips::Template.new('human') {|t| t.slot :ahoj; t.slot :ahoj} }
