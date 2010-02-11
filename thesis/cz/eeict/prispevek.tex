@@ -24,7 +24,7 @@
 \emails{xcecho00@stud.fit.vutbr.cz}
 
 \supervisor{Zdenìk Letko}
-\emailv{iletkok@fit.vutbr.cz}
+\emailv{iletko@fit.vutbr.cz}
 
 \begin{document}
 % -- Hlavièka práce --
@@ -33,144 +33,27 @@
 
 % -- Abstrakt práce --
 \selectlanguage{english}
-\abstract{The abstract is placed here. It shoud be approximately 50-100 words long.
-The purpose of the abstract is to summarize the important ideas of the paper. It
-must be written in English. Please ask your supervisor to check the abstract.}
+\abstract{This paper describe manually created library called rbClips, that makes CLIPS functionality available from Ruby. CLIPS is public domain tool for building expert systems that was originally developed in NASA in 1990's. Tool itself is written in C, but it's user interface is very similar to LISP. Ruby is modern dynamic scripting language that offer programmer flexible syntax, purely objective environment, fully openness of objects and other interesting stuff. }
+
 %-------------------------------------------------------------------------------
 \selectlanguage{czech}
 \section{Úvod}
 
-Tady u se koneènì mùete vyjádøit. Patrnì bude vhodné nìjakı úvod napsat,
-aby se ètenáø lehce vpravil do problematiky. Rozhodnì ale není vhodné se
-zde nìjak pøíliš široce rozepisovat. Nezapomeòte, e pro kadı pøíspìvek
-jsou ve sborníku vyhrazeny maximálnì 3 stránky pro Bc. a Mgr. studenty,
-5 stran pro studenty PhD.
+\section{Ruby}
 
-Kdy u se nám zdá, e toho bylo dost, pøejdeme k vìci (v další kapitole).
+\section{Expertní systémy a Clips}
 
-
-\section{Rozbor}
-
-Nyní rozboøíme zvolené téma. Nejprve si ukáeme, e vlnitı plech nemá na
-Ni-MH zdroj energie ádnı vliv. Bla bla bla bla. A ještì nìjaká další vìta,
-aby se to trochu natáhlo. Jak je vidìt, ta vìta je zcela o nièem. Stejnì
-jako øada pøedchozích (a ostatnì také tato). Ale kdo má vymıšlet, co by se
-sem eventuálnì hodilo.
-
-\subsection{Upozornìní}
-
-Není vhodné (a ani pøípustné) pokoušet se o zanoøení vìtší úrovnì, ne je
-tato. Pøíspìvky, které tuto (a další podmínky) nesplní, budou autorùm
-vráceny k~pøepracování.
-
-\subsection{Rovnice}
-%----------
-% Pøíklad pouití rovnice na samostatném øádku + odkazu z textu
-%
-Takto $y=ax+b$ vypadá rovnice v~textu. Dùleité rovnice je ovšem vhodné
-napsat na samostatnı øádek:
-
-\begin{equation} \label{rovnice}
- y = px + q
-\end{equation}
-
-V~rovnici (\ref{rovnice}) jsme ukázali, e zítra nebude pršet.
-
-
-\subsection{Tabulky}
-%----------
-% Pøíklad pouití tabulky
-Obèas se mùe vyskytnout potøeba prezentovat nìjaká data uspoøádaná
-do tabulky. I~to je samozøejmì moné.
-
-\begin{table}[h]
-\begin{center}
-  \begin{tabular}{|l|r|}
-    \hline
-    X     &   Y      \\
-    \hline
-    10    &  100,1   \\
-    20    &  102,1   \\
-    30    & $-$103,5 \\
-    \hline
-  \end{tabular}
-  \caption{
-      \rm{
-      \hspace{0.1cm} Závislost velièiny X na velièinì Y}}
-  \label{tabulka_1}
-\end{center}
-\end{table}
-
-V~tabulce \ref{tabulka_1} je uvedena závislost velièiny X na velièinì Y.
-
-%------------
-% Bude se pouívat pouze neèíslovanı seznam
-%
-\subsection{Odrseznam}
-
-Další text je tady. Nyní bych uvedl nìkolik zásadních vìcí, které je
-nutné dodret.
-
-\begin{itemize}
-  \item seznam literatury bude pokud mono podle pravidel popsanıch zde \\
-        \verb(http://www.fit.vutbr.cz/info/statnice/bibcitace.html(
-  \item obrázky budou èernobílé nebo v~odstínech šedi; minimální velikost písma
-        v~obrázku bude 1mm (cca 6pt)
-\end{itemize}
-
-\subsection{Obrázek}
-
-No, a obèas se mùe v~textu samozøejmì také vyskytnout
-nìjakı ten odkaz na obrázek. Obrázek \ref{bozka_ss.jpg} ukazuje
-nìco, co jste ještì nevidìli.
-
-%------------
-% Pøíklad vloení obrázku do dokumentu.
-\begin{figure}[bht]
-\begin{center}
-  \includegraphics[width=6cm,keepaspectratio]{bozka_ss}
-  \caption{
-      \rm{
-      \hspace{0.1cm} Obrázek Boetìchovy}}
-  \label{bozka_ss.jpg}
-\end{center}
-\end{figure}
-
-
-\section{Zvr}
-Tìko øíct, co sem ještì tak asi napsat. Doufám, e tato šablonka
-nìkomu usnadní splnìní zostøenıch poadavkù, které jsou kladeny na
-pøíspìvky pro konferenci EEICT v~roce 2007.
-
-Pokud bude mít nìkdo jakékoliv pøipomínky a námìty, nech neváhá a
-pošle e-mail: \\ 
-\begin{center}
-orsag@fit.vutbr.cz nebo drahan@fit.vutbr.cz
-\end{center}
-
-Doporuèujeme skvìlou kníku Jiøího Rybièky \cite{rybicka}, kterou
-je moné získat v~knihkupectví.
-
-%------------
-% Podìkování
-%
-\section*{Podkovn}
-Tento pøíspìvek vznikl za podpory grantu GAÈR 111/22/3333 a vızkumného
-zámìru XXX: J55/66:12345678 (nìkdo samozøejmì nemusí øešit grant nebo
-nìco takového, take tuhle sekci nebudou mít ve svém pøíspìvku všichni.)
+\section{rbClips}
 
 %------------
 % Citace
 %
 \begin{thebibliography}{9}
-  \bibitem{rybicka} Rybièka, J.: \LaTeX pro zaèáteèníky, Brno, Konvoj 1999,
-                    ISBN 80-85615-77-0
-  \bibitem{orsag} Orság, F.: Vision für die Zukunft. Biometrie, Kreutztal,
-                    DE, b-Quadrat, 2004, s. 131-145, ISBN 3-933609-02-X
-  \bibitem{drahansky} Drahanskı, M., Orság, F.: Biometric Security Systems: Robustness of the Finger-print and Speech Technologies. In: BT 2004 - International Workshop on Biometric Technologies, Calgary, CA, 2004, s. 99-103
-
-
+  \bibitem{metaprogrammingRuby} Paolo Perrotta: Metaprogramming Ruby, The
+Pragmatic Programmers LL 2009, ISBN 1-934356-47-6
+  \bibitem{rubyProgrammingLanguage}  David Flanagan, Yukihiro Matsumoto: The
+Ruby Programming Languag, O'Reilly Media, Inc 2008, ISBN 0-596-51617-7
+  \bibitem{expertSystems} Josph C. Giarratano, Gary D. Rile: Expert Systems:
+Principles and programming, Thomson Learning, Inc 2005, ISBN 0-534-38447-1
 \end{thebibliography}
-
-
 \end{document}
