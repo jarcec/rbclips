@@ -15,5 +15,8 @@ VALUE cl_base_run(int, VALUE *, VALUE);
 //! Base::reset
 VALUE cl_base_reset(VALUE);
 
+//! Base::clear
+VALUE cl_base_clear(VALUE);
+
 #endif // _RBBASE_H_
 

@@ -79,3 +79,12 @@ VALUE cl_base_reset(VALUE self)
   return Qnil;
 }
 
+/**
+ * Call CLIPS function of same name
+ */
+VALUE cl_base_clear(VALUE self)
+{
+  Clear();
+  return Qnil;
+}
+

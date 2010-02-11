@@ -35,4 +35,11 @@ class Test_Base < Test::Unit::TestCase
     assert_nil Clips::Base.reset
     assert_equal "f-0     (initial-fact)\nFor a total of 1 fact.\n", Clips::Base.insert_command("(facts)")
   end
+
+  def test_clear
+    Clips::Base.insert_command("(assert (a b))")
+    assert_nil Clips::Base.clear
+    assert_equal "", Clips::Base.insert_command("(facts)")
+  end
+
 end
