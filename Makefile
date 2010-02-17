@@ -11,7 +11,7 @@ test:
 	make -C tests/
 
 thesis:
-	make -C thesis/cz/
+	make -C thesis/cz/thesis
 
 clean:
 	make -C src/ clean
