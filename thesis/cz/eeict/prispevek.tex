@@ -2,16 +2,11 @@
 %
 % Text pøíspìvku do sborníku EEICT
 %
-% Vytvoøil:  Martin Drahanský
+% Vytvoøil:  Jarek Jarcec Cecho
 % Datum:     26.02.2007
-% E-mail:    drahan@fit.vutbr.cz
+% E-mail:    jarcec@jarcec.net
 %
 %--------------------------------------------------------------------------------
-%
-% Pøeložení: pdflatex prispevek.tex
-%
-% Optimální zpùsob použití = pøepište jen vlastní text
-%
 \documentclass{eeict}
 \inputencoding{cp1250}
 \usepackage[bf]{caption2}
@@ -33,32 +28,51 @@
 
 % -- Abstrakt práce --
 \selectlanguage{english}
-\abstract{This paper describe manually created library called rbClips, that makes CLIPS functionality available from Ruby. CLIPS is public domain tool for building expert systems that was originally developed in NASA in 1990's. Tool itself is written in C, but it's user interface is very similar to LISP. Ruby is modern dynamic scripting language that offer programmer flexible syntax, purely objective environment, fully openness of objects and other interesting stuff. }
+\abstract{This paper describes created library called rbClips that makes CLIPS functionality available from Ruby. CLIPS is public domain tool for building expert systems that was originally developed in NASA in 1990's. The tool itself is written in C but its user interface is very similar to LISP language. Ruby is modern dynamic scripting language that offers programmer flexible syntax, purely objective environment, openness of objects and other interesting stuff.}
 
 %-------------------------------------------------------------------------------
 \selectlanguage{czech}
 \section{Úvod}
+V èlánku bych rád popsal principy své bakaláøské práce, ve které jsem spojil dvì technologie, systém pro tvorbu expertních systémù CLIPS s mladým skriptovacím jazykek Ruby, do jednoho funkèního celku.
 
-\section{Ruby}
+\textbf{Ruby}. Ruby\footnote{http://www.ruby-lang.org/en/} mladý dynamický skriptovací jazyk vytvoøený japonským inženýrem Yukihiro Matsumoto známym na internetu pod pøezdívkou Matz. Na popularitì si získává až v poslední dobì kvùli døívìjší absenci anglicky psaných materiálù. Nabízí programátorovi plnì objektový jazyk s volnou syntaxí (napøíklad možnost vynechat závory okolo argumentù funkcí na místech, kde to není syntakticky nejednoznaèné). Podobnì jako napøíklad prototypový Javascript umožnuje jakoukoliv tøídu znovu otevøít a upravit chování stávající metody nebo dokonce celou metodu novì dodefinovat. Navíc lze takovéto otevøení provádìt i u jednolivých objektù.
 
-\section{Expertní systémy}
+\textbf{Expertní systémy.} Expertní systém\cite{expertSystems} je deklarativnì zapsaný program, který umí odpovídat na dotazy uživatele na základì uložených znalostí. Svou funkèností simuluje rozhodování lidského experta a používá se v pøípadech, ve kterých neexistuje algoritmické øešení, pøípadnì na místech kde by takové øešení bylo pøílis složité èi špatnì udržovatelné. Zpravidla se zkládá z nìkolika èástí: (1) Báze znalostí, kde jsou uložena pravidla umožnující mìnit, mazat a vyvozovat nová fakta z pracovní pamìti, (2) pracovní pamìt uchovavající známá fakta, (3) øídící algoritmus vykonavající vyhovující pravidla, (4) vysvìtlující podsystém pro zdùvodnìní dosaženého výsledku a také (5) uživatelské rozhraní pro komunikaci s uživatelem (a\v{t} už formou pøíkazového øádku nebo grafického rozhraní).
 
-\subsection{CLIPS}
+CLIPS\footnote{http://clipsrules.sourceforge.net/} je systém pro tvorbu expertních systémù vytvoøený v NASA v 90tých letech, dnes dostupný jako public domain software. Je stále udržován pùvodním autorem a mimo této verze existují i další jeho varianty, které pùvodní CLIPS obohacují o nové možnosti - napøíklad FuzzyClips\footnote{http://www.nrc-cnrc.gc.ca/eng/projects/iit/fuzzy-reasoning.html}, což je rozšíøení o možnosti pracovat s fuzzy logikou nebo pøepis pro Javu jménem Jess\footnote{http://www.jessrules.com/}. Celý systém je napsaný v dobøe pøenositelném jazyce C, ovšem jazyk pro ovládání systému je velice podobný jazyku LISP (viz ukázka \ref{clipsUkazka}).
 
-\section{Možnosti spojení}
-Existují dva rùzné zpùsoby zpøístupnìní funkcí rùzných C knihoven do jazykù vyšší úrovnì - manuálnì nebo automaticky. V prvním pøípadì si programátor napíše rozhraní, které obalí knihovnu
+\begin{figure}[bht]
+  \begin{verbatim}
+(assert (zvire (jmeno "Azor") (vek 3) (rasa "vlcak")))
+  \end{verbatim} 
+  \vspace{-1.2cm}
+    \caption{Ukázka vytvoøení faktu v CLIPS.}
+    \label{clipsUkazka}
+\end{figure}
 
-Automatická cesta spoèívá v použití programu SWIG\footnote{http://www.swig.org/}, který má na vstupu zdrojové k\'{o}dy knihovny psané v C nebo C++, které obalí vygenerovaným k\'{o}dem tak, aby šly pøeložit a použit jako binarní rozšíøení zvoleného podporovaného cílového skriptovacího jazyka. Mezi podporované cílové jazyky patøí Perl, PHP, Python, Tcl èi právì Ruby. Tento zpùsob je velice pøímoèarý a programátor ma v cílovém jazyce plný
+Existují dva rùzné zpùsoby zpøístupnìní funkcionality knihoven psaných v jazyku C do skriptovacích jazykù\,--\,manuálnì nebo automaticky. V prvním pøípadì si programátor napíše rozhraní, mezi knihovnou a jazykem zcela sám a má tedy plnou kontrolu nad podobou výsledku. V druhém pøípadì lze využít utility, které toto rozhraní umí vygenerovat automaticky samy. Pøíkladem mùže být projekt SWIG\footnote{http://www.swig.org/}, který zpracuje zdrojové k\'{o}dy knihovny psané v C (pøípadnì C++), pro které vygeneruje obalovací k\'{o}d tak, aby šly pøeložit a použit jako binarní rozšíøení zvoleného cílového skriptovacího jazyka. V pøípadì SWIG patøí mezi podporované cílové jazyky Perl, PHP, Python, Tcl èi právì Ruby. Tento zpùsob je velice rychlý a pøímoèarý, bohužel na druhou stranu má programátor minimální možnost ovlivnit výsledek.
 
-\section{rbClips}
-RbClips je knihovna, která spojuje obì zmínìné technologie do jednoho funkèního celku - zpøístup\v{n}uje funkce CLIPS v jazyce Ruby.
+\section{Knihovna rbClips}
+Ve své práci jsem vytvoøit knihovnu rbClips, kde jsem manuálnì zpøístupnil funkce CLIPS v Ruby. Manuální pøístup pøevodu mi pøednì umožnil zapouzdøit procedurální chování CLIPS do objektù a pøizpùsobit tak rozhraní zvyklostem objektového návrhu a nepsaným hojnì rozšíøeným konvencím Ruby. Aplikaèní rozhraní (API) jsem navrhl po vzoru projektu ActiveRecords\footnote{http://ar.rubyonrails.org/} z webového frameworku Ruby On Rails\footnote{http://rubyonrails.org/} a proto se programátor se základní znalostí AR velice rychle zorientuje i v používání rbClips. 
+
+Dalším podstatným ziskem z manuálního pøevodu je odstínìní koncového uživatele od znalosti syntaxe uživatelského rozhraní CLIPS. Nìkteré ménì využívané konstrukce nejsou bohužel v rbClips podporovány a proto jsem pøidal možnost vkládat a vykonávat validní úryvky CLIPS k\'{o}du pøímo. Možnost odstranìní nutnosti používat rozhraní syntakticky podobné jazyku LISP byl jeden z hlavních dùvodù proè jsem se rozhodl pro manuální pøevod.
+
+Drùhým hlavním dùvodem je umožnìní zpìtného volání Ruby metod. V tøídì pro práci s pravidly lze v jeho druhé (následné, výplývající) èasti nastavit libovolný objekt a jeho metoda, která po aktivaci pravidla mùže být zavolána s aktivaèními parametry. Je to umožnìno pomocí registrace vlastní funkce v CLIPS, která umožnuje volání metod registrovaných Ruby objektù. Samotná registrace je pro uživatele plnì transparentní a nemusí se jí zabývat. Touto funkcionalitou se otevírá uživateli celá øada nových možností, kdy v rámci pravidel není vázán pouze možnostmi CLIPS, ale mùže provádìt zcela libovolné akce a hlavnì  navazovat stabilní jádro CLIPS  na již døíve napsané a èasem ovìøené knihovny Ruby, které ještì více umocní možnosti, které s celkem bude možné provádìt.
+
+Z pohledu uživatele je rbClips knihovna obsahující modul \verb|Clips| se ètyømi zakladními a nìkolika podpurnými tøídami. Základní tøídy zapouzdøují možnost ovládání prostøedí CLIPS (tøída \verb|Base|, metody pro pøímou interakci s CLIPS, spouštìní a ovládání øídícího algoritmu), prací se šablonami (tøída \verb|Template|), fakty (\verb|Fact|) a nakonec také správu pravidel (\verb|Rule|). Podpùrné tøídy slouží napøíklad pro manipulaci s prostøedími (\verb|Environment|) èi možnosti ovlivnit pøípustné hodnoty v jednotlivých slotech faktù (\verb|Constraint|).
+
+\section{Reálné nasazení}
+Tento projekt vznikl v rámci spoleènosti AVG Technologies s.r.o\footnote{http://www.avg.com} s cílem usnadnit práci lidským pracovníkùm v oblasti automatické analýzy virových vzorkù. Knihovna bude mít za úkol napodobovat analýzu, kterou by nad daným vzorkem provádìl èlovìk a rozhodovat zda-li se jedná o malware èi o èistý legitimní software. K tomu ji bude velice užiteèná možnost využít jádro expertního systému CLIPS se spojenými možnosti prostøedí Ruby, které umožnují snadnou integraci s relaèními databazemi, kde jsou uloženy rùzné záznamy o kontrolních souètech a dalších zajimavých vyhledávaných vzorech, s možností spouštet externí utility a rozhodovat se na základì jejich výsledkù pøesnì tak, jak by to provádìl lidský pracovník.
+
+Další možnost nasazení se nachází na stranì klient, kdy expertní systém lze použít jako základ pro behavior detekci (jedná se o detekci na základì chovaní programu nikoliv jeho statické analýzy). Operaèní systém bude hlásit antivirovému programu jednotlivé akce, které programy postupnì dìlají (napøíklad alokace velkého bloku souvislé pamìti, rozšifrování dat do tohoto bloku a jeho následné spuštìní) a ten by rozhodoval na základì výstupu z rbClips umožnil varovat uživatele pøed podezøelým chováním jednolivých programù.
+
+\section*{Podìkování}
+Rád bych podìkoval technickému vedoucímu této prace, Ryanu Hicksovi, za nápad, rady a ochotu øešit problémy, na které jsem pøi tvorbì narazil a svému odbornému vedoucímu Zde\v{n}kovi Letkovi za jeho trpìlivost a èas vìnovaný kontrole korektnosti mých textù.
 
 %------------
 % Citace
 %
 \begin{thebibliography}{9}
-  \bibitem{metaprogrammingRuby} Paolo Perrotta: Metaprogramming Ruby, The
-Pragmatic Programmers LL 2009, ISBN 1-934356-47-6
   \bibitem{rubyProgrammingLanguage}  David Flanagan, Yukihiro Matsumoto: The
 Ruby Programming Languag, O'Reilly Media, Inc 2008, ISBN 0-596-51617-7
   \bibitem{expertSystems} Josph C. Giarratano, Gary D. Rile: Expert Systems:
