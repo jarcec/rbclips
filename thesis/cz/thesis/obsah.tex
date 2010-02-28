@@ -6,33 +6,40 @@ TODO: Dopsat zvnaneni proc jsme se rozhodli napsat tento wrapper, popsat jednotl
 %=========================================================================
 \chapter{Pou¾ité technologie}
 %=========================================================================
+Má bakaláøská práce se zabývá spojením dvou technologií, Ruby a CLIPS, které jsou v následujících sekcích popsány.
 
 \section{Ruby}
-Ruby\cite{webRuby} je relativnì nový dynamický skriptovací jazyk vytvoøený japonským in¾enýrem jménem Yukihiro Matsumoto známym pod pøezdívkou Matz (pou¾ito dále v textu). V souèasné dobì neexistuje ¾ádná specifikace èi norma jako je tomu napøíklad u jazykù C/C++ a dal¹ích. Z tohoto dùvodu se jako reference jazyka bere samotný interpret napsaný Matzem - MRI (Mat'z ruby intepreter). Interpretù existuje více a jejich zkrácený seznam je uveden dále v textu. Absence existujícího standartu vedla v roce 2008 k vytvoøení skupiny pro standardizaci tohoto jazyka v rámci japonské organizace IPA (Information-technology Promotion Agency), která vychází z MRI verze 1.8.7. V souèasné dobì je k dispozici ji¾ návrh standartdu\cite{webRubySpec}, který má být navr¾en ke schválení prvnì v japonsku u Japanese Industrial Standards Committee (JISC) a následnì i u mezinárodní organizace ISO.
+Ruby\cite{webRuby} je relativnì nový dynamický skriptovací jazyk vytvoøený japonským in¾enýrem Yukihiro Matsumoto známym pod pøezdívkou Matz. V souèasné dobì neexistuje ¾ádná specifikace èi norma jako je tomu napøíklad u jazykù C/C++ a dal¹ích. Z tohoto dùvodu se jako reference jazyka bere samotný interpret napsaný Matzem\,--\,Matz' ruby intepret (MRI). Interpretù existuje více a jejich zkrácený seznam je uveden dále v textu. Absence existujícího standartu vedla v roce 2008 k vytvoøení skupiny pro standardizaci tohoto jazyka v rámci japonské organizace Information-technology Promotion Agency (IPA), která vychází z MRI verze 1.8.7. V souèasné dobì je k dispozici ji¾ návrh standartdu\footnote{http://ruby-std.netlab.jp/draft\_spec/agreement.html}, který má být navr¾en ke schválení prvnì v japonsku u Japanese Industrial Standards Committee (JISC) a následnì i u International Standard Organization (ISO).
 
 \subsection{Historie}
-První verze interpretu ruby vytvoøená Matzem byla zveøejnìna u¾ v roce 1995 (velice zajimavý je fakt, ¾e jméno nového jazyka u¾ bylo vybráno v roce 1993, tedy o cele dva roky døíve), ov¹em oficální webové stránky jazyka (interpretu) v angliètinì byly k dispozici a¾ o tøi roky pozdìji - tedy v roce 1998. Absence kvalitních materiálù v angliètinì je jedním z hlavních dùvodù, proè se ruby stal populárním prvnì pouze v japonsku a velice pomalu se dostával i do ostatních státu svìta. V dne¹ní dobì u¾ na¹tìstí není problém najít kvalitní zdroje informací ani v angliètinì ani v èe¹tinì (èi dál¹ích jazycích) a to jak ve webové tak i v kni¾ní podobì.
+První verze interpretu ruby vytvoøená Matzem byla zveøejnìna u¾ v roce 1995 (velice zajimavý je fakt, ¾e jméno nového jazyka u¾ bylo vybráno v roce 1993, tedy o cele dva roky døíve), ov¹em oficální webové stránky jazyka (interpretu) v angliètinì byly k dispozici a¾ o tøi roky pozdìji\,--\,tedy v roce 1998. Absence kvalitních materiálù v angliètinì je jedním z hlavních dùvodù, proè se ruby stal populárním prvnì pouze v japonsku a velice pomalu se dostával i do ostatních státu svìta. V dne¹ní dobì u¾ na¹tìstí není problém najít kvalitní zdroje informací ani v angliètinì ani v èe¹tinì, èi dál¹ích jazycích, a to jak ve webové tak i v kni¾ní podobì. Tyto i dal¹í zajimavá data jsou shrnuta na Obrázku \ref{ruby_history}, která jsem èerpal z prezentace vytvoøené k pøíle¾itosti konference RubyConf 2006\footnote{http://blog.nicksieger.com/articles/2006/10/20/rubyconf-history-of-ruby}.
 
-Matz vytvoøil nový jazyk\cite{webMatzInterview}, proto¾e ho nadchly mo¾nosti skriptovacích jazyku a ¾adný z tehdy dostupných jazykù ho nezaujal - chtìl jazyk mocnìj¹í ne¾ perl a více objektì orientovaný ne¾ python.  Na otázku, proè vytvoøil dal¹í skriptovací jazyk, Matz je¹tì èasto dodává dùvody syntaxe - programovacích jazyku je mnoho a jsou svým zpùsobem velice podobné co se do mo¾ností týèe. Matz chtìl jazyk, ve kterém ho bude bavit psát a nebude se muset pøíli¹ trápit se zápisem jednotlivých konstrukcí (syntaxe by mìla být podøízena èlovìku jako¾to pisateli jazyka, nikoliv opaènì poèítaèi jako¾to interpretu jazyka).
+Matz vytvoøil nový jazyk, proto¾e ho nadchly mo¾nosti skriptovacích jazyku a ¾adný z tehdy dostupných jazykù ho nezaujal\footnote{http://linuxdevcenter.com/pub/a/linux/2001/11/29/ruby.html} - chtìl jazyk mocnìj¹í ne¾ Perl\footnote{http://www.perl.org/} a více objektì orientovaný ne¾ Python\footnote{http://www.python.org/}.  Na otázku, proè vytvoøil dal¹í skriptovací jazyk, Matz je¹tì èasto dodává dùvody syntaxe - programovacích jazykù je mnoho a jsou svým zpùsobem velice podobné (vlastnostmi i schopnostmi). Matz ov¹em chtìl jazyk, ve kterém ho bude bavit psát a nebude se muset pøíli¹ trápit se zápisem jednotlivých konstrukcí. Syntaxe by mìla být podøízena èlovìku jako¾to pisateli jazyka, nikoliv opaènì poèítaèi jako¾to interpretu jazyka.
 
-Nìkolik zajímavých dat z historie\cite{webRubyHistory}:
-\begin{description}
- \item[1993] Vybráno jméno
- \item[1995] První zveøejnìná verze interpretu (verze 0.95)
- \item[1996] Verze 1.0
- \item[1997] Matz zamìstnán jako full-time ruby programátor (tedy jako programátor v jazyce, který si sam vytvoøil)
- \item[1998] Webové stránky v angliètinì a vznik anglicky psaného mailing listu 
- \item[1999] První kniha o ruby (psána japonsky)
- \item[2000] Zaèátek roz¹iøování povìdomí o ruby mimo hranice Japonska
- \item[2001] YARPC - Yet Another Ruby and Perl Conference
-\end{description}
+\begin{figure}[tbh]
+  \begin{tabular}{|c|l|}
+    \hline
+    1993 & Vybráno jméno \\
+    1995 & První zveøejnìná verze interpretu (verze 0.95) \\
+    1996 & Verze 1.0 \\
+    1997 & Matz zamìstnán jako full-time ruby programátor \\
+    1998 & Webové stránky v angliètinì a vznik anglicky psaného mailing listu \\
+    1999 & První kniha o ruby (psána japonsky) \\
+    2000 & Zaèátek roz¹iøování povìdomí o ruby mimo hranice Japonska \\
+    2001 & YARPC - Yet Another Ruby and Perl Conference \\
+    \hline
+  \end{tabular} 
 
-V souèasné verze se udr¾ují dvì hlavní vìtve MRI - verze 1.8 a 1.9. Vìtev 1.8 je pova¾ována za stabilní a ji¾ se pouze udr¾uje (opravují se chyby), vývoj probíhá ve vìtvi 1.9.
+  \caption{Shrnutá historie v datech}
+  \label{ruby_history}
+\end{figure}
+
+V souèasné verze se udr¾ují dvì hlavní vìtve MRI\,--\,verze 1.8 a 1.9. Vìtev 1.8 je pova¾ována za stabilní a ji¾ se pouze udr¾uje (opravují se chyby), hlavní vývoj probíhá ve vìtvi~1.9.
 
 \subsection{Vlastnosti ruby}
-Ruby je dynamický skriptovací jazyk mnoha ruzných paradigmat - je plnì objektovì orientovaný, ale lze v nìm bez problémù psát i imperativnì èi funkcionálnì. Následuje popis vybraných vlastností, které bych rád vyzdvihl èi na nì upozornil. Podle poøeby budu dále v textu srovnávat Ruby s dal¹ímy jazyky které znám - Java, C/C++, python a perl.
+Ruby je dynamický skriptovací jazyk mnoha ruzných paradigmat\,--\,je plnì objektovì orientovaný, ale lze v nìm bez problémù psát i imperativnì èi funkcionálnì. Následuje popis vybraných vlastností, které bych rád vyzdvihl èi na nì upozornil. Podle poøeby budu dále v textu srovnávat Ruby s dal¹ímy jazyky které znám - Java\footnote{http://www.java.com/en/} a C++\footnote{http://www.cplusplus.com/}.
 
-Ní¾e uvedený popis vlastní jsem èerpal ze své osobní zku¹enosti s tímto programovacím jazykem, z velice obsáhleho popisu jazyka napsaného samotným autorem ruby The Ruby programming language\cite{rubyProgrammingLanguage} (co¾ je zrevidování a roz¹íøení døíve vydané knihy, která je v ruby svìtì známa pod názvem Ruby in Nutshel\cite{rubyInNutshel}) a z knihy Metaprogramming Ruby\cite{metaprogrammingRuby}, která se zabývá nejen metaprogramováním v ruby, ale take velice èitelným zpùsobem vysvìtluje objektový model ruby a jeho jiné aspekty.
+Ní¾e uvedený popis vlastností jsem èerpal ze své osobní zku¹enosti s tímto programovacím jazykem, z velice obsáhleho popisu jazyka napsaného samotným autorem ruby The Ruby programming language\cite{rubyProgrammingLanguage}, co¾ je zrevidování a roz¹íøení døíve vydané knihy, která je v ruby svìtì známa pod názvem Ruby in Nutshel\cite{rubyInNutshel}, a z knihy Metaprogramming Ruby\cite{metaprogrammingRuby}, která se zabývá nejen metaprogramováním v ruby, ale take velice èitelným zpùsobem vysvìtluje objektový model ruby a dal¹í jeho aspekty.
 
 \subsubsection{Objektovost}
 Ruby je plnì objektovì orientovaný jazyk (byl mimo jiné inspirován i Smalltalkem), co¾ znamená, ¾e v¹e v ruby je objekt. Nejsou zde ¾ádná datová primitiva jako napøíklad v Jave (int, double). \u{C}íselné a jiné konstanty jsou interpretem pøevádìny na instance pøíslu¹ných tøíd okam¾ite a automaticky:
