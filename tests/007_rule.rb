@@ -2,6 +2,11 @@ require 'test/unit'
 require 'rbclips'
 
 class Test_Rule < Test::Unit::TestCase
+
+  def teardown
+    Clips::Base.reset
+  end
+
   def test_exists
     assert Clips.constants.member?(:Rule)
     assert Clips::Rule.constants.member?(:Creator)

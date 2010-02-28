@@ -63,6 +63,9 @@ VALUE cl_fact_all(VALUE self)
 
   while( fact = GetNextFact(fact) )
   {
+    char *templatename = GetDeftemplateName( FactDeftemplate(fact) );
+    if(strcmp(templatename, "initial-fact") == 0) continue;
+
     // Creating the object
     cl_sFactWrap *wrap = calloc(1, sizeof(*wrap));
     VALUE obj = Data_Wrap_Struct(cl_cFact, NULL, free, wrap);
