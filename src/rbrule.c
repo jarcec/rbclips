@@ -38,6 +38,63 @@ VALUE cl_rule_new(int argc, VALUE *argv, VALUE self)
 }
 
 /**
+ * Load rule from CLIPS environment
+ */
+VALUE cl_rule_load(VALUE self, VALUE name)
+{
+  if(TYPE(name) != T_STRING && TYPE(name) != T_SYMBOL)
+  {
+    rb_raise(cl_eArgError, "Clips::Rule::load expect argument of type symbol or string, but '%s' have class '%s'", CL_STR(name), CL_STR_CLASS(name));
+    return Qnil;
+  }
+
+  // Looking for the rule
+  void *rule = FindDefrule( CL_STR(name) );
+  if(!rule) return Qnil;
+
+  // Creating the object
+  cl_sRuleWrap *wrap = calloc(1, sizeof(*wrap));
+  VALUE ret = Data_Wrap_Struct(cl_cRule, NULL, free, wrap);
+  
+  // Building it's content
+  rb_iv_set(ret, "@name", CL_TO_S(name));
+  rb_iv_set(ret, "@to_s", rb_str_new_cstr(GetDefrulePPForm(rule)) );
+  CL_UPDATE(ret);
+
+  // C'est tout
+  return ret;
+}
+
+/**
+ * Returns array with all rules in system
+ */
+VALUE cl_rule_all(VALUE self)
+{
+  VALUE ret = rb_ary_new();
+
+  void *rule = NULL;
+
+  while( rule = GetNextDefrule(rule) )
+  {
+    char *name = GetDefruleName(rule);
+
+    // Creating the object
+    cl_sRuleWrap *wrap = calloc(1, sizeof(*wrap));
+    VALUE obj = Data_Wrap_Struct(cl_cRule, NULL, free, wrap);
+  
+    // Building it's content
+    rb_iv_set(obj, "@name", rb_str_new_cstr(name));
+    rb_iv_set(obj, "@to_s", rb_str_new_cstr(GetDefrulePPForm(rule)) );
+    CL_UPDATE(obj);
+
+    rb_ary_push(ret, obj);
+  }
+
+  // C'est tout
+  return ret;
+}
+
+/**
  * Constructor of Rule object
  */
 VALUE cl_rule_initialize(VALUE self, VALUE name)
@@ -118,6 +175,8 @@ VALUE cl_rule_save(VALUE self)
  */
 VALUE cl_rule_destroy(VALUE self)
 {
+  CL_UPDATE(self);
+
   cl_sRuleWrap *wrap = DATA_PTR(self);
 
   if( !wrap )
@@ -145,6 +204,45 @@ VALUE cl_rule_destroy(VALUE self)
   wrap->ptr = NULL;
 
   return ret;
+}
+
+/**
+ * Update object, currently only load pointer according to name.
+ * Returns true if rule stil exists
+ */
+VALUE cl_rule_update(VALUE self)
+{
+    cl_sRuleWrap *wrap = DATA_PTR(self);
+    wrap->ptr = FindDefrule( CL_STR(rb_iv_get(self, "@name" )) );
+
+    if(wrap->ptr) return Qtrue;
+
+    return Qfalse;
+}
+
+/**
+ * Reprezents these two objects same CLIPS entity?
+ */
+VALUE cl_rule_equal(VALUE a, VALUE b)
+{
+  CL_UPDATE(a);
+  CL_UPDATE(b);
+
+  CL_EQUAL_DEFINE;
+  
+  CL_EQUAL_CHECK_IV("@name");
+  
+  CL_EQUAL_DEFINE_WRAP(cl_sRuleWrap);
+
+  if((aaa && !aaa->ptr) || (bbb && !bbb->ptr))
+  {
+    rb_raise(cl_eUseError, "Comparing unsaved Rules is prohibited");
+    return Qnil;
+  }
+
+  CL_EQUAL_CHECK_PTR;
+
+  return Qtrue;
 }
 
 /**

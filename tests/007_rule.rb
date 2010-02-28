@@ -119,4 +119,48 @@ class Test_Rule < Test::Unit::TestCase
     assert rule.destroy!
     assert !rule.destroy!
   end
+
+  def test_load
+    rule = Clips::Rule.new 'animal-mammal' do |r|
+      r.pattern "(animals ?a)"
+      r.pattern "(child-of ?a ?b)"
+      r.rhs "(assert (animals ?b))"
+    end  
+    assert rule.save
+    copy = Clips::Rule.load 'animal-mammal'
+    assert copy.destroy!
+    assert !rule.destroy!
+  end
+
+  def test_equal
+    a = Clips::Rule.new 'animal-mammal-da' do |r|
+      r.pattern "(animals ?a)"
+      r.pattern "(child-of ?a ?b)"
+      r.rhs "(assert (animals ?b))"
+    end  
+    assert_raise(Clips::UsageError) { assert_equal a, a }
+    assert a.save
+
+    b = Clips::Rule.load 'animal-mammal-da'
+    assert_equal a, b
+
+    assert a.destroy!
+  end
+
+  def test_all
+    a = Clips::Rule.new 'animal-mammal' do |r|
+      r.pattern "(animals ?a)"
+      r.pattern "(child-of ?a ?b)"
+      r.rhs "(assert (animals ?b))"
+    end  
+    b = Clips::Rule.new 'animal-mammal2' do |r|
+      r.pattern "(animals ?a)"
+      r.pattern "(child-of ?a ?b)"
+      r.rhs "(assert (animals ?b))"
+    end  
+    assert a.save
+    assert b.save
+
+    assert_equal [a, b], Clips::Rule.all
+  end
 end

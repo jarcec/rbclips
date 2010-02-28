@@ -27,6 +27,12 @@ typedef struct _cl_sRuleCreatorWrap cl_sRuleCreatorWrap;
 //! Clips::Rule::new
 VALUE cl_rule_new(int, VALUE *, VALUE);
 
+//! Clips::Rule::load
+VALUE cl_rule_load(VALUE, VALUE);
+
+//! Clips::Rule::all
+VALUE cl_rule_all(VALUE);
+
 //! Clips::Rule\#initialize
 VALUE cl_rule_initialize(VALUE, VALUE);
 
@@ -38,6 +44,12 @@ VALUE cl_rule_save(VALUE);
 
 //! Clips::Rule\#destroy!
 VALUE cl_rule_destroy(VALUE);
+
+//! Clips::Rule\#update
+VALUE cl_rule_update(VALUE);
+
+//! Clips::Rule\#equal
+VALUE cl_rule_equal(VALUE, VALUE);
 
 //! Clips::Rule::Creator\#initialize
 VALUE cl_rule_creator_initialize(VALUE);

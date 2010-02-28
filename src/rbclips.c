@@ -101,10 +101,16 @@ void Init_rbclips()
   // Clips::Rule
   cl_cRule = rb_define_class_under(cl_mClips, "Rule", rb_cObject);
   rb_define_singleton_method(cl_cRule, "new", cl_rule_new, -1);
+  rb_define_singleton_method(cl_cRule, "load", cl_rule_load, 1);
+  rb_define_singleton_method(cl_cRule, "all", cl_rule_all, 0);
   rb_define_method(cl_cRule, "initialize", cl_rule_initialize, 1);
   rb_define_method(cl_cRule, "to_s", cl_rule_to_s, 0);
   rb_define_method(cl_cRule, "save", cl_rule_save, 0);
   rb_define_method(cl_cRule, "destroy!", cl_rule_destroy, 0);
+  rb_define_method(cl_cRule, "update", cl_rule_update, 0);
+  rb_define_method(cl_cRule, "==", cl_rule_equal, 1);
+  rb_define_alias(cl_cRule, "equal?", "==");
+  rb_define_alias(cl_cRule, "eql?", "==");
 
   // Clips::Rule::Creator
   cl_cRuleCreator = rb_define_class_under(cl_cRule, "Creator", rb_cObject);
