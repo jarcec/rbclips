@@ -85,6 +85,7 @@ extern cl_sIds cl_vIds;
 /** Easy writing equal methods
  * Macro for easy writing equal methods
  */
+#define CL_EQUAL_CLASS(obj, klass)     if(rb_obj_class(obj) != klass) return Qfalse
 #define CL_EQUAL_DEFINE           VALUE aa, bb, ret
 #define CL_EQUAL_CHECK_IV(what)   aa = rb_iv_get(a, (what)); \
                                   bb = rb_iv_get(b, (what)); \
@@ -92,6 +93,6 @@ extern cl_sIds cl_vIds;
                                   if(TYPE(ret) != T_TRUE) return Qfalse
 #define CL_EQUAL_DEFINE_WRAP(s)   s *aaa = DATA_PTR(a); \
                                   s *bbb = DATA_PTR(b)
-#define CL_EQUAL_CHECK_PTR        if(!aaa || !bbb || aaa->ptr != bbb->ptr) return false
+#define CL_EQUAL_CHECK_PTR        if(!aaa || !bbb || aaa->ptr != bbb->ptr) return Qfalse
 
 #endif // _RBCLIPS_H_

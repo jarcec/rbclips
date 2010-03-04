@@ -225,6 +225,8 @@ VALUE cl_rule_update(VALUE self)
  */
 VALUE cl_rule_equal(VALUE a, VALUE b)
 {
+  CL_EQUAL_CLASS(b, cl_cRule);
+
   CL_UPDATE(a);
   CL_UPDATE(b);
 

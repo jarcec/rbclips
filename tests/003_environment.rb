@@ -50,8 +50,7 @@ class Test_Environment < Test::Unit::TestCase
 
     assert_equal num, Clips::Environment.all.size
 
-    # Comparising with non Environment object
-    assert_raise(Clips::ArgumentError)  { Clips::Environment.new == 5 }
+    assert_not_equal Clips::Environment.new, 5
   end
 
   def test_valid

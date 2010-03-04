@@ -356,6 +356,8 @@ VALUE cl_fact_clone(VALUE self)
  */
 VALUE cl_fact_equal(VALUE a, VALUE b)
 {
+  CL_EQUAL_CLASS(b, cl_cFact);
+
   CL_UPDATE(a);
   CL_UPDATE(b);
 

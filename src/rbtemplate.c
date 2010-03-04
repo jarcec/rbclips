@@ -467,6 +467,8 @@ VALUE cl_template_clone(VALUE self)
  */
 VALUE cl_template_equal(VALUE a, VALUE b)
 {
+  CL_EQUAL_CLASS(b, cl_cTemplate);
+
   CL_UPDATE(a);
   CL_UPDATE(b);
 

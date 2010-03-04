@@ -149,6 +149,9 @@ class Test_Rule < Test::Unit::TestCase
     b = Clips::Rule.load 'animal-mammal-da'
     assert_equal a, b
 
+    assert_not_equal a, 3
+    assert_not_equal b, "ahoj"
+
     assert a.destroy!
   end
 

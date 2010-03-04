@@ -113,18 +113,14 @@ VALUE cl_environment_clone(VALUE self)
  * Return true or false, base on whether the different environment object
  * describe the same CLIPS environment.
  */
-VALUE cl_environment_equal(VALUE self, VALUE other)
+VALUE cl_environment_equal(VALUE a, VALUE b)
 {
-  if(rb_obj_class(other) != cl_cEnvironment)
-  {
-    rb_raise(cl_eArgError, "Expected two Clips::Environment instances to be compared!");
-    return Qfalse;
-  }
+  CL_EQUAL_CLASS(b, cl_cEnvironment);
 
-  cl_sEnvironmentWrap *selfwrap = DATA_PTR(self);
-  cl_sEnvironmentWrap *otherwrap = DATA_PTR(other);
+  CL_EQUAL_DEFINE_WRAP(cl_sEnvironmentWrap);
+  CL_EQUAL_CHECK_PTR;
 
-  return (selfwrap->ptr == otherwrap->ptr) ? Qtrue : Qfalse;
+  return Qtrue;
 }
 
 /**

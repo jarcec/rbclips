@@ -284,6 +284,8 @@ VALUE cl_constraint_to_s(VALUE self)
  */
 VALUE cl_constraint_equal(VALUE a, VALUE b)
 {
+  CL_EQUAL_CLASS(b, cl_cConstraint);
+
   CL_EQUAL_DEFINE;
   
   CL_EQUAL_CHECK_IV("@type");
