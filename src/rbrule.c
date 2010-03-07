@@ -370,6 +370,44 @@ VALUE cl_rule_creator_rhs(VALUE self, VALUE str)
 }
 
 /**
+ * Registering ruby object for calling during rule execution
+ */
+VALUE cl_rule_creator_rcall(int argc, VALUE *argv, VALUE self)
+{
+  if(argc < 2)
+  {
+    rb_raise(cl_eArgError, "Clips::Rule::Creator#rcall expect at least two arguments, but %d was given.", argc);
+    return Qnil;
+  }
+
+  // First argument is any object, so I'm leaving it without any tests
+
+  if(TYPE(argv[1]) != T_SYMBOL)
+  {
+    rb_raise(cl_eArgError, "Clips::Rule::Creator#rcall expect second argument to be symbol, but given '%s' have class '%s'.", CL_STR(argv[1]), CL_STR_CLASS(argv[1]));
+    return Qnil;
+  }
+
+  // Given object is going to be used from rule - mark it as global
+  rb_global_variable(&argv[0]);
+
+  // Create corresponding string
+  VALUE str = rb_sprintf("(rcall \"%lx\" \"%s\"", argv[0], CL_STR(argv[1]));
+
+  int i;
+  for(i = 2; i < argc; i++)
+    rb_str_catf(str, " %s", rb_generic_slot_value(argv[i]));
+
+  rb_str_cat2(str, ")");
+
+  // Insert final string to RHS array
+  VALUE rhs = rb_iv_get(self, "@rhs");
+  rb_ary_push(rhs, str);
+
+  return Qtrue;
+}
+
+/**
  * Helper: Transform given array of parameters into searchable pattern
  * for left hand side of the rule definition.
  */

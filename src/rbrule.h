@@ -63,6 +63,9 @@ VALUE cl_rule_creator_retract(int, VALUE *, VALUE);
 //! Clips::Rule::Creator\#rhs
 VALUE cl_rule_creator_rhs(VALUE, VALUE);
 
+//! Clips::Rule::Creator\#rcall
+VALUE cl_rule_creator_rcall(int, VALUE *, VALUE);
+
 //! Clips::Rule::Creator\#or
 VALUE cl_rule_creator_or(VALUE);
 

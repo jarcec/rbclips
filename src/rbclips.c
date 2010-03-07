@@ -8,6 +8,7 @@
 #include "rbtemplate.h"
 #include "rbfact.h"
 #include "rbrule.h"
+#include "rbrcall.h"
 
 /* Definitions */
 VALUE cl_mClips;
@@ -118,6 +119,7 @@ void Init_rbclips()
   rb_define_method(cl_cRuleCreator, "pattern", cl_rule_creator_pattern, -1);
   rb_define_method(cl_cRuleCreator, "retract", cl_rule_creator_retract, -1);
   rb_define_method(cl_cRuleCreator, "rhs", cl_rule_creator_rhs, 1);
+  rb_define_method(cl_cRuleCreator, "rcall", cl_rule_creator_rcall, -1);
   rb_define_method(cl_cRuleCreator, "or", cl_rule_creator_or, 0);
   rb_define_method(cl_cRuleCreator, "and", cl_rule_creator_and, 0);
   rb_define_method(cl_cRuleCreator, "not", cl_rule_creator_not, 0);

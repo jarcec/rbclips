@@ -171,4 +171,29 @@ class Test_Rule < Test::Unit::TestCase
 
     assert_equal [a, b], Clips::Rule.all
   end
+
+  # Dump class for testing purposes
+  class Dump
+    def initialize
+      @num = 0
+    end
+    def add(num)
+      @num += num
+    end
+  end
+
+  def test_rcall
+    dump = Dump.new
+
+    rule = Clips::Rule.new "counter" do |r|
+      r.pattern 'add', :number
+      r.rcall dump, :add, :number
+    end
+    rule.save
+    Clips::Fact.new("add", [3]).save
+    Clips::Fact.new("add", [5]).save
+    Clips::Base.run
+
+    assert_equal dump.instance_eval{@num}, 8
+  end
 end

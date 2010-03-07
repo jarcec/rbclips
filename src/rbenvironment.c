@@ -5,6 +5,7 @@
 #include "rbrouter.h"
 #include "rbenvironment.h"
 #include "rbexception.h"
+#include "rbrcall.h"
 
 /* Definitions */
 VALUE cl_cEnvironment;
@@ -28,6 +29,9 @@ VALUE cl_environment_new(VALUE self)
 
   // Environment-aware code - put our router into new environment as well
   cl_router_init();
+
+  // Environment-aware code - add our functions to new environment as well
+  cl_rcall_define();
 
   // Taking back the old one
   SetCurrentEnvironment(oldenv);
