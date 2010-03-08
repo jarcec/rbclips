@@ -117,6 +117,7 @@ void Init_rbclips()
   cl_cRuleCreator = rb_define_class_under(cl_cRule, "Creator", rb_cObject);
   rb_define_method(cl_cRuleCreator, "initialize", cl_rule_creator_initialize, 0);
   rb_define_method(cl_cRuleCreator, "pattern", cl_rule_creator_pattern, -1);
+  rb_define_method(cl_cRuleCreator, "assert", cl_rule_creator_assert, -1);
   rb_define_method(cl_cRuleCreator, "retract", cl_rule_creator_retract, -1);
   rb_define_method(cl_cRuleCreator, "rhs", cl_rule_creator_rhs, 1);
   rb_define_method(cl_cRuleCreator, "rcall", cl_rule_creator_rcall, -1);

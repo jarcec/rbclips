@@ -304,6 +304,41 @@ VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
 }
 
 /**
+ * Declare creation of new fact during RHS
+ */
+VALUE cl_rule_creator_assert(int argc, VALUE *argv, VALUE self)
+{
+  cl_sRuleCreatorWrap *wrap = DATA_PTR(self);
+  if( !wrap )
+  {
+    rb_raise(cl_eUseError, "Inner structure not found");
+    return Qnil;
+  }
+
+  VALUE rhs = rb_iv_get(self, "@rhs");
+
+  if(argc == 2 && rb_obj_class(argv[0]) == cl_cTemplate && TYPE(argv[1]) == T_HASH)
+  {
+    VALUE pom = rb_sprintf("(assert %s)", CL_STR(cl_rule_creator_transform_nonordered_fact(argv[0], argv[1])));
+    rb_ary_push(rhs, pom);
+
+    return Qtrue;
+  }
+  
+  if(argc > 1 && (TYPE(argv[0]) == T_STRING || TYPE(argv[0]) == T_SYMBOL))
+  {
+    // Assume we're searching for ordered fact
+    VALUE pom = rb_sprintf("(assert %s)", CL_STR(cl_rule_creator_transform_ordered_fact(argc, argv)));
+    rb_ary_push(rhs, pom);
+
+    return Qtrue;
+  }
+
+  rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#assert with unknown parameter set. See manual for all allowed posibilities.");
+  return Qnil;
+}
+
+/**
  * Declare searching and destroying pattern
  */
 VALUE cl_rule_creator_retract(int argc, VALUE *argv, VALUE self)
@@ -332,7 +367,6 @@ VALUE cl_rule_creator_retract(int argc, VALUE *argv, VALUE self)
     rb_ary_push(rhs, rb_sprintf("(retract ?rbclips-%u)", wrap->counter));
 
     wrap->counter++;
-    return Qtrue;
     return Qtrue;
   }
 

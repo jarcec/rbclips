@@ -64,6 +64,28 @@ class Test_Rule < Test::Unit::TestCase
     end
   end
 
+  def test_creator_assert
+    rule = Clips::Rule.new 'ahoj' do |r|
+      r.pattern 'zavadec', 'windows'
+      r.assert 'go-to', 'mars'
+    end
+    assert_equal rule.to_s, '(defrule ahoj (zavadec "windows") => (assert (go-to "mars")))'
+
+    rule = Clips::Rule.new 'ahoj2' do |r|
+      r.pattern 'mammal', :mammal
+      r.assert 'animal', :mammal
+    end
+    assert_equal rule.to_s, '(defrule ahoj2 (mammal ?mammal) => (assert (animal ?mammal)))'
+
+    tmpl = Clips::Template.new "tmpl", %w{a b c}
+
+    rule = Clips::Rule.new 'ahoj3' do |r|
+      r.pattern 'a', :b
+      r.assert tmpl, :b => :b
+    end
+    assert_equal rule.to_s, '(defrule ahoj3 (a ?b) => (assert (tmpl (b ?b))))'
+  end
+
   def test_creator_retract
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.retract 'animal', :a
