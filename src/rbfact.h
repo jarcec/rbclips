@@ -17,6 +17,9 @@ VALUE cl_fact_new(int, VALUE *, VALUE);
 //! Clips::Fact::all
 VALUE cl_fact_all(VALUE);
 
+//! Clips::Fact::find
+VALUE cl_fact_find(int, VALUE *, VALUE);
+
 //! Clips::Fact\#initialize
 VALUE cl_fact_initialize(VALUE, VALUE, VALUE);
 

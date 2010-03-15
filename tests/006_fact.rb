@@ -134,7 +134,7 @@ class Test_Fact < Test::Unit::TestCase
 
   def test_all
     template = get_animal
-    template.save
+    assert template.save
 
     a = Clips::Fact.new template, :name => 'Azor'
     b = Clips::Fact.new template, :age => 30
@@ -150,6 +150,26 @@ class Test_Fact < Test::Unit::TestCase
     assert b.destroy!
     assert c.destroy!
 
+    assert template.destroy!
+  end
+
+  def test_find
+    template = get_animal
+    assert template.save
+    
+    assert Clips::Fact.new('os', %w(linux)).save
+    assert Clips::Fact.new('os', %w(MacOS)).save
+    assert Clips::Fact.new('os', %w(FreeBsd)).save
+    assert Clips::Fact.new('gameloader', %w(Windows)).save
+    assert Clips::Fact.new(template, :name => 'alik').save
+    assert Clips::Fact.new(template, :name => 'zorek').save
+ 
+    assert_equal Clips::Fact.find('os').size, 3
+    assert_equal Clips::Fact.find('gameloader').size, 1
+    assert_equal Clips::Fact.find(template).size, 2
+    assert_equal Clips::Fact.find('maminka').size, 0
+
+    Clips::Fact.all.each {|f| assert f.destroy! }
     assert template.destroy!
   end
 end

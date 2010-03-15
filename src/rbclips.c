@@ -87,6 +87,7 @@ void Init_rbclips()
   cl_cFact = rb_define_class_under(cl_mClips, "Fact", rb_cObject);
   rb_define_singleton_method(cl_cFact, "new", cl_fact_new, -1);
   rb_define_singleton_method(cl_cFact, "all", cl_fact_all, 0);
+  rb_define_singleton_method(cl_cFact, "find", cl_fact_find, -1);
   rb_define_method(cl_cFact, "initialize", cl_fact_initialize, 2);
   rb_define_method(cl_cFact, "to_s", cl_fact_to_s, 0);
   rb_define_method(cl_cFact, "clone", cl_fact_clone, 0);

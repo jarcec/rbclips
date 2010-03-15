@@ -82,6 +82,61 @@ VALUE cl_fact_all(VALUE self)
 }
 
 /**
+ * Return only facts matching given criteria
+ * This is really simple approach, some more sofisticated 
+ * way is desierable for the future.
+ */
+VALUE cl_fact_find(int argc, VALUE *argv, VALUE self)
+{
+  if(argc != 1)
+  {
+    rb_raise(cl_eArgError, "Clips::Fact::find Wrong number of argumentse, please read manual for allowed values.");
+    return Qnil;
+  }
+
+  if(TYPE(argv[0]) != T_STRING && TYPE(argv[0]) != T_SYMBOL && rb_obj_class(argv[0]) != cl_cTemplate)
+  {
+    rb_raise(cl_eArgError, "Clips::Fact::find expects for first argument to be string, symbol or Template object, but '%s' have class '%s'.", CL_STR(argv[0]), CL_STR_CLASS(argv[0]));
+    return Qnil;
+  }
+
+  // I'm using fact that CLIPS are creating templates even for 
+  // ordered facts, so task to find out if we're looking for this
+  // fact based on template is really simple and straightforward
+  // even for ordered facts.
+  char *template;
+  if(rb_obj_class(argv[0]) == cl_cTemplate)
+  {
+    template = CL_STR( rb_iv_get(argv[0], "@name")  );
+  } else {
+    template = CL_STR(argv[0]);
+  }
+
+  VALUE ret = rb_ary_new();
+  void *fact = NULL;
+
+  while( fact = GetNextFact(fact) )
+  {
+    // Are we looking for this?
+    char *templatename = GetDeftemplateName( FactDeftemplate(fact) );
+    if(strcmp(template, templatename) != 0) continue;
+
+    // Creating the object
+    cl_sFactWrap *wrap = calloc(1, sizeof(*wrap));
+    VALUE obj = Data_Wrap_Struct(cl_cFact, NULL, free, wrap);
+  
+    // Building it's content
+    wrap->ptr = fact;
+    CL_UPDATE(obj);
+
+    rb_ary_push(ret, obj);
+  }
+
+  // C'est tout
+  return ret;
+}
+
+/**
  * Constructor - initialize
  */
 VALUE cl_fact_initialize(VALUE self, VALUE first, VALUE second)

@@ -46,6 +46,11 @@ class Test_Complex1 < Test::Unit::TestCase
     # Run the code
     Base.run
 
-    assert_equal Fact.all.size, 16  
+    assert_equal Fact.all.size, 16
+    assert_equal Fact.find(:animal).size, 4
+    assert_equal Fact.find('warm-blooded').size, 3
+    assert_equal Fact.find('lays-eggs').size, 2
+    assert_equal Fact.find('child-of').size, 3
+    assert_equal Fact.find('mammal').size, 4
   end
 end
