@@ -309,7 +309,7 @@ VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
       rb_ary_push(lhs, cl_rule_creator_transform_nonordered_fact(argv[0], argv[1]));
     }
 
-    return Qnil;
+    return Qtrue;
   }
 
   if(argc > 1 && (TYPE(argv[0]) == T_STRING || TYPE(argv[0]) == T_SYMBOL))
@@ -331,7 +331,7 @@ VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
       rb_ary_push(lhs, cl_rule_creator_transform_ordered_fact(argc, argv));
     }
 
-    return Qnil;
+    return Qtrue;
   }
 
   if(argc == 1 && TYPE(argv[0]) == T_STRING)
