@@ -19,6 +19,7 @@ struct _cl_sRuleCreatorWrap
 {
   VALUE ptr;
   unsigned counter;
+  int not_block;    // Boolean if we're inside not block
 };
 typedef struct _cl_sRuleCreatorWrap cl_sRuleCreatorWrap;
 

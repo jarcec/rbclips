@@ -29,22 +29,22 @@ class Test_Rule < Test::Unit::TestCase
       r.pattern 'animal', :a
       r.rhs '(assert (animal ?a))'
     end
-    assert_equal rule.to_s, "(defrule animal-mammal (animal ?a) => (assert (animal ?a)))"
+    assert_equal rule.to_s, "(defrule animal-mammal ?rbclips-0 <- (animal ?a) => (assert (animal ?a)))"
 
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.pattern 'animal', :one
     end
-    assert_equal rule.to_s, "(defrule animal-mammal (animal ?) => )"
+    assert_equal rule.to_s, "(defrule animal-mammal ?rbclips-0 <- (animal ?) => )"
 
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.pattern 'animal', :all
     end
-    assert_equal rule.to_s, "(defrule animal-mammal (animal $?) => )"
+    assert_equal rule.to_s, "(defrule animal-mammal ?rbclips-0 <- (animal $?) => )"
 
     rule = Clips::Rule.new 'animal-mammal' do |r|
       r.pattern 'animal', 1, "ahoj", 2.3
     end
-    assert_equal rule.to_s, '(defrule animal-mammal (animal 1 "ahoj" 2.3) => )'
+    assert_equal rule.to_s, '(defrule animal-mammal ?rbclips-0 <- (animal 1 "ahoj" 2.3) => )'
 
     assert_raise(Clips::UsageError)  do
       Clips::Rule.new 'x' do |r|
@@ -55,7 +55,7 @@ class Test_Rule < Test::Unit::TestCase
     rule = Clips::Rule.new 'humanize' do |r|
       r.pattern t, :age => :a, :name => 'jarcec'
     end
-    assert_equal rule.to_s, '(defrule humanize (human (age ?a) (name "jarcec")) => )'
+    assert_equal rule.to_s, '(defrule humanize ?rbclips-0 <- (human (age ?a) (name "jarcec")) => )'
 
     assert_raise(Clips::ArgumentError)  do
       Clips::Rule.new 'human' do |r|
@@ -69,13 +69,13 @@ class Test_Rule < Test::Unit::TestCase
       r.pattern 'zavadec', 'windows'
       r.assert 'go-to', 'mars'
     end
-    assert_equal rule.to_s, '(defrule ahoj (zavadec "windows") => (assert (go-to "mars")))'
+    assert_equal rule.to_s, '(defrule ahoj ?rbclips-0 <- (zavadec "windows") => (assert (go-to "mars")))'
 
     rule = Clips::Rule.new 'ahoj2' do |r|
       r.pattern 'mammal', :mammal
       r.assert 'animal', :mammal
     end
-    assert_equal rule.to_s, '(defrule ahoj2 (mammal ?mammal) => (assert (animal ?mammal)))'
+    assert_equal rule.to_s, '(defrule ahoj2 ?rbclips-0 <- (mammal ?mammal) => (assert (animal ?mammal)))'
 
     tmpl = Clips::Template.new "tmpl", %w{a b c}
 
@@ -83,7 +83,7 @@ class Test_Rule < Test::Unit::TestCase
       r.pattern 'a', :b
       r.assert tmpl, :b => :b
     end
-    assert_equal rule.to_s, '(defrule ahoj3 (a ?b) => (assert (tmpl (b ?b))))'
+    assert_equal rule.to_s, '(defrule ahoj3 ?rbclips-0 <- (a ?b) => (assert (tmpl (b ?b))))'
   end
 
   def test_creator_retract
@@ -192,6 +192,34 @@ class Test_Rule < Test::Unit::TestCase
     assert b.save
 
     assert_equal [a, b], Clips::Rule.all
+  end
+
+  def test_factaddress
+    rule = Clips::Rule.new 'dump' do |r|
+      a = r.pattern :a, :p1
+      assert_equal a.to_s, "?rbclips-0"
+      assert_instance_of Clips::FactAddress, a
+
+      a = r.retract :b, :p1
+      assert_equal a.to_s, "?rbclips-1"
+      assert_instance_of Clips::FactAddress, a
+
+      r.or do |o|
+        a = o.pattern :c, :p1
+        assert_equal a.to_s, "?rbclips-2"
+      end
+
+      a = r.retract :d, :p1
+      assert_equal a.to_s, "?rbclips-3"
+
+      r.and do |o|
+        a = o.pattern :e, :p1
+        assert_equal a.to_s, "?rbclips-4"
+      end
+
+      a = r.retract :f, :p1
+      assert_equal a.to_s, "?rbclips-5"
+    end
   end
 
   # Dump class for testing purposes

@@ -11,6 +11,7 @@
 
 /* Definitions */
 VALUE cl_cFact;
+VALUE cl_cFactAddress;
 
 //! Create ordered fact
 VALUE cl_fact_initialize_ordered(VALUE, VALUE, VALUE);
@@ -561,4 +562,12 @@ VALUE cl_fact_ordered(VALUE self)
   if(TYPE(name) == T_STRING) return Qtrue;
 
   return Qfalse;
+}
+
+/**
+ * Return representation of our address
+ */
+VALUE cl_factaddress_to_s(VALUE self)
+{
+  return rb_str_dup( rb_iv_get(self, "@to_s") );
 }

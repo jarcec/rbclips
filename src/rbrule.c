@@ -7,6 +7,7 @@
 #include "rbexception.h"
 #include "rbbase.h"
 #include "rbtemplate.h"
+#include "rbfact.h"
 
 /* Definitions */
 VALUE cl_cRule;
@@ -23,6 +24,9 @@ int cl_rule_creator_transform_nonordered_fact_each(VALUE, VALUE, VALUE);
 
 //! Generic and/or/not method for shared functionality
 VALUE cl_rule_creator_generic_andornot(VALUE, char *);
+
+//! Create and return FactAddress object
+VALUE cl_rule_create_factaddress(VALUE);
 
 /**
  * Creating new object - just wrapping structrue
@@ -274,6 +278,13 @@ VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
 {
   VALUE lhs = rb_iv_get(self, "@lhs");
 
+  cl_sRuleCreatorWrap *wrap = DATA_PTR(self);
+  if( !wrap )
+  {
+    rb_raise(cl_eUseError, "Inner structure not found");
+    return Qnil;
+  }
+
   if(argc == 0)
   {
     rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#pattern without arguments is prohibited. See manual for all allowed posibilities.");
@@ -282,15 +293,45 @@ VALUE cl_rule_creator_pattern(int argc, VALUE *argv, VALUE self)
 
   if(argc == 2 && rb_obj_class(argv[0]) == cl_cTemplate && TYPE(argv[1]) == T_HASH)
   {
-    rb_ary_push(lhs, cl_rule_creator_transform_nonordered_fact(argv[0], argv[1]) );
-    return Qtrue;
+    /* 
+     * If we are *NOT* inside not block bound searched fact to variable for
+     * use in RHS or other methods and return its addres (ruby object describing
+     * address). In case of not block, don't bound because it make no sense and just
+     * return nil.
+     */
+    if( !wrap->not_block )
+    {
+      VALUE ret = cl_rule_create_factaddress(rb_sprintf("?rbclips-%u", wrap->counter++));
+      VALUE pom = cl_rule_creator_transform_nonordered_fact(argv[0], argv[1]);
+      rb_ary_push(lhs, rb_sprintf("%s <- %s", CL_STR(ret), CL_STR(pom)));
+      return ret;
+    } else {
+      rb_ary_push(lhs, cl_rule_creator_transform_nonordered_fact(argv[0], argv[1]));
+    }
+
+    return Qnil;
   }
 
   if(argc > 1 && (TYPE(argv[0]) == T_STRING || TYPE(argv[0]) == T_SYMBOL))
   {
-    // Assume we're searching for ordered fact
-    rb_ary_push(lhs, cl_rule_creator_transform_ordered_fact(argc, argv) );
-    return Qtrue;
+    /* 
+     * If we are *NOT* inside not block bound searched fact to variable for
+     * use in RHS or other methods and return its addres (ruby object describing
+     * address). In case of not block, don't bound because it make no sense and just
+     * return nil.
+     */
+    if( !wrap->not_block )
+    {
+      // Assume we're searching for ordered fact
+      VALUE ret = cl_rule_create_factaddress(rb_sprintf("?rbclips-%u", wrap->counter++));
+      VALUE pom = cl_rule_creator_transform_ordered_fact(argc, argv);
+      rb_ary_push(lhs, rb_sprintf("%s <- %s", CL_STR(ret), CL_STR(pom)));
+      return ret;
+    } else {
+      rb_ary_push(lhs, cl_rule_creator_transform_ordered_fact(argc, argv));
+    }
+
+    return Qnil;
   }
 
   if(argc == 1 && TYPE(argv[0]) == T_STRING)
@@ -361,25 +402,27 @@ VALUE cl_rule_creator_retract(int argc, VALUE *argv, VALUE self)
 
   if(argc == 2 && rb_obj_class(argv[0]) == cl_cTemplate && TYPE(argv[1]) == T_HASH)
   {
-    VALUE pom = rb_sprintf("?rbclips-%u <- %s", wrap->counter, CL_STR(cl_rule_creator_transform_nonordered_fact(argv[0], argv[1])));
+    VALUE ret = cl_rule_create_factaddress(rb_sprintf("?rbclips-%u", wrap->counter));
+    VALUE pom = rb_sprintf("%s <- %s", CL_STR(ret), CL_STR(cl_rule_creator_transform_nonordered_fact(argv[0], argv[1])));
 
     rb_ary_push(lhs, pom);
-    rb_ary_push(rhs, rb_sprintf("(retract ?rbclips-%u)", wrap->counter));
+    rb_ary_push(rhs, rb_sprintf("(retract %s)", CL_STR(ret)));
 
     wrap->counter++;
-    return Qtrue;
+    return ret;
   }
 
   if(argc > 1 && (TYPE(argv[0]) == T_STRING || TYPE(argv[0]) == T_SYMBOL))
   {
     // Assume we're searching for ordered fact
-    VALUE pom = rb_sprintf("?rbclips-%u <- %s", wrap->counter, CL_STR(cl_rule_creator_transform_ordered_fact(argc, argv)));
+    VALUE ret = cl_rule_create_factaddress(rb_sprintf("?rbclips-%u", wrap->counter));
+    VALUE pom = rb_sprintf("%s <- %s", CL_STR(ret), CL_STR(cl_rule_creator_transform_ordered_fact(argc, argv)));
 
     rb_ary_push(lhs, pom);
-    rb_ary_push(rhs, rb_sprintf("(retract ?rbclips-%u)", wrap->counter));
+    rb_ary_push(rhs, rb_sprintf("(retract %s)", CL_STR(ret)));
     
     wrap->counter++;
-    return Qtrue;
+    return ret;
   }
 
   rb_raise(cl_eArgError, "Calling Clips::Rule::Creator#retract with unknown parameter set. See manual for all allowed posibilities.");
@@ -542,6 +585,7 @@ VALUE cl_rule_creator_generic_andornot(VALUE self, char *func)
   cl_sRuleCreatorWrap *newWrap = calloc(1, sizeof(*newWrap));
   newWrap->ptr = self;
   newWrap->counter = wrap->counter;
+  newWrap->not_block = (strcmp(func, "not") == 0) ? 1 : 0;
 
   VALUE creator = Data_Wrap_Struct(cl_cRuleCreator, NULL, free, newWrap);
   rb_obj_call_init(creator, 0, NULL);
@@ -572,3 +616,17 @@ VALUE cl_rule_creator_generic_andornot(VALUE self, char *func)
   wrap->counter = newWrap->counter;
   return Qtrue;
 }
+
+/**
+ * Create FactAddress object and return it for next use
+ */
+VALUE cl_rule_create_factaddress(VALUE addr)
+{
+  VALUE ret = Data_Wrap_Struct(cl_cFactAddress, NULL, NULL, NULL);
+  rb_obj_call_init(ret, 0, NULL);
+
+  rb_iv_set(ret, "@to_s", addr);
+
+  return ret;
+}
+

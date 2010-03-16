@@ -4,6 +4,9 @@
 //! Clips::Fact
 extern VALUE cl_cFact;
 
+//! Clips::FactAddress
+extern VALUE cl_cFactAddress;
+
 //! Holds values stored inside Clips::Fact
 struct _cl_sFactWrap
 {
@@ -52,5 +55,8 @@ VALUE cl_fact_destroy(VALUE);
 
 //! Clips::Fact\#ordered?
 VALUE cl_fact_ordered(VALUE);
+
+//! Clips::FactAddress\#to_s
+VALUE cl_factaddress_to_s(VALUE);
 
 #endif // _RBFACT_H_
