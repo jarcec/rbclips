@@ -23,6 +23,16 @@ struct _cl_sRuleCreatorWrap
 };
 typedef struct _cl_sRuleCreatorWrap cl_sRuleCreatorWrap;
 
+/** 
+ * List with rule block types - AND, OR, NOT
+ */
+enum RULES_BLOCK_TYPES
+{
+  BLOCK_AND,
+  BLOCK_OR,
+  BLOCK_NOT,
+};
+
 /* Function list */
 
 //! Clips::Rule::new

@@ -126,7 +126,7 @@ class Test_Rule < Test::Unit::TestCase
         end
       end
       r.retract 'd', :a
-      r.not {|n| n.retract 'e', :a }
+      r.not {|n| n.pattern 'e', :a }
     end
 
     assert_raise(Clips::UsageError)  do
@@ -134,6 +134,58 @@ class Test_Rule < Test::Unit::TestCase
         r.or {|o| }
       end
     end
+
+    # Checking existance of methods
+    rule = Clips::Rule.new 'x' do |r|
+      assert_respond_to r, :pattern
+      assert_respond_to r, :retract
+      assert_respond_to r, :and
+      assert_respond_to r, :or
+      assert_respond_to r, :not
+      assert_respond_to r, :rhs
+      assert_respond_to r, :assert
+      assert_respond_to r, :rcall
+
+      r.or do |o|
+        assert_respond_to o, :pattern
+        assert_respond_to o, :retract
+        assert_respond_to o, :and
+        assert_respond_to o, :or
+        assert_respond_to o, :not
+        assert_raise(NoMethodError) { o.rhs "a" }
+        assert_raise(NoMethodError) { o.assert "a" }
+        assert_raise(NoMethodError) { o.rcall "a" }
+
+        o.pattern :a, :b
+      end
+
+      r.not do |n|
+        assert_respond_to n, :pattern
+        assert_respond_to n, :and
+        assert_respond_to n, :or
+        assert_raise(NoMethodError) { n.rhs "a" }
+        assert_raise(NoMethodError) { n.assert "a" }
+        assert_raise(NoMethodError) { n.rcall "a" }
+        assert_raise(NoMethodError) { n.retract "a" }
+        assert_raise(NoMethodError) { n.not "a" }
+
+        n.pattern :b, :c
+
+        n.and do |a|
+          assert_respond_to a, :pattern
+          assert_respond_to a, :and
+          assert_respond_to a, :or
+          assert_raise(NoMethodError) { a.rhs "a" }
+          assert_raise(NoMethodError) { a.assert "a" }
+          assert_raise(NoMethodError) { a.rcall "a" }
+          assert_raise(NoMethodError) { a.retract "a" }
+          assert_raise(NoMethodError) { a.not "a" }
+        
+          a.pattern :x, :y
+        end
+      end
+    end
+
   end
 
   def test_save_destroy!

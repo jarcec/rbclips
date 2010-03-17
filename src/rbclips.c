@@ -121,14 +121,14 @@ void Init_rbclips()
   // Clips::Rule::Creator
   cl_cRuleCreator = rb_define_class_under(cl_cRule, "Creator", rb_cObject);
   rb_define_method(cl_cRuleCreator, "initialize", cl_rule_creator_initialize, 0);
-  rb_define_method(cl_cRuleCreator, "pattern", cl_rule_creator_pattern, -1);
-  rb_define_method(cl_cRuleCreator, "assert", cl_rule_creator_assert, -1);
-  rb_define_method(cl_cRuleCreator, "retract", cl_rule_creator_retract, -1);
-  rb_define_method(cl_cRuleCreator, "rhs", cl_rule_creator_rhs, 1);
-  rb_define_method(cl_cRuleCreator, "rcall", cl_rule_creator_rcall, -1);
-  rb_define_method(cl_cRuleCreator, "or", cl_rule_creator_or, 0);
-  rb_define_method(cl_cRuleCreator, "and", cl_rule_creator_and, 0);
-  rb_define_method(cl_cRuleCreator, "not", cl_rule_creator_not, 0);
+//  rb_define_method(cl_cRuleCreator, "pattern", cl_rule_creator_pattern, -1);
+//  rb_define_method(cl_cRuleCreator, "assert", cl_rule_creator_assert, -1);
+//  rb_define_method(cl_cRuleCreator, "retract", cl_rule_creator_retract, -1);
+//  rb_define_method(cl_cRuleCreator, "rhs", cl_rule_creator_rhs, 1);
+//  rb_define_method(cl_cRuleCreator, "rcall", cl_rule_creator_rcall, -1);
+//  rb_define_method(cl_cRuleCreator, "or", cl_rule_creator_or, 0);
+//  rb_define_method(cl_cRuleCreator, "and", cl_rule_creator_and, 0);
+//  rb_define_method(cl_cRuleCreator, "not", cl_rule_creator_not, 0);
 
   // Exception classes
   cl_eException = rb_define_class_under(cl_mClips, "Exception", rb_eException);

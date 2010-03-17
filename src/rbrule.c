@@ -23,7 +23,7 @@ VALUE cl_rule_creator_transform_nonordered_fact(VALUE, VALUE);
 int cl_rule_creator_transform_nonordered_fact_each(VALUE, VALUE, VALUE);
 
 //! Generic and/or/not method for shared functionality
-VALUE cl_rule_creator_generic_andornot(VALUE, char *);
+VALUE cl_rule_creator_generic_andornot(VALUE, int);
 
 //! Create and return FactAddress object
 VALUE cl_rule_create_factaddress(VALUE);
@@ -120,6 +120,17 @@ VALUE cl_rule_initialize(VALUE self, VALUE name)
 
   VALUE creator = Data_Wrap_Struct(cl_cRuleCreator, NULL, free, wrap);
   rb_obj_call_init(creator, 0, NULL);
+
+  // Create full method list
+  rb_define_singleton_method(creator, "pattern", cl_rule_creator_pattern, -1);
+  rb_define_singleton_method(creator, "assert", cl_rule_creator_assert, -1);
+  rb_define_singleton_method(creator, "retract", cl_rule_creator_retract, -1);
+  rb_define_singleton_method(creator, "rhs", cl_rule_creator_rhs, 1);
+  rb_define_singleton_method(creator, "rcall", cl_rule_creator_rcall, -1);
+  rb_define_singleton_method(creator, "or", cl_rule_creator_or, 0);
+  rb_define_singleton_method(creator, "and", cl_rule_creator_and, 0);
+  rb_define_singleton_method(creator, "not", cl_rule_creator_not, 0);
+
   rb_yield(creator);
 
   rb_iv_set(self, "@name", CL_TO_S(name));
@@ -544,7 +555,7 @@ int cl_rule_creator_transform_nonordered_fact_each(VALUE key, VALUE value, VALUE
  */
 VALUE cl_rule_creator_or(VALUE self)
 {
-  return cl_rule_creator_generic_andornot(self, "or");
+  return cl_rule_creator_generic_andornot(self, BLOCK_OR);
 }
 
 /**
@@ -552,7 +563,7 @@ VALUE cl_rule_creator_or(VALUE self)
  */
 VALUE cl_rule_creator_and(VALUE self)
 {
-  return cl_rule_creator_generic_andornot(self, "and");
+  return cl_rule_creator_generic_andornot(self, BLOCK_AND);
 }
 
 /**
@@ -560,14 +571,25 @@ VALUE cl_rule_creator_and(VALUE self)
  */
 VALUE cl_rule_creator_not(VALUE self)
 {
-  return cl_rule_creator_generic_andornot(self, "not");
+  return cl_rule_creator_generic_andornot(self, BLOCK_NOT);
 }
 
 /**
  * Common code for 'or', 'and' and 'not' blocks
  */
-VALUE cl_rule_creator_generic_andornot(VALUE self, char *func)
+VALUE cl_rule_creator_generic_andornot(VALUE self, int block_type)
 {
+  // Resolving block type to it's text representative
+  char *func;
+  switch(block_type)
+  {
+    case BLOCK_NOT: func = "not"; break;
+    case BLOCK_AND: func = "and"; break;
+    case BLOCK_OR:  func = "or";  break;
+    default: func = "fuck-you";
+  }
+
+  // Checking structure and params
   cl_sRuleCreatorWrap *wrap = DATA_PTR(self);
   if( !wrap )
   {
@@ -581,14 +603,34 @@ VALUE cl_rule_creator_generic_andornot(VALUE self, char *func)
     return Qnil;
   }
 
+  // We need to know if we're "not" dirty (meaning we are inside not block)
+  int not_block = (block_type == BLOCK_NOT ) ? 1 : 0;
+
+  // But we can be and/or block inside another not block - what about our parent?
+  if(wrap->not_block) not_block = 1;
+
   // Creating new Creator object
   cl_sRuleCreatorWrap *newWrap = calloc(1, sizeof(*newWrap));
   newWrap->ptr = self;
   newWrap->counter = wrap->counter;
-  newWrap->not_block = (strcmp(func, "not") == 0) ? 1 : 0;
+  newWrap->not_block = not_block;
 
   VALUE creator = Data_Wrap_Struct(cl_cRuleCreator, NULL, free, newWrap);
   rb_obj_call_init(creator, 0, NULL);
+
+  // Registering possible methods
+  if( !not_block )
+  {
+    rb_define_singleton_method(creator, "pattern", cl_rule_creator_pattern, -1);
+    rb_define_singleton_method(creator, "retract", cl_rule_creator_retract, -1);
+    rb_define_singleton_method(creator, "or", cl_rule_creator_or, 0);
+    rb_define_singleton_method(creator, "and", cl_rule_creator_and, 0);
+    rb_define_singleton_method(creator, "not", cl_rule_creator_not, 0);
+  } else {
+    rb_define_singleton_method(creator, "pattern", cl_rule_creator_pattern, -1);
+    rb_define_singleton_method(creator, "or", cl_rule_creator_or, 0);
+    rb_define_singleton_method(creator, "and", cl_rule_creator_and, 0);
+  }
 
   // Calling creator to build new block
   rb_yield(creator);
