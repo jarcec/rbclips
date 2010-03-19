@@ -2,6 +2,7 @@
 #include "clips/clips.h"
 #include "rbclips.h"
 #include "rbgeneric.h"
+#include "rbfact.h"
 
 /**
  * Transfer ruby ID to string representation that is valid in CLIPS.
@@ -137,6 +138,21 @@ VALUE cl_generic_convert_dataobject(DATA_OBJECT value)
         rb_ary_push(ret, slot);
       }
 
+      return ret;
+    }
+
+    case FACT_ADDRESS:
+    {
+      // Fact addres
+      void *fact = DOToPointer(value);
+
+      // Creating the object
+      cl_sFactWrap *wrap = calloc(1, sizeof(*wrap));
+      VALUE ret = Data_Wrap_Struct(cl_cFact, NULL, free, wrap);
+  
+      // Building it's content
+      wrap->ptr = fact;
+      CL_UPDATE(ret);
       return ret;
     }
 

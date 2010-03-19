@@ -275,7 +275,7 @@ class Test_Rule < Test::Unit::TestCase
   end
 
   # Dump class for testing purposes
-  class Dump
+  class Dump 
     def initialize
       @num = 0
     end
@@ -284,7 +284,7 @@ class Test_Rule < Test::Unit::TestCase
     end
   end
 
-  def test_rcall
+  def test_rcall_base
     dump = Dump.new
 
     rule = Clips::Rule.new "counter" do |r|
@@ -297,5 +297,24 @@ class Test_Rule < Test::Unit::TestCase
     Clips::Base.run
 
     assert_equal dump.instance_eval{@num}, 8
+  end
+
+  def fact(fact)
+    assert_instance_of Clips::Fact, fact
+  end
+
+  def test_rcall_fact
+    dump = Dump.new
+    dump.instance_eval { @test = self }
+
+    rule = Clips::Rule.new "factCaller" do |r|
+      addr = r.pattern 'f', :number
+      r.rcall self, :fact, addr
+    end
+
+    rule.save
+    Clips::Fact.new("f", [3]).save
+    Clips::Fact.new("f", [5]).save
+    Clips::Base.run
   end
 end
