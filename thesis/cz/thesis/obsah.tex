@@ -41,54 +41,82 @@ Ruby je dynamický skriptovací jazyk mnoha ruzných paradigmat\,--\,je plnì objekt
 
 Ní¾e uvedený popis vlastností jsem èerpal ze své osobní zku¹enosti s tímto programovacím jazykem, z velice obsáhleho popisu jazyka napsaného samotným autorem ruby The Ruby programming language\cite{rubyProgrammingLanguage}, co¾ je zrevidování a roz¹íøení døíve vydané knihy, která je v ruby svìtì známa pod názvem Ruby in Nutshel\cite{rubyInNutshel}, a z knihy Metaprogramming Ruby\cite{metaprogrammingRuby}, která se zabývá nejen metaprogramováním v ruby, ale take velice èitelným zpùsobem vysvìtluje objektový model ruby a dal¹í jeho aspekty.
 
+TODO: Seznam vlastnosti
+
 \subsubsection{Objektovost}
-Ruby je plnì objektovì orientovaný jazyk (byl mimo jiné inspirován i Smalltalkem), co¾ znamená, ¾e v¹e v ruby je objekt. Nejsou zde ¾ádná datová primitiva jako napøíklad v Jave (int, double). \u{C}íselné a jiné konstanty jsou interpretem pøevádìny na instance pøíslu¹ných tøíd okam¾ite a automaticky:
+Ruby je plnì objektovì orientovaný jazyk (byl mimo jiné inspirován i Smalltalkem\footnote{http://www.smalltalk.org/main/}), co¾ znamená, ¾e v¹e v ruby je objekt. Nejsou zde ¾ádná datová primitiva jako v Javì (int, double) a C++. \u{C}íselné a jiné konstanty jsou interpretem okam¾itì pøevádìny na instance pøíslu¹ných tøíd. Pøíklad na Obrázku \ref{ruby_objektovost_fig1} ukazuje mo¾nost volání metody na èíselnou konstantu bez nutnosti explicitní objektivizace.
 
-\begin{verbatim}
- 123.class # => Fixnum
-\end{verbatim}
-
-Konstanta 123 je lexikálním analyzátorem pøevedena na objekt pøíslu¹ného typu (zde instance tøídy Fixnum), na který okam¾itì mohu volat metodu (v pøíkladì volám metodu pro zji¹tìní tøídy ke které objekt nále¾í).
-
-Interpret ruby po svém startu vytvoøí bezejmenou instanci tøídy Object a v jejím kontextu poté vykonává pøedaný skript. Není zde tedy nutnost vytváøet tøídu a jednu veøejnou metodu, která se spustí po startu aplikace jako je tomu napøíklád v Jave èi funkci main() jako u C++. Ukázkový ``Hello world!'' program, který v ruby vypadá takto: \verb|puts "Hello world!"|, je tedy objektový k\'{o}d, i kdy¾ se tak na první pohled nezdá - toto lze dokazát vypsaním tøídy aktualního objektu \verb|puts self.class|, která vratí ``Object'' i kdy¾ pro pisatele v ¾ádném objektu není (\verb|self| je obdoba ukazatele \verb|this| z jazyka C++, tedy ``ukazatel'' na aktuální objekt),
-
-Dal¹í a pro mì v dobì, kdy jsem s ruby poprvé seznamoval, velice pøekvapivý dùsledek plné objektovosti je fakt, ¾e tøídy samy jsou objekty. Tuto skuteènost jsem ji¾ vysvìtloval mnoha lidem a èasto jsem byl nepochopen, proto toto tvrzení rozvedu tro¹ku více. Objekt (instance) je neformálnì øeèeno mno¾ina promìných daného objektu a mno¾ina method, které na nìm lze volat (z formálnìj¹íh hlediska mno¾ina zpráv, kterým objekt rozumí). Ka¾dy objekt patøí nìjaké tøídì - tøída tedy urèitým zpùsobem popisuje mno¾inu objektù (napøíklad seznam zpráv/metod, kterým v¹echny objekty dané tøídy rozumí). Pro lep¹í vysvìtlení mohu øíci, ¾e promìné existují v objektu (pro ka¾dý objekt mohou být jiné nebo nabývat jiných hodnot) a metody existují ve tøídì (proto¾e jsou sdílené mezi v¹emi objekty této tøídy). 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=8cm,keepaspectratio]{fig/fig-ruby-inst_obj.png}
-  \caption{Promìné, metody a jejich umístìní v instancích a tøídách}
-  \label{fig_ruby_inst_obj}
+\begin{figure}[tbh]
+	\begin{verbatim}
+	123.class # => Fixnum
+	\end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Automatická objektivizace èíselných konstant}
+  \label{ruby_objektovost_fig1}
 \end{figure}
 
-Tøídy jsou v ruby také objekty (instance jiné tøídy - konkrétnì tøídy Class) - mají tedy své instanèní promìné a lze na nich volat metody (které jsou umístìny v tøídì dané tøídy).
+Interpret po svém startu vytvoøí bezejmenou instanci tøídy Object a v jejím¾ kontextu naslednì vykoná pøedaný skript. Není zde tedy nutnost vytváøet tøídu s minimálnì jednou veøejnou metodu, která se spustí po startu aplikace jako je tomu v Javì popøípadnì funkci main() v pøípadì C++. Ukázkový ``Hello world!'' program, který v ruby vypadá takto: \verb|puts "Hello world!"|, je tedy objektový k\'{o}d, i kdy¾ se tak na první pohled nezdá. Tvrzení lze dokazát vypsaním tøídy aktualního objektu \verb|puts self.class|, která vratí ``Object'' i kdy¾ pro pisatele v ¾ádném objektu není (\verb|self| je obdoba ukazatele \verb|this| z jazyka C++, tedy ``ukazatel'' na aktuální objekt),
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=12cm,keepaspectratio]{fig/fig-ruby-inst_obj_2.png}
-  \caption{Tøída je také objekt}
-  \label{fig_ruby_inst_obj_2}
+Dal¹í a pro mì v dobì, kdy jsem s ruby poprvé seznamoval, velice pøekvapivý dùsledek plné objektovosti je fakt, ¾e tøídy samy jsou objekty. Napøíklad objekt ``abcd'' je tøídy \verb|String|, a samotná tøída/objekt \verb|String| je zase tøídy \verb|Class|, co¾ jde vidìt na Obrázku \ref{ruby_objektovost_fig2}. Z tohoto pøístupu plynì nìkolik dùsledkù: (1) je potøeba rozli¹ovat mezi tøídní metodou a instaèní metodou, (2) tøídy mohou mít své instaèní promìné, (3) existuje mo¾nost dìdit i na mno¾inì objektù, ze kterých se vytváøejí tøídy. Z praktického pohledu se na tuto vlastnost lze koukat jako na statické promìné a metody u jazyka C++.
+
+\begin{figure}[tbh]
+	\begin{verbatim}
+	"abc".class # => String
+	String.class # => Class
+	\end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Ruby tøída je normální objekt}
+  \label{ruby_objektovost_fig2}
 \end{figure}
 
-Z urèitého hlediska se na tuto vlastnost lze koukat jako na statické promìné a metody u jazyku C++, i kdy¾ bych u toho pøirovnání byl opatrný. Praktické vyu¾ítí této vlastnosti zmíním v odstavci o dynamiènosti ruby.
+Schopnosti dìdit na mno¾inì objektù, ze kterých se vytváøejí tøídy vyu¾ívá i objektový model Ruby. Tøída \verb|Class| pou¾ívaná pro tvorbu tøíd napøíklad dìdí od tøídy \verb|Modul|, kterou roz¹iøuje hlavnì o metodu \verb|new| slou¾ící pro tvorbu nových instancí. Modul je zjednodu¹ená tøída, kolekce metod, od které nelze vytváøet instance ov¹em lze je vkládat dovnitø jiných tøíd a tím nahrazovat absenci vícenásobné dìdiènosti v Ruby.
+
+%\begin{figure}[ht]
+%  \centering
+%  \includegraphics[width=8cm,keepaspectratio]{fig/fig-ruby-inst_obj.png}
+%  \caption{Promìné, metody a jejich umístìní v instancích a tøídách}
+%  \label{fig_ruby_inst_obj}
+%\end{figure}
+%
+%Tøídy jsou v ruby také objekty (instance jiné tøídy - konkrétnì tøídy Class) - mají tedy své instanèní promìné a lze na nich volat metody (které %jsou umístìny v tøídì dané tøídy).
+%
+%\begin{figure}[ht]
+%  \centering
+%  \includegraphics[width=12cm,keepaspectratio]{fig/fig-ruby-inst_obj_2.png}
+%  \caption{Tøída je také objekt}
+%  \label{fig_ruby_inst_obj_2}
+%\end{figure}
 
 \subsubsection{Volná syntaxe}
-Matz chtìl od zaèátku vytvoøit jazyk, ve ktém by ho bavilo programovat\cite{webMatzInterview} - ve kterém by nemusel poøád pøemý¹let na syntaxí, který by byl krásnì èitelný a hlavnì pokud mo¾no co nejbli¾¹í bì¾nému lidskému jazyku. Ukázky k\'{o}du pøi ètení opravdu pøipomínájí anglické vìty, popisující co se vlastnì má dìlat:
+Jak u¾ bylo zmínìno vý¹e, Matz chtìl vytvoøit jazyk, ve kterém by ho bavilo programovat. Jazyk ve kterém by nemusel poøád pøemý¹let nad syntaxí, který by byl krásnì èitelný a hlavnì pokud mo¾no co nejbli¾¹í bì¾nému lidskému jazyku. Cíl se mu povedl, proto¾e ukázky k\'{o}du (viz Obrázek \ref{ruby_syntaxe_fig1}) opravdu pøi ètení pøipomínájí anglické vìty, popisující co se má dìlat.
 
-\begin{description}
- \item \verb|3.times do puts 'Ahoj'| 3x vypi¹ ``Ahoj''
- \item \verb|puts "Ahoj" if name == "jarcec"| Vypi¹ ahoj pokud se jmenuju jarcec
-\end{description}
+\begin{figure}[tbh]
+	\begin{verbatim}
+	3.times do puts 'Ahoj'
+	puts "Ahoj" if name == "jarcec"
+	\end{verbatim} 
+	\vspace{-0.7cm}
+  \caption{Ukázky èitelnosti k\'{o}du}
+  \label{ruby_syntaxe_fig1}
+\end{figure}
 
-Závorky oddìlující název metody od jejich parametrù jsou v místech kde to není syntakticky nejednoznaèné volitelné, mohu tedy zavolat metodu \verb|naDruhou| s parametrem 5 tak jak je zvykem v Javì/C/C++ \verb|naDruhou(5)| nebo na mnoha místech více èitelnìji \verb|naDruhou 5|. Volání metod bez závorek vypadá na mnoha místech jako klíèové slovo, které deklaruje spí¹e ne¾ volání metody - na první pohled se mù¾e jevit spí¹e jako matoucí, ale uvedu pøíklad z webového frameworku Ruby on Rails (dále v textu pou¾ívám zkratku RoR):
+Jedním ze zpùsobu pøízpùsobìní gramatiky jazyka programátorovi je mo¾nost nepsat závorky oddìlující název metody od jejich parametrù v místech, kde to není syntakticky nejednoznaèné. Mohu tedy zavolat metodu \verb|naDruhou| s parametrem 5 tak jak je zvykem v Javì/C++ \verb|naDruhou(5)|, nebo na mnoha místech více èitelnìji \verb|naDruhou 5|. Volání metod bez závorek vypadá na mnoha místech jako klíèové slovo, které spí¹e nìco deklaruje ne¾ obyèejné volání metody. Na první pohled se to mù¾e jevit spí¹e jako matoucí, ale uvedený  pøíklad (Obrázek \ref{ruby_syntaxe_fig2}) z webového frameworku Ruby on Rails\footnote{http://rubyonrails.org/} (dále v textu pou¾ívám zkratku RoR) ukazuje opak.
 
-\begin{verbatim}
-class Human < ActiveRecord::Base
-  has_many     :articles
-  belongs_to   :department
-end
-\end{verbatim} 
+\begin{figure}[tbh]
+	\begin{verbatim}
+	class Human < ActiveRecord::Base
+		has_many     :articles
+		belongs_to   :department
+	end
+	\end{verbatim} 
+	\vspace{-0.7cm}
+  \caption{ActiveRecord ukázka prezentující volitelné pøeskoèení závorek}
+  \label{ruby_syntaxe_fig2}
+\end{figure}
 
-I èlovìk bez znalosti ruby nebo RoR, ale se znalostí jiných programovacích jazykù, je schopen s velkou úspì¹ností odhadnout, ¾e prezentovaný pøíklad vytváøí tøídu Human, s nìjakým typem závislosti na oddìlení (department) a který napsal mnoho rùzných èlánkù (articles). Tento spí¹e sociální efekt (``Jedná se o metodu nebo klíèové slovo?'') jde velice hluboko - mnohdy lze u¾ úvodních tutoriálech k Ruby najít zmínku o klíèovém slovu \verb|puts|, slou¾ícím pro výpis na standartní výstup (obdoba \verb|printf()| z C, \verb|echo| z bashe nebo \verb|print| z perlu). Ve skuteènosti se ov¹em nejedná o klíèové slovo, ale o metodu modulu Kernel, který ka¾dy objekt dìdí a proto je na ka¾dém místì programu dostupná - jedná se tedy plnohodnotnou metodu a jde stejnì jako jakákoliv jíná v pøípade potøeby pøetí¾it nebo z objektu odstranit...
+I èlovìk bez znalosti Ruby nebo RoR, ale se znalostí jiných programovacích jazykù, je schopen s velkou úspì¹ností odhadnout, ¾e prezentovaný pøíklad vytváøí tøídu Human, s urèitou závislostí na oddìlení (department), a který napsal mnoho rùzných èlánkù (articles).
+
+Tento spí¹e sociální efekt (``Jedná se o metodu nebo klíèové slovo?'') jde velice hluboko. Mnohdy lze u¾ úvodních tutoriálech k Ruby najít zmínku o klíèovém slovu \verb|puts|, slou¾ícím pro výpis na standartní výstup (obdoba \verb|printf()| z C, \verb|echo| z Bashe nebo \verb|print| z Perlu). Ve skuteènosti se ov¹em nejedná o klíèové slovo, ale o metodu modulu \verb|Kernel|, který ka¾dy objekt dìdí a proto je na ka¾dém místì programu dostupná - jedná se tedy plnohodnotnou metodu a jde stejnì jako jakákoliv jíná v pøípade potøeby pøetí¾it popøípadnì z objektu odstranit...
 
 Odstranìní nutnosti v¹ude psát závorky beru jako velice kladnou vlastnost, kterou velice èasto a rád vyu¾ívám, na druhou stranu ov¹em musím upozornit na její dopady - i pouhá mezera mù¾e zmìnit logiku kódu s jakou bude zpracován:
 
