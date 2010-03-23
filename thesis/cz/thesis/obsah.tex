@@ -6,7 +6,7 @@ TODO: Dopsat zvnaneni proc jsme se rozhodli napsat tento wrapper, popsat jednotl
 %=========================================================================
 \chapter{Pou¾ité technologie}
 %=========================================================================
-Má bakaláøská práce se zabývá spojením dvou technologií, Ruby a CLIPS, které jsou v následujících sekcích popsány.
+Má bakaláøská práce se zabývá spojením dvou technologií, Ruby a CLIPS, které jsou v následujících sekcích detailnìji popsány.
 
 \section{Ruby}
 Ruby\cite{webRuby} je relativnì nový dynamický skriptovací jazyk vytvoøený japonským in¾enýrem Yukihiro Matsumoto známym pod pøezdívkou Matz. V souèasné dobì neexistuje ¾ádná specifikace èi norma jako je tomu napøíklad u jazykù C/C++ a dal¹ích. Z tohoto dùvodu se jako reference jazyka bere samotný interpret napsaný Matzem\,--\,Matz' ruby intepret (MRI). Interpretù existuje více a jejich zkrácený seznam je uveden dále v textu. Absence existujícího standartu vedla v roce 2008 k vytvoøení skupiny pro standardizaci tohoto jazyka v rámci japonské organizace Information-technology Promotion Agency (IPA), která vychází z MRI verze 1.8.7. V souèasné dobì je k dispozici ji¾ návrh standartdu\footnote{http://ruby-std.netlab.jp/draft\_spec/agreement.html}, který má být navr¾en ke schválení prvnì v japonsku u Japanese Industrial Standards Committee (JISC) a následnì i u International Standard Organization (ISO).
@@ -118,132 +118,167 @@ I èlovìk bez znalosti Ruby nebo RoR, ale se znalostí jiných programovacích jazyk
 
 Tento spí¹e sociální efekt (``Jedná se o metodu nebo klíèové slovo?'') jde velice hluboko. Mnohdy lze u¾ úvodních tutoriálech k Ruby najít zmínku o klíèovém slovu \verb|puts|, slou¾ícím pro výpis na standartní výstup (obdoba \verb|printf()| z C, \verb|echo| z Bashe nebo \verb|print| z Perlu). Ve skuteènosti se ov¹em nejedná o klíèové slovo, ale o metodu modulu \verb|Kernel|, který ka¾dy objekt dìdí a proto je na ka¾dém místì programu dostupná - jedná se tedy plnohodnotnou metodu a jde stejnì jako jakákoliv jíná v pøípade potøeby pøetí¾it popøípadnì z objektu odstranit...
 
-Odstranìní nutnosti v¹ude psát závorky beru jako velice kladnou vlastnost, kterou velice èasto a rád vyu¾ívám, na druhou stranu ov¹em musím upozornit na její dopady - i pouhá mezera mù¾e zmìnit logiku kódu s jakou bude zpracován:
+Odstranìní nutnosti psát v¹ude závorky beru jako kladnou vlastnost, kterou velice èasto a rád vyu¾ívám. Na druhou stranu ov¹em musím upozornit na její dopady - i pouhá mezera mù¾e zmìnit logiku kódu s jakou bude zpracován. Na Obrázku \ref{ruby_syntaxe_fig3} uvadím dva pøíklady li¹ící se pouhou jednou mezerou mezi koncem názvu metody a otevírající závorkou. V prvním pøípadì syntaktický analyzátor najde ihned za názvem metody závorku. Ví tedy, ¾e uvnitø se nacházejí parametry, se kterými se metoda má volat a a¾ následná vrácená hodnota se vynasobí dvìma. Výsledek bude $18$ (=$3^2  * 2$). V druhém pøíkladì syntaktický analyzátor najde za názvem metody mezeru a pøístupuje k volání jinak. Ví, ¾e následuje seznam argumentù oddìlený èárkami, proto¾e závorky okolo argumentù jsou vynechány. Na øádce se ov¹em ¾ádná èárka nenachazí a tedy celý výraz $(1+2)*2$ je metodì pøedán jako jeden argument s výsledkem $36$ (=$((1+2) * 2)^2$).
 
-\begin{verbatim*}
-puts naDruhou(1+2)*2
-puts naDruhou (1+2)*2
-\end{verbatim*}
- 
-Oba pøíklady se li¹í pouhou mezerou mezi koncem názvu metody a otevírající závorkou. V prvním pøípadì syntaktický analyzátor najde ihned za názvem metody závorku a tak ví, ¾e uvnitø jsou parametry se kterými se poté metoda zavolá a následnì vrácená hodnota se vynasobí dvìmi. Výsledek bude tedy $18$ (=$3^2  * 2$). V druhém pøíkladì syntaktický analyzátor najde za názvem metody mezeru a tedy ví, ¾e následuje seznam argumentù oddìlený èárkami (závorky okolo argumentù jsou vynechány). Na øádce se ¾ádná èárka nenachazí a tedy celý výraz $(1+2)*2$ je metodì pøedán jako argument s výsledkem $36$ (=$((1+2) * 2)^2$)!
+\begin{figure}[tbh]
+	\begin{verbatim*}
+	puts naDruhou(1+2)*2
+	puts naDruhou (1+2)*2
+	\end{verbatim*}
+ 	\vspace{-0.7cm}
+  \caption{Dùle¾itý význam mezer}
+  \label{ruby_syntaxe_fig3}
+\end{figure}
 
-Ruby neumo¾nuje pojmenovat argumenty metody jako je mo¾né napøíklad v pythonu, ov¹em volná syntaxe pro vytvoøení hashe (asociativního pole) je hojnì vyu¾ívaná k napodobení této schopnosti - pøíkladem mù¾e být tøeba volání fiktivní metody pro hledání: \verb|find :name => 'Jarek', :surname => 'Cecho'|, kde opticky pøedávám dva parametry - name, surname. Ve skuteènosti je tento zápis reprezentován jako tvorba asociativního pole s klièi name a surname (s pøíslu¹nými hodnotami) a¾ naslednì toto pole je jako jeden argument pøedáno metodì \verb|find|. Webový framework Ruby on Rails tento pøístup pou¾ívá snad úplnì v¹ude.
+Ruby neumo¾nuje pojmenovat argumenty metod podobnì jako python, ov¹em díky volné syntaxi pro vytvoøení asociativního pole (hashe) lze toto chování napodobit. Pøíkladem mù¾e být volání fiktivní metody pro hledání \verb|find :name => 'Jarek', :surname => 'Cecho'|, kde opticky pøedávám dva pojmenované parametry - name a surname. Ve skuteènosti je tento zápis reprezentován jako tvorba asociativního pole s klièi name a surname (s pøíslu¹nými hodnotami) a¾ naslednì toto pole je jako jeden argument pøedáno metodì \verb|find|. Webový framework Ruby on Rails tento pøístup pou¾ívá velmi èasto.
 
-Podobnì jako perl umo¾nuje ruby otoèení zápisu podmínky a její akce:
-\begin{verbatim}
-if osoba == 'jarcec' then print "Ahoj Jarcec"; end
-print "Ahoj Jarcec" if osoba == 'jarcec'
-\end{verbatim}
+Poslední poznámka o volné syntaxi, Ruby umo¾nuje stejnì jako perl otoèení poøadí zápisu neúplné podmínky a jejího tìla (viz. Obrázek \ref{ruby_syntaxe_fig3}).
+
+\begin{figure}[tbh]
+	\begin{verbatim}
+	if osoba == 'jarcec' then print "Ahoj Jarcec"; end
+	print "Ahoj Jarcec" if osoba == 'jarcec'
+	\end{verbatim}
+ 	\vspace{-0.7cm}
+  \caption{Pøehození poøadí zápisu neúplnì podmínky a jejího tìla}
+  \label{ruby_syntaxe_fig4}
+\end{figure}
 
 \subsubsection{Dynamiènost a otevøenost}
-Dynamiènost je velmi obsáhle slovo, zde je my¹leno jako jazyk provádìjící mnoho èinností a¾ za bìhu programu ne¾ pøi jeho pøekladu (èi v pøípadì skriptovacího jazyka zpracovávání). Vzhledem k plné objektovosti nemá moc smysl mluvit o typovosti jazyka (v¹e je objekt a ty mezi sebou komunikují pomocí zasílání zpráv).
+Dynamièností Ruby rozumím provádìní mnoha èinností, které jsou provádìny v pøípadì C++ èi Javy v dobì kompilace, a¾ za bìhu programu. Vzhledem k plné objektovosti nemá moc smysl mluvit o typovosti jazyka, proto¾e existuje pouze jediný datový typ, kterým je objekt.
 
-Mnohem zajimavìj¹í a ne a¾ tak bì¾nou vlastní je otevøenost ruby. Ka¾dý objekt mù¾e být za bìhu otevøen a roz¹íøen o nové metody podobnì jako JavaScript. \u{C}asto se toho vyu¾ívá u tøíd (napøíklad roz¹íøením vìstavìné tøídy o nové metody). Tuto vlastnost by do urèité míry ¹lo nahradit dìdièností (nové metody ulo¾it do potomka), ale jen pokud se bavíme o tøídách. Jak jsem uvedl vý¹e, v¹e v ruby je objekt (tedy i tøídy), tak¾e roz¹íøit jdou nejen tøídy, ale i instance jednotlivých tøíd, co¾ byl pro mì jako¾to programátora v C++ docela ¹ok pøi seznamování se s tímto jazykem. Mo¾nosti roz¹íøení instancí o nové metody pou¾ívám i v rbClips, co¾ je popsáno ní¾e v kapitole o Faktech. 
+Z dynamiènosti vyplývá mnohem zajimavìj¹í a ne a¾ tak bì¾ná vlastnost Ruby, kterou je otevøenost. Ka¾dý objekt mù¾e být za bìhu otevøen a roz¹íøen o nové metody podobnì jako je tomu u JavaScriptu. Velice \u{c}asto se toho vyu¾ívá u tøíd (napøíklad roz¹íøením vìstavìné tøídy o nové metody). Tuto vlastnost by do urèité míry ¹lo nahradit dìdièností (nové metody ulo¾it do potomka), ale jen pokud se roz¹iøují tøídy. V Ruby je v¹e objekt, tak¾e roz¹íøit jdou nejen tøídy, ale i instance jednotlivých tøíd (viz Obrázek \ref{ruby_dynamicnost_fig1}), co¾ byl pro mì jako¾to programátora v C++ docela ¹ok pøi seznamování se s tímto jazykem. Mo¾nosti roz¹íøení instancí o nové metody pou¾ívám i ve své práci, co¾ popisuji ní¾e v kapitole o zpracování Faktù.
 
-\begin{verbatim}
-class A
-  def metodaA
-    4
-  end
-end
+\begin{figure}[tbh]
+	\begin{verbatim}
+	class A
+		def metodaA
+			4
+		end
+	end
 
-a = A.new
-a.metodaA # => 4
+	a = A.new
+	a.metodaA # => 4
 
-b = A.new
-def b.metodaB
-  5
-end
-b.metodaB # => 5
-a.metodaB # => Exception NoMethodError
-\end{verbatim}
-Uvedený pøíklad schopnost roz¹íøit instance objektù ukazuje v praxi.
+	b = A.new
+	def b.metodaB
+		5
+	end
+	b.metodaB # => 5
+	a.metodaB # => Exception NoMethodError
+	\end{verbatim}
+ 	\vspace{-0.7cm}
+  \caption{Pøehození poøadí zápisu neúplnì podmínky a jejího tìla}
+  \label{ruby_dynamicnost_fig1}
+\end{figure}
 
-Díky dynamiènosti a otevøenosti se v ruby velice pìknì metaprogramuje (co¾ je dál¹í mnohoznaèný výráz - zde ve významu psaní k\'{o}du, který generuje dal¹í k\'{o}d). Jedná se o velice èasto vyu¾ívanou schopnost jazyka a velké projekty v ruby jsou metaprogramováním dosti ovlivnìny. Pøíkladem mù¾e být projekt ActiveRecords, který zapouzdøuje èinnost s relaèními databázemi tak, aby se u¾ivatel se SQL vùbec nesetkal (v¹e má krásnì naservírované v objektech):
+Díky dynamiènosti a otevøenosti se v ruby velice pìknì metaprogramuje (co¾ je mnohoznaèný výráz, zde pou¾ívám ve významu psaní k\'{o}du, který generuje dal¹í k\'{o}d). Jedná se o velice èasto vyu¾ívanou schopnost jazyka a velké projekty v Ruby jsou metaprogramováním dosti ovlivnìny. Pøíkladem mù¾e být projekt ActiveRecords\footnote{http://ar.rubyonrails.org/}, který zapouzdøuje èinnost s relaèními databázemi tak, aby se u¾ivatel se SQL vùbec nesetkal (v¹e je zapouzdøeno do objektù).
 
-\begin{verbatim}
-class Human < ActiveRecords::Base
-end
+\begin{figure}[tbh]
+	\begin{verbatim}
+	class Human < ActiveRecords::Base
+	end
 
-jarcec = Human.new
-jarcec.name = "Jarek"
-jarcec.surname = "Cecho"
-jarcec.save
-\end{verbatim}
+	jarcec = Human.new
+	jarcec.name = "Jarek"
+	jarcec.surname = "Cecho"
+	jarcec.save
+	\end{verbatim}
+ 	\vspace{-0.7cm}
+  \caption{Ukázka pou¾ití knihovny ActiveRecords}
+  \label{ruby_dynamicnost_fig2}
+\end{figure}
 
-V definici tøídy chybí deklarace method \verb|name| a \verb|surname| a pøesto daný k\'{o}d bude fungovat. Konstruktor tøídy se toti¾ pøi inicializaci podívá do databáze na strukturu tabulky kterou popisuje, v tomto pøípadì tabulky \verb|humans| (popis ActiveRecords a jejich jmenných konvencí jsou nad rámec této práce, v¹e lze najít v oficiální dokumentaci\cite{webActiveRecord}, pìkné vysvìtlení je v guides k RoR\cite{webRubyGuides} a taky v nìkolika kapitolách Metaprogramming Ruby\cite{metaprogrammingRuby}) a vytvoøí ke v¹em nalezeným sloupcùm pøíslu¹né metody (jak pro ètení, tak pro zápis). Tento pøístup usnad\u{n}uje údr¾bu k\'{o}du - v definice tøídy není seznam sloupcù jednotlivých tabulek a proto pøi zmìnì databázového schéma není nutné v¹e upravovat a zvedat tak pravdìpodobnost zavleèení chyby (nekonzistence seznamu sloupcù v databázi a v definici tøídy).
+V definici tøídy z Obrázku \ref{ruby_dynamicnost_fig2} chybí deklarace method \verb|name| a \verb|surname| a pøesto daný k\'{o}d bude fungovat. Konstruktor tøídy se toti¾ pøi inicializaci podívá do databáze na strukturu tabulky kterou popisuje, v tomto pøípadì tabulky \verb|humans| a vytvoøí ke v¹em nalezeným sloupcùm pøíslu¹né metody pro ètení i zápis. Tento pøístup usnad\u{n}uje údr¾bu k\'{o}du. V definice tøídy není seznam sloupcù jednotlivých tabulek a proto pøi zmìnì databázového schématu není nutné v¹e upravovat a zvedat tak pravdìpodobnost zavleèení chyby (nekonzistence seznamu sloupcù v databázi a v definici tøídy).
 
-O metaprogramování v ruby byla napsána velice pìkná kniha - Metaprogrammin Ruby\cite{metaprogrammingRuby} - psaná spí¹e laickým stylem a na praktických pøíkladech popisující co pøesnì se pod pojmem metapogramovaní skrývá a jak toho v ruby co nejefektivnìji vyu¾ít.
+O metaprogramování v ruby byla napsána velice pìkná kniha - Metaprogrammin Ruby\cite{metaprogrammingRuby}. Psána je spí¹e laickým stylem a na praktických pøíkladech popisuje co pøesnì se pod pojmem metapogramovaní skrývá, a jak toho v ruby co nejefektivnìji vyu¾ít.
 
 \subsubsection{Bloky}
-Blok je podobnì jako v C/C++ nebo Jave mno¾ina pøíkazù ohranièená slo¾enymí závorkami (nebo v pøípadì ruby je je¹tì mo¾né blok ohranièit klíèovými slovy \verb|do| a \verb|end|). Na rozdíl od zmínìných jazykù v ruby jde s bloky dìlat o dost vìt¹í kouzla a proto je zmi\v{n}uji v samostatné kapitole. Jako první dùle¾itý rozdíl je mo¾nost pøedat bloku parametry (a ten se pak vlastnì chová jako taková malá bezejmená funkce). Druhý velice dùle¾itý rozdíl je schopnost bloky v ruby pøedávát do method. Pøíkladem mù¾e být zámìna velikosti písmen v poli øetezcù:
+Blok je podobnì jako v C++ nebo Javì mno¾ina pøíkazù ohranièená slo¾enymí závorkami. V pøípadì ruby je je¹tì mo¾né blok ohranièit klíèovými slovy \verb|do| a \verb|end|. Na rozdíl od zmínìných jazykù v Ruby jde s bloky dìlat o dost vìt¹í kouzla a proto je zmi\v{n}uji v samostatné èásti. První dùle¾itý rozdíl je mo¾nost pøedat bloku parametry (a ten se pak vlastnì chová jako bezejmená funkce). Dal¹í rozdíl je schopnost bloky v Ruby pøedávát do method.
 
-\begin{verbatim}
-["AHOJ", "NAZDAR", "HI"].map{|prvek| prvek.downcase}
-    # => ["ahoj", "nazdar", "hi"]
-\end{verbatim}
+\begin{figure}[tbh]
+	\begin{verbatim}
+	["AHOJ", "NAZDAR", "HI"].map{|prvek| prvek.downcase}
+			# => ["ahoj", "nazdar", "hi"]
+	\end{verbatim}
+ 	\vspace{-0.7cm}
+  \caption{Ukázka pøedání bloku metodì}
+  \label{ruby_bloky_fig1}
+\end{figure}
 
-\verb|map| je metoda tøídy pole, která pøijímá blok akceptující jeden parametr a pro ka¾dý prvek v poli tento blok zavolá. Návratovou hodnotu bloku (v ruby je v¹e výraz a tak i bloky vracejí své hodnoty, ale tato vlastnost je popsána ní¾e) ulo¾í do pole na místo volaného prvku. Ukázka tedy zmen¹í velikost písmen pro kazdý prvek v poli.
+Pøíkladem mù¾e být zámìna velikosti písmen v poli øetezcù na Obrázku \ref{ruby_bloky_fig1}. \verb|map| je metoda tøídy \verb|Array|, která pøijímá blok akceptující jeden parametr a pro ka¾dý prvek v poli tento blok zavolá. Návratovou hodnotu bloku (v ruby je v¹e výraz, i bloky tedy vracejí své hodnoty, tato vlastnost je detailnìji popsána ní¾e) ulo¾í do pole na místo volaného prvku. Ukázka tedy zmen¹í velikost písmen pro kazdý prvek v poli.
 
-S bloky se pojí jeden dùle¾íty pojem - uzávìr (anglicky closure). Ka¾dý blok si s sebou nese vazby na lokální promìné známe v dobì jeho vzniku (anglicky bindings). Osvìtlující pøíklad:
+S bloky se pojí jeden dùle¾íty pojem - uzávìr (anglicky closure). Ka¾dý blok si s sebou nese vazby na lokální promìné známe v dobì jeho vzniku (takzvané bindings). V pøíkladì na Obrázku \ref{ruby_bloky_fig2} si blok ``zapamatuje`` svou lokální promìnou \verb|a| (s hodnotou 30) a nese si ji s sebou i do metody \verb|foo|, odkud je poté zavolán (pomocí klíèového slova \verb|yield|). Ukázka výpí¹e èíslo 30, proto¾e \verb|a| je lokální promìná z kontextu, ve kterém byl pøedaný blok vytvoøen. Pokud by chtìla metoda \verb|foo| vytisknout svou hodnotu promìné \verb|a|, musela by ji pøedat do bloku jako parametr.
 
-\begin{verbatim}
-def foo
-  a = 10
-  yield # Zavolej predany blok
-end
+\begin{figure}[tbh]
+	\begin{verbatim}
+	def foo
+		a = 10
+		yield # Zavolej predany blok
+	end
 
-a = 30
-foo { puts a } # Vytiskne hodnotu promene a, ale ktere? 10 nebo 30?
-\end{verbatim} 
+	a = 30
+	foo { puts a } # Vytiskne hodnotu promene a, ale ktere? 10 nebo 30?
+	\end{verbatim} 
+ 	\vspace{-0.7cm}
+  \caption{Vazby na lokální promìné v pøípadì pøedaných blokù}
+  \label{ruby_bloky_fig2}
+\end{figure}
 
-Blok si ``pamatuje`` svou lokální promìnou \verb|a| (s hodnotou 30) a nese si ji s sebou i do metody \verb|foo|, odkud je poté zavolán (pomocí klíèového slova \verb|yield|). Ukázka výpí¹e èíslo 30, proto¾e \verb|a| je lokální promìná z kontextu, ve kterém byl pøedaný blok vytvoøen. Pokud by chtìla metoda \verb|foo| vytisknout svou hodnotu promìné \verb|a|, musela by ji pøedat jako parametr.
 
 \subsubsection{Drobnosti}
-U¾ bych se chtìl u¾ jenom krátce zmínit o nìkolika málo dal¹ích vlastnostech ruby, které popisem nevydají na samostatnou kapitolu, ale pøesto si myslím, ¾e by zde mìly být uvedeny.
+Dále bych se chtìl u¾ jenom krátce zmínit o nìkolika vlastnostech Ruby, které popisem nevydají na samostatnou kapitolu, ale pøesto si myslím, ¾e by zde mìly být uvedeny.
 
-Mimo toho, ¾e v¹e je v ruby objekt, je ka¾dá jazyková konstrukce výraz (má svou hodnotu). Tedy i øídicí konstrukce (\verb|if|, \verb|while|, ...) nìco vrací - podle funkce pøíslu¹né konstrukce je to tøeba poslední vykonaný pøíkaz nebo \verb|nil|. Pøiklad z øádkového interpretu ruby \verb|irb|:
+Mimo toho, ¾e v¹e je v ruby objekt, je ka¾dá jazyková konstrukce výraz (má svou hodnotu). Tedy i øídicí konstrukce (\verb|if|, \verb|while|, ...) nìco vrací - podle funkce pøíslu¹né konstrukce je to tøeba poslední vykonaný pøíkaz nebo \verb|nil| (Obrázek \ref{ruby_drobnosti_fig1}).
 
-\begin{verbatim}
-irb(main):001:0> if 1 == 2
-irb(main):002:1>   puts "1 == 2"
-irb(main):003:1> end
-=> nil
-\end{verbatim} 
+\begin{figure}[tbh]
+	\begin{verbatim}
+	if 1 == 2
+	  puts "1 == 2"
+	end # => nil
+	\end{verbatim} 
+ 	\vspace{-0.7cm}
+  \caption{Ka¾dá jazyková konstrukce je výraz}
+  \label{ruby_drobnosti_fig1}
+\end{figure}
 
-Ruby je plnì objektový a v¹e je objekt nebo jeho metoda -- i aritmetické operátory jsou ve skuteènosti metody a jejich zápis bez pøístupové teèky je jen ''syntax sugar`` (jak se uvádí v knize  The Ruby Programming Language\cite{rubyProgrammingLanguage}). Jde je tedy podobnì jako v C++ pøetí¾it nebo z daného objektu úplnì odstranit:
+Ruby je plnì objektový a v¹e je objekt popøípadnì jeho metoda. I aritmetické operátory jsou tedy ve skuteènosti metody a jejich zápis bez pøístupové teèky je jen ''syntax sugar`` (jak se uvádí v knize  The Ruby Programming Language\cite{rubyProgrammingLanguage}). Jde je tedy podobnì jako v C++ pøetí¾it nebo z daného objektu úplnì odstranit (Obrázek \ref{ruby_drobnosti_fig2}).
 
-\begin{verbatim}
-irb(main):001:0> class Fixnum
-irb(main):002:1>   def +(oth)
-irb(main):003:2>     self * oth
-irb(main):004:2>   end
-irb(main):005:1> end
-=> nil
-irb(main):006:0> 4 + 2
-=> 8
-\end{verbatim} 
+\begin{figure}[tbh]
+	\begin{verbatim}
+	class Fixnum
+	  def +(oth)
+	    self * oth
+	  end
+	end #	=> nil
+	4 + 2 #	=> 8
+	\end{verbatim} 
+ 	\vspace{-0.7cm}
+  \caption{Ka¾dá jazyková konstrukce je výraz}
+  \label{ruby_drobnosti_fig2}
+\end{figure}
 
-Ruby podporuje pouze jednoduchou dìdiènost (tøída mù¾e mít maximálnì jednoho pøedka), ale absenci implementaènì slo¾ité vícenásobné dìdiènosti vynahrazuje mo¾ností vkládat do sebe moduly (modul je jednodu¹e øeèeno kolekce metod):
+Ruby podporuje pouze jednoduchou dìdiènost, tøída mù¾e mít maximálnì jednoho pøedka. Ov¹em absenci implementaènì slo¾ité vícenásobné dìdiènosti vynahrazuje mo¾ností vkládat do sebe moduly (Obrázek \ref{ruby_drobnosti_fig3}).
 
-\begin{verbatim}
-irb(main):001:0> module Ahoj
-irb(main):002:1>   def ahoj
-irb(main):003:2>     puts "Ahoj"
-irb(main):004:2>   end
-irb(main):005:1> end
-=> nil
-irb(main):006:0> class Pozdravy
-irb(main):007:1>   include Ahoj
-irb(main):008:1> end
-=> Pozdravy
-irb(main):009:0> p = Pozdravy.new
-=> #<Pozdravy:0x82945b4>
-irb(main):010:0> p.ahoj
-Ahoj
+\begin{figure}[tbh]
+	\begin{verbatim}
+	module Ahoj
+	  def ahoj
+	    "Ahoj"
+	  end
+	end
+	class Pozdravy
+	  include Ahoj
+	end
+	p = Pozdravy.new
+	p.ahoj # => "Ahoj"
 \end{verbatim}
+ 	\vspace{-0.7cm}
+  \caption{Ka¾dá jazyková konstrukce je výraz}
+  \label{ruby_drobnosti_fig3}
+\end{figure}
 
-Na rozdíl od C/C++ èi Javy jsou v ruby povoleny na konci metod jiné znaky ne¾ jen znaky anglické abecedy. Co¾ má veliký dopad na zlep¹enou èitelnost k\'{o}du, jeliko¾ podle konvencí metody vracející booleanovskou hodnotu (true/false) jsou ukonèeny znakem otázníku (napøíklad \verb|Object#nil?|) a metody mìnící stav samotného objektu jsou pro zmìnu ukonèeny vykøièníkem (napøíklad \verb|Array#map!|).
+Na rozdíl od C++ èi Javy jsou v Ruby povoleny na konci metod jiné znaky ne¾ jen znaky anglické abecedy. Co¾ má veliký dopad na zlep¹enou èitelnost k\'{o}du, jeliko¾ podle konvencí metody vracející booleanovskou hodnotu (true/false) jsou ukonèeny znakem otázníku (napøíklad \verb|Object#nil?|) a metody mìnící stav samotného objektu jsou pro zmìnu ukonèeny vykøièníkem (napøíklad \verb|Array#map!|).
 
 \subsection{Ostatní implementace ruby}
 Nejznámìj¹í a asi i nejvíce pou¾ívanou implementací jazyka Ruby je interpret MRI (Mat'z ruby interpreter) od autora jazyka. Ten má ov¹em své nedostatky (není nejrychlìj¹í, neumo¾nujì opravdový paralerismus proto¾e obsahuje ''Global interpreter lock`` - v jednu chvíli mù¾e bì¾et maximálnì jedno vlákno). Jako podklad pro tento list jsem pou¾il seznam rùzných interpretù a jejich krásné srovnání na webu igvita\cite{webIgvitaInterprets}.
