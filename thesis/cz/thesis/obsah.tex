@@ -280,70 +280,92 @@ Ruby podporuje pouze jednoduchou dìdiènost, tøída mù¾e mít maximálnì jednoho pøe
 
 Na rozdíl od C++ èi Javy jsou v Ruby povoleny na konci metod jiné znaky ne¾ jen znaky anglické abecedy. Co¾ má veliký dopad na zlep¹enou èitelnost k\'{o}du, jeliko¾ podle konvencí metody vracející booleanovskou hodnotu (true/false) jsou ukonèeny znakem otázníku (napøíklad \verb|Object#nil?|) a metody mìnící stav samotného objektu jsou pro zmìnu ukonèeny vykøièníkem (napøíklad \verb|Array#map!|).
 
-\subsection{Ostatní implementace ruby}
-Nejznámìj¹í a asi i nejvíce pou¾ívanou implementací jazyka Ruby je interpret MRI (Mat'z ruby interpreter) od autora jazyka. Ten má ov¹em své nedostatky (není nejrychlìj¹í, neumo¾nujì opravdový paralerismus proto¾e obsahuje ''Global interpreter lock`` - v jednu chvíli mù¾e bì¾et maximálnì jedno vlákno). Jako podklad pro tento list jsem pou¾il seznam rùzných interpretù a jejich krásné srovnání na webu igvita\cite{webIgvitaInterprets}.
+\subsection{Implementace ruby}
+Nejznámìj¹í a asi i nejvíce pou¾ívanou implementací Ruby je interpret MRI (Mat'z ruby interpret) od autora jazyka. Ten má ov¹em své velké nedostatky. Pøednì pou¾ívá mark-and-sweep garbage collector. Ten v rámci své ''mark`` fáze zmrazí provádìní programu, co¾  se neblaze odrází na celkové rychlosti interpretace. Dále obsahuje takzvaný ''Global interpreter lock`` (GIL), který znemo¾nuje paralerní zpracování. Programy sice mohou be¾et ve vláknech, ale kvùli jeho pøítomnosti mù¾e v jednu chvíli bì¾et maximálnì jedno vlákno.
+
+Jako podklad pro následný list alternativních implementaci jsem pou¾il seznam interpretù a jejich krásné srovnání na webu igvita\footnote{http://www.igvita.com/2009/11/20/state-of-ruby-vms-ruby-renaissance}.
 
 \subsubsection{Ruby Enterprise edition}
-Jde o fork MRI implementace verze 1.8.7\cite{webRubyEE} s vylep¹enou správou pamìti a vymìnìným garbage collectorem (MRI vyu¾ívá mark-and-sweep GC). Vznikl jako potøeba optimalizovat ruby pro bìh na serverech pro webové aplikace postavené na Ruby on Rails a je pro nì optimalizován. Je plnì kompatibilní s ruby verze 1.8.7 a podle oficiálních stránek v urèitých pøípadech a¾ o 33\% rychlej¹í. Na portále RubyInside\cite{webRubyEERecord} je k dispozici záznám pøedná¹ky obou autorù toho forku z konference Google Tech Talk (2009, San Francisco), o dùvodech proè se do forku pustili a také o optimalizacích, které provedli.
+Jde o vývojovou vìtvi (fork) MRI implementace verze 1.8.7\footnote{http://www.rubyenterpriseedition.com/index.htm} s vylep¹enou správou pamìti a vymìnìným garbage collectorem. Vznikl jako potøeba optimalizovat ruby pro bìh na serverech pro webové aplikace postavené na Ruby on Rails a je pro nì optimalizován. Je plnì kompatibilní s ruby verze 1.8.7 a podle oficiálních stránek v urèitých pøípadech a¾ o 33\% rychlej¹í. Na portále RubyInside je k dispozici záznám pøedná¹ky\footnote{http://www.rubyinside.com/how-phusion-built-a-more-efficient-ruby-1-8-interpreter-2906.htm} obou autorù  z konference Google Tech Talk (2009, San Francisco), o dùvodech proè se do úprav pustili a také o optimalizacích, které provedli.
 
 \subsubsection{JRuby}
-Je implementace ruby v Jave\cite{webJRuby} a vyu¾ívající mo¾ností Java VM - obsahuje plnou paralerizaci (¾ádný GIL), v souèastosti se pracuje na podpoøe ruby verze 1.9. Velmi ¾ivý projekt se 7 aktivními vývojáøi (MRI z nejvìt¹í èásti vyvíjí jeden èlovìk).
+Je implementace ruby v Jave\footnote{http://jruby.org} a vyu¾ívající mo¾ností Java VM - obsahuje plnou paralelizaci (¾ádný GIL). V souèastosti se pracuje na podpoøe ruby verze 1.9. Velmi ¾ivý projekt se 7 aktivními vývojáøi (MRI z nejvìt¹í èásti vyvíjí pouze jeden èlovìk).
 
 \subsubsection{BlueRuby}
-Jedná se o implementaci ruby bì¾ícího uvnitø SAP NetWeaver a SAP ERP produktù, tedy dal¹í mo¾nost jak roz¹íøit SAP mimo jazykù ABAP a Java. Zatím je projekt pouze ve stádiu experimentální implementace\cite{webBlueRuby} a nehodí se pro reálné nasazení - je naimplementováno pouze okolo 75\% vlastní ruby podle ruby specs.
+Jedná se o implementaci Ruby bì¾ícího uvnitø SAP NetWeaver\footnote{www.SAP.com/cz/ERP} a SAP ERP produktù, tedy dal¹í mo¾nost jak roz¹íøit platformu SAP mimo jazykù ABAP\footnote{http://help.sap.com/saphelp\_nw70/helpdata/en/fc/eb2e97358411d1829f0000e829fbfe/frameset.htm} a Java. Zatím je projekt pouze ve stádiu experimentální implementace\footnote{https://wiki.sdn.sap.com/wiki/display/Research/BlueRuby} a nehodí se pro reálné nasazení.
 
 \subsubsection{Rubinius}
-Zajimavý nápad napsat co nejvìt¹í èást ruby v samotném ruby\cite{webRubinius} - jedná se o pøepsaní nezbytnì nutných èástí interpretu do C++ a zbývajícího k\'{o}du do ruby (jako napøíklad standartní tøídy - String, Array, Hash, ...). Intepret obsahuje JIT kompilátor - parsovaný skript kompiluje na místì do binárního k\'{o}du spustitelném na dané platformì a a¾ ten následnì spou¹tí, èím¾ dosahuje zrychlení oproti MRI. Díky kompilaci do nativního k\'{o}du není zatí¾en GIL a tedy umo¾nuje paralerismus. V souèasné dobì je tento projekt stále ve vývoji - nìkolik gemù a aplikací v nìm ji¾ bì¾í, ale pro reálné nasazení není pøíli¹ vhodný.
+Zajimavý nápad napsat co nejvìt¹í èást ruby v samotném ruby\footnote{http://rubini.us} - jedná se o pøepsaní nezbytnì nutných èástí interpretu do C++ a zbývajícího k\'{o}du do Ruby (jako napøíklad standartní tøídy - String, Array, Hash, ...). Intepret obsahuje just in time (JIT) kompilátor - parsovaný skript pøelo¾í první do binárního k\'{o}du spustitelném na dané platformì a a¾ ten následnì spoustí. Tímto dosahuje zrychlení oproti MRI. Díky kompilaci do nativního k\'{o}du není zatí¾en GIL a umo¾nuje tedy plný paralelismus. V souèasné dobì je tento projekt stále ve vývoji - nìkolik aplikací v nìm ji¾ bì¾í, ale pro reálné nasazení není pøíli¹ vhodný.
 
 \subsection{Mo¾nosti binárního roz¹íøení}
-MRI verze ruby, kterou jsme se rozhodli pou¾ít, proto¾e se jedná o referenèní implementaci ruby, je napsán v jazyce C a souèástí distribuèního tarballu je i README soubor obsahující rychlý úvod do psaní binárních roz¹íøení. Jako dal¹í zdroj informací odkud jsem èerpal uvedu vyèerpávající popis ruby The Ruby programming language\cite{rubyProgrammingLanguage}.
+Distribuèní tarball MRI verze Ruby obsahuje také soubor README, kde je rychle popsán postup pro psaní binárních roz¹íøení.
+
+TODO: Hlubsi uvod
+
+\subsubsection{Pøeklad roz¹íøení}
+Binární roz¹íøení se v ruby pøekládají pomocí pøíkazu \verb|make|, tak jak je tomu u vìt¹iny ostatních projektù v prostøedí Linuxu, ov¹em na rozdíl od nich není pou¾ita sada programù autotools (skript ./configure pro generaci souboru Makefile). Makefile popisující jak se má roz¹íøení pøelo¾it a nainstalovat toti¾ vygeneruje samo ruby - existuje modul \verb|mkmf| (MaKe MakeFile), pomocí jeho¾ metod programátor popí¹e na vysoké úrovní abstrakce, jak pøelo¾it jeho roz¹íøení a tento skript potom distribuuje spolu se zdrojovými k\'{o}dy. Celý sled pøíkazù pro pøeklad a instalaci je zobrazen na Obrázku \ref{ruby_rozsireni_fig1}.
+
+\begin{figure}[tbh]
+	\begin{verbatim}
+	ruby extconf.rb
+	make
+	make install
+	\end{verbatim}
+ 	\vspace{-0.7cm}
+  \caption{Pøeklad binárních roz¹íøení}
+  \label{ruby_rozsireni_fig1}
+\end{figure}
+
+Modul \verb|mkmf| slou¾í hlavnì k nastavení dùle¾itých cest pro pøeklad automaticky a nezávisle na dané verzi èi distribuci operaèního systemu (cesta k hlavièkovým souborùm ruby, jeho knihovnám). Mimo této èinnosti modul nabízí metody, které umo¾nují podobné èinnosti jako skript ./configure\,--\,nalézat cesty k systémovým knihovnám, ovìøováním zda-li obsahují po¾adované symboly (funkce, promìné, ...) a dal¹í podobné funkce. Takto vytvoøený skript je samozøejmì plnìhodnotný program v ruby, lze tedy pou¾ít ve¹keré jeho mo¾nosti vèetnì pou¾ití dal¹ích ruby knihoven (lze napøíklad distribuovat pouze skript bez zdrojových k\'{o}dù, který si prvnì stáhnì nejnovìj¹í verzi projektu a a¾ poté bude pokraèovat ve své obvyklé èinnosti).
 
 \subsubsection{VALUE}
-\verb|VALUE| je datový typ, který v C reprezentuje ruby objekt. V ruby je v¹e objekt, tak¾e se tento datový typ pou¾ívá v¹ude - ka¾dá funkce, která je volatelná z ruby, vrací \verb|VALUE| jako svou návratovou hodnotu. Ve skuteènosti je se jedná o pøejmenování datového typu \verb|unsigned long| obsahujícího adresu struktury, která daný objekt reprezentuje - ve vìt¹inì pøípadù se tedy jedná o ukazatel. Ov¹em ne ve v¹ech pøípadech - interpret vyu¾ívá faktu, ¾e ukazatele jsou na platformì x86 v pamìti zarovnány - nejni¾¹í dva bity jsou pro ukazatele v¾dy nulové (platí pro 32 bitovou architekturu, pro 64 bitù se zarovnává na 8 bytù - tedy poslední ètyøi bity ukazatele jsou nulové). Napøíklad objekty tøídy \verb|Fixnum| (reprezentující celá èísla), nemají svou strukturu pro popis objektu jako ostatní objekty, ale jejich hodnota je zak\'{o}dována pøímo do promìné typu \verb|VALUE|, tak ¾e nultý bit (LSB, Least significant bit, nejménì významný bit) je nastaven na jednièku a ostatní bit jsou pou¾ity pro ulo¾ení vlastní hodnoty èísla. Tímto pøístup se u¹etøí dereferencování ukazatele pøi práci s celými èísly. Samozøejmì zobrazitelný rozsah èísel je tímto pøístupem omezený na 31 bitù (èíslo je ulo¾eno v pamìti jako znaménkové v dopl\v{n}kovém k\'{o}du) a proto ruby pro ''velká`` èísla (ov¹em stále celá) nabízí ruby je¹tì tøídu \verb|Bignum|, její¾ hodnota není reprezentována pøímo v míste ukazatele a proto má o dost vìt¹í rozsah. 
+\verb|VALUE| je datový typ, který v C reprezentuje ruby objekt. V ruby je v¹e objekt, tak¾e se tento datový typ pou¾ívá v¹ude\,--\,ka¾dá funkce, která je volatelná z ruby, vrací \verb|VALUE| jako svou návratovou hodnotu. Ve skuteènosti se jedná o pøejmenování datového typu \verb|unsigned long| obsahujícího adresu struktury reprezentující daný objekt. Vìt¹inou se tedy jedná o prostý ukazatel. Ov¹em ne ve v¹ech pøípadech. Interpret vyu¾ívá faktu, ¾e ukazatele jsou na platformì x86 v pamìti zarovnány - nejni¾¹í dva bity jsou pro ukazatele v¾dy nulové (platí pro 32 bitovou architekturu, pro 64 bitù se zarovnává na 8 bytù - tedy poslední ètyøi bity ukazatele jsou nulové).
 
-Tato optimalizace není pou¾ita jen u celých èísel, ale také u singleton promìných významých a èasto pou¾ívaných tøíd. Singleton (èesky jsem na¹el pøeklad ''jedináèek`` nebo ''unikát``) je oznaèení situace kdy existuje právì jedna (popøípadnì maximálnì jedna) instance tøídy v celém programu. V ruby se jedná o instance tøíd \verb|TrueClass| (instance se jmenuje \verb|true|), \verb|FalseClass| (instancí je objekt \verb|false|) nebo \verb|NilClass| (instance je \verb|nil|, obdoba \verb|NULL| v jazyce C, ''prazdný`` nebo také ''¾ádný`` objekt). V¹echny tyto objekty tedy nemají reprezentující strukturu, ale jejich obsah je pøím zak'{o}dován do typu \verb|VALUE| pro rychlej¹í interpretaci skriptu.
+Napøíklad objekty tøídy \verb|Fixnum| (reprezentující celá èísla), nemají svou strukturu pro popis objektu jako ostatní objekty, ale jejich hodnota je zak\'{o}dována pøímo do promìné typu \verb|VALUE| tak, ¾e nultý bit (LSB, Least significant bit, nejménì významný bit) je nastaven na jednièku a ostatní bity jsou pou¾ity pro ulo¾ení vlastní hodnoty èísla. Tímto pøístup se u¹etøí dereferencování ukazatele pøi práci s celými èísly. Samozøejmì zobrazitelný rozsah èísel je tímto pøístupem omezený na 31 bitù (èíslo je ulo¾eno v pamìti jako znaménkové v dopl\v{n}kovém k\'{o}du), a proto ruby pro pøíli¹ velká celá èísla nabízí je¹tì tøídu \verb|Bignum|, její¾ hodnota není reprezentována pøímo v místì ukazatele, a proto má o dost vìt¹í rozsah.
+
+Tato optimalizace není pou¾ita jen u celých èísel, ale také u singleton promìných významých a èasto pou¾ívaných tøíd. Singleton je oznaèení pro tøídu, která ma maximálnì jednu instanci v celém programu. V ruby se jedná o instance tøíd \verb|TrueClass| (instance se jmenuje \verb|true|), \verb|FalseClass| (instancí je objekt \verb|false|) nebo \verb|NilClass| (instance je \verb|nil|, obdoba \verb|NULL| v jazyce C, ''prazdný`` nebo také ''¾ádný`` objekt). V¹echny tyto objekty tedy nemají reprezentující strukturu, ale jejich obsah je pøím zak\'{o}dován do typu \verb|VALUE| pro rychlej¹í interpretaci skriptu.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=13.5cm,keepaspectratio]{./fig/ruby_value_diagram.png}
-  \caption{Diagram pro reprezentaci hodnoty v promìné VALUE (pøevzatý obrázek \cite{webRubyValue})}
+  \caption{Diagram pro reprezentaci hodnoty v promìné VALUE (pøevzato\footnote{http://www.oreillynet.com/ruby/blog/2006/01/the\_ruby\_value\_1.htm})}
   \label{fig_ruby_value_diagram}
 \end{figure}
 
-\subsubsection{Pøeklad roz¹íøení}
-Binární roz¹íøení se v ruby pøekládají pomocí pøíkazu \verb|make|, tak jak je tomu u vìt¹iny ostatních projektù v prostøedí linuxu, ov¹em na rozdíl od nich není pou¾ita sada programù autotools (skript ./configure pro generaci souboru Makefile). Makefile popisující jak se má roz¹íøení pøelo¾it a nainstalovat toti¾ vygeneruje samo ruby - existuje modul \verb|mkmf| (MaKe MakeFile), pomocí jeho¾ metod programátor popí¹e na vysoké úrovní abstrakce, jak pøelo¾it jeho roz¹íøení a tento skript potom distribuuje spolu se zdrojovými k\'{o}dy. Celý sled pøíkazù pro pøeklad a instalaci poté vypadá takto:
-
-\begin{verbatim}
-ruby extconf.rb
-make
-make install
-\end{verbatim} 
-
-Modul \verb|mkmf| slou¾í hlavnì k nastavení dùle¾itých cest pro pøeklad automaticky a nezávisle na dané verzi èi distribuci operaèního systemu (cesta k hlavièkovým souborùm ruby, jeho knihovnám). Mimo této èinnosti modul nabízí metody, které umo¾nují podobné èinnosti jako skript ./configure - nalezat cesty k systémovým knihovnám, ovìøováním zda-li obsahují po¾adované symboly (funkce, promìné, ...) a dal¹í podobné funkce. Takto vytvoøený skript je samozøejmì plnìhodnotný program v ruby, lze tedy pou¾ít ve¹keré jeho mo¾nosti vèetnì pou¾ití dal¹ích ruby knihoven (lze napøíklad distribuovat pouze skript bez zdrojových k\'{o}dù, který si prvnì stáhnì nejnovìj¹í verzi projektu a a¾ poté bude pokraèovat ve své obvyklé èinnosti).
-
 \subsubsection{Symboly}
-\verb|Symbol| je jeden z  datových typù ruby, jeho¾ popis patøí spí¹e do sekce o vlastnostech, ale kvùli velké návaznosti na jeho vnitøní implementaci jsem se rozhodl zaøadit zmínku o nìm a¾ v této kapitole. \verb|Symbol| je textový øetìzec podobný øetìzcùm tøídy \verb|String|, který se pro odli¹ení pí¹e s dvojteèkou pøed vlastním øetezcem. Pokud je symbol navíc slo¾en pouze z písmen, je mo¾né vynechat i jindy povinné uvozovky èi apostrofy:
+\verb|Symbol| je jeden z  datových typù ruby, jeho¾ popis patøí spí¹e do sekce o vlastnostech, ale kvùli velké návaznosti na jeho vnitøní implementaci jsem se rozhodl zaøadit zmínku o nìm a¾ v této èásti. \verb|Symbol| je textový øetìzec podobný øetìzcùm tøídy \verb|String|, který se pro odli¹ení pí¹e s dvojteèkou pøed vlastním øetezcem. Pokud je symbol navíc slo¾en pouze z písmen, je mo¾né vynechat i jindy povinné uvozovky èi apostrofy (ukázky mo¾ností zápisu symbolu jsou na Obrázku \ref{ruby_symboly_fig1}). Symboly v Ruby mají nìkolik odli¹ných vlastností od tøídy \verb|String| - za prvé se jedná o objekty pouze pro ètení (nejde zmìnit hodnota, text symbolu) a druhý a podstatnìj¹í rozdíl je v rovnosti a identitì. Uvedu vysvìtlující pøíklad.
 
-\begin{verbatim}
-irb(main):001:0> :ahoj.class # => Symbol
-irb(main):002:0> :'ahoj'.class # => Symbol
-irb(main):003:0> :'ahoj, tady jezisek'.class # => Symbol
-irb(main):004:0> :'4'.class # => Symbol
+\begin{figure}[tbh]
+	\begin{verbatim}
+	:ahoj.class # => Symbol
+	:'ahoj'.class # => Symbol
+	:'ahoj, tady jezisek'.class # => Symbol
+	:'4'.class # => Symbol
+	\end{verbatim} 
+ 	\vspace{-0.7cm}
+  \caption{Rùzné zpùsoby zadání symbolu}
+  \label{ruby_symboly_fig1}
+\end{figure}
+
+Symboly v Ruby mají nìkolik odli¹ných vlastností od tøídy \verb|String| - za prvé se jedná o objekty pouze pro ètení (nejde zmìnit hodnota, text symbolu) a druhý a podstatnìj¹í rozdíl je v rovnosti a identitì. V ukázce na Obrázku \ref{ruby_symboly_fig2} se provádí dvì dvojice porovnání na objektech tøíd \verb|String| a \verb|Symbol|. V prvním testu porovnávám objekty zda-li se rovnají (mají-li ted stejný obsah). Druhý test se ptá na ID (jednoznaèný identifikátor objektu) objektu. Testuje tedy identitu objektu. Testy na rovnost samozøejmì v¾dy uspìjí, proto¾e jak symbol, tak øetìzec obsahují stejné hodnoty. Ov¹em test na identitu v pøípadì øetìzce sel¾e, proto¾e se jedná o dva rùzné objekty (vytvoøené interpretem pøi parsování zdrojového k\'{o}du programu). Symboly jsou si ov¹em identické - jedná se o jednu instanci. Tato dùle¾itá vlastnost symboly pøedurèuje k pou¾ítí na místech konstant èí klíèù do asociativních polí - symbol s daným textem existuje v pamìti maximalnì jednou, bez ohledu na poèet výskytù v programu, co¾ vede k ¹etøení pamìtí a zvý¹ení výkonu aplikace.
+
+\begin{figure}[tbh]
+	\begin{verbatim}
+	'ahoj' == 'ahoj' # => true
+	'ahoj'.object_id == 'ahoj'.object_id # => false
+
+	:ahoj == :ahoj # => true
+	:ahoj.object_id == :ahoj.object_id # => true
 \end{verbatim} 
+ 	\vspace{-0.7cm}
+  \caption{Rùzné zpùsoby zadání symbolu}
+  \label{ruby_symboly_fig2}
+\end{figure}
 
-Symboly v ruby mají nìkolik odli¹ných vlastností od tøídy \verb|String| - za prvé se jedná o objekty pouze pro ètení (nejde zmìnit hodnota, text symbolu) a druhý a podstatnìj¹í rozdíl je v rovnosti a identitì. Uvedu vysvìtlující pøíklad:
-
-\begin{verbatim}
-irb(main):001:0> 'ahoj' == 'ahoj' # => true
-irb(main):002:0> 'ahoj'.object_id == 'ahoj'.object_id # => false
-
-irb(main):003:0> :ahoj == :ahoj # => true
-irb(main):004:0> :ahoj.object_id == :ahoj.object_id # => true
-\end{verbatim} 
-
-Provádím dvì dvojice porovnání, porovnávám mezi sebou vlastnosti objektù tøíd \verb|String| a \verb|Symbol|. V prvním testu porovnávám objekty zda-li se rovnají (mají-li ted stejný obsah). Druhý test se ptá na ID (jednoznaèný identifikátor objektu) objektu a testuje tedy identitu objektu. Testy na rovnost samozøejmì v¾dy uspìjí, proto¾e jak symbol tak øetìzec obsahují stejné hodnoty. Ov¹em test na identitu v pøípadì øetìzce sel¾e, proto¾e se jedná o dva rùzné objekty (vytvoøené interpretem pøi parsování zdrojového k\'{o}du programu). Symboly jsou si ov¹em identické - jedná se o jednu instanci. Tato dùle¾itá vlastnost symboly pøedurèuje k pou¾ítí na místech konstant èí klíèù do asociativních polí - symbol s daným textem existuje v pamìti maximalnì jednou, bez ohledu na poèet výskytù v programu, co¾ vede k ¹etøení pamìtí a zvý¹ení výkonu aplikace.
 
 Na úrovní zdrojových k\'{o}du MRI se jedná o tabulku, která jednoznaènì pøevádí textovou reprezentaci symbolu na datový typ \verb|ID| (co¾ je pøedefinovaný typ \verb|unsigned long|). Ve¹kerá porovnávání na rovnost symbolu jsou tedy ve skuteènosti celoèíselná porovnání, která jsou rychlej¹í ne¾ øetìzcová, èím¾ se dosahuje dal¹í optimalizace. Symbol je podobnì jako Fixnum pøímo zak\'{o}dován do typu \verb|VALUE|, nedochazí zde tedy k dereferencování ukazatele pro získaní této èíselné hodnoty a ta je získána pouze jednou pøi tvorbì objektu.
+
+TODO: Dopsat java intern
 
 Pro práci se symboly nabízí MRI binarním roz¹íøení nìkolik funkcí:
 \begin{itemize}
