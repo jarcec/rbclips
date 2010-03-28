@@ -408,7 +408,9 @@ Vygenerovné rozhraní zpravidla obsahuje pro ka¾dou nalezenou funkci knihovny jed
 Takto vygenerované rozhraní je velice pøímoèaré a programátor ma minimální kontrolu nad jeho výslednou podobou. Zpøístup\v{n}uje v¹echny funkce knihovny pro jejich volání ze skriptovacího jazyka se zachováním sémantiky jejich argumentù bez jakékoliv vý¹¹í abstrakce. Navíc zde mù¾e být problém se slo¾itými vnitøními datovými typy, které se pou¾ívají i vnì knihovny.
 
 \section{Manuální postup}
+Manuálním napsáním spojovací vrstvy získá prográmátor plnou kontrolu nad výsledkem. Jako jednu z hlavních výhod vidím mo¾nost vytvoøit z vnitøních struktur pou¾ivaných i vnì knihovny tøídy a z funkcí nad nimi operujícími metody této tøídy. Výsledkem je krásnì objektové chování, jak jsou programátoøi v Ruby zvyklí na rozdíl od pouhého procedurálního zpøístup\v{n}ení v¹ech funkcí. Navíc není problém zapouzdøovanou knihovnu tøeba roz¹íøit o dal¹í funkcionalitu, která se u¾ ov¹em bude odehrávát pouze na úrovni Ruby.
 
+Na druhou stranu má tento postup oproti automatickému pøístupu jednu obrovskou nevýhodu - èas programátora. Ten mùsí nastudovat rozhraní knihovny, navrhnout jeho vhodné zapouzdøení a nakonec i celé rozhraní napsat. Díky èasové nároènosti se plnì manuální pøístup v praxi pou¾ívá pouze zøídka a pokud je snaha knihovnu je¹tì zapouzdøit na vy¹¹í úrovni, polo¾ením do objektù napøíklad, tak se spí¹e pou¾ívá kombinace obou pøístupù. Automaticky se vytvoøí rozhraní knihovny pøístupné ve skriptovacím jazyce a a¾ toto rozhraní se následnì zapouzdøí do objektù a dal¹ích specifických jazykových konstrukcí, které v C nebo C++ nejsou známy.
 
 %=========================================================================
 \chapter{Knihovna rbClips}
