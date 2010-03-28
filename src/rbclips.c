@@ -24,7 +24,7 @@ void Init_rbclips()
   cl_mClips = rb_define_module("Clips");
 
   // Clips::Base
-  cl_cBase = rb_define_class_under(cl_mClips, "Base", rb_cObject);
+  cl_cBase = rb_define_module_under(cl_mClips, "Base");
   rb_define_singleton_method(cl_cBase, "insert_command", cl_base_insert_command, 1);
   rb_define_singleton_method(cl_cBase, "run", cl_base_run, -1);
   rb_define_singleton_method(cl_cBase, "reset", cl_base_reset, 0);

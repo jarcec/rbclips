@@ -5,6 +5,7 @@ require 'rbclips'
 class Test_Complex1 < Test::Unit::TestCase
 
   include Clips
+  include Base
 
   def teardown
     Base.reset
