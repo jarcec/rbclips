@@ -31,20 +31,27 @@ int cl_fact_initialize_nonordered_each(VALUE, VALUE, VALUE);
 //! Foreach method for string conversion
 int cl_fact_to_s_nonordered_each(VALUE, VALUE, VALUE);
 
-//! Foreach method for creating slot accessors
-int cl_fact_initialize_attr_slot(VALUE, VALUE, VALUE);
-
 //! Foreach method for updating fact
 int cl_fact_update_each(VALUE, VALUE, VALUE);
 
-//! Method body (block) for creating
-VALUE cl_fact_initialize_attr_slot_block(VALUE, VALUE, int, VALUE *);
-
 //! Define method for ordered fact
-void cl_fact_define_instance_methods_ordered(VALUE);
+void cl_fact_define_instance_methods_ordered(VALUE, int);
 
 //! Define method for nonordered fact
-void cl_fact_define_instance_methods_nonordered(VALUE);
+void cl_fact_define_instance_methods_nonordered(VALUE, int);
+
+//! Foreach method for creating slot accessors (nonordered fact)
+int cl_fact_define_instance_methods_attr_slot(VALUE, VALUE, VALUE);
+
+//! Method body (block) for creating slot accessors (nonordered fact)
+VALUE cl_fact_define_instance_methods_attr_slot_block(VALUE, VALUE, int, VALUE *);
+
+//! Method body (block) for creationt set_slot accessors (nonordered fact)
+VALUE cl_fact_define_instance_methods_attr_set_slot_block(VALUE, VALUE, int, VALUE *);
+
+//! Foreach method for creation set_slot accessors(nonordered fact)
+int cl_fact_define_instance_methods_attr_set_slot(VALUE, VALUE, VALUE);
+
 /**
  * Creating new object - wrap struct
  */
@@ -79,7 +86,7 @@ VALUE cl_fact_all(VALUE self)
     // Building it's content
     wrap->ptr = fact;
     CL_UPDATE(obj);
-    cl_fact_define_instance_methods(obj);
+    cl_fact_define_instance_methods(obj, FACT_FAMILY_READ|FACT_FAMILY_WRITE);
 
     rb_ary_push(ret, obj);
   }
@@ -135,7 +142,7 @@ VALUE cl_fact_find(int argc, VALUE *argv, VALUE self)
     // Building it's content
     wrap->ptr = fact;
     CL_UPDATE(obj);
-    cl_fact_define_instance_methods(obj);
+    cl_fact_define_instance_methods(obj, FACT_FAMILY_READ|FACT_FAMILY_WRITE);
 
     rb_ary_push(ret, obj);
   }
@@ -178,7 +185,7 @@ VALUE cl_fact_initialize_ordered(VALUE self, VALUE first, VALUE second)
   rb_iv_set(self, "@slots", second);
 
   // Define instance methods
-  cl_fact_define_instance_methods_ordered(self);
+  cl_fact_define_instance_methods_ordered(self, FACT_FAMILY_READ|FACT_FAMILY_WRITE);
 
   return Qtrue;
 }
@@ -201,7 +208,7 @@ VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
   rb_hash_foreach(second, cl_fact_initialize_nonordered_each, self);
 
   // Define instance methods
-  cl_fact_define_instance_methods_nonordered(self);
+  cl_fact_define_instance_methods_nonordered(self, FACT_FAMILY_READ|FACT_FAMILY_WRITE);
 
   return Qtrue;
 }
@@ -211,6 +218,8 @@ VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
  */
 VALUE cl_fact_slots(VALUE self)
 {
+  CL_UPDATE(self);
+
   VALUE slots = rb_iv_get(self, "@slots");
   return rb_ary_dup(slots);
 }
@@ -220,40 +229,61 @@ VALUE cl_fact_slots(VALUE self)
  */
 VALUE cl_fact_slot(VALUE self, VALUE slot)
 {
+  CL_UPDATE(self);
+
   VALUE template  = rb_iv_get(self, "@template");
   VALUE fslots    = rb_iv_get(self, "@slots");
   VALUE tslots    = rb_iv_get(template, "@slots");
 
+  // Check if given slot really exists  
   VALUE c  = rb_hash_lookup(tslots, slot);
   if(NIL_P(c))
   {
-    rb_raise(cl_eArgError, "Clips::Fact#slot Given slot don't exists");
-    return ST_STOP;
+    rb_raise(cl_eArgError, "Clips::Fact#slot Given slot '%s' don't exists", CL_STR(slot));
+    return Qnil;
   }
   
   return rb_hash_lookup(fslots, slot);
 }
 
 /**
- * Block represenatation for wrapping slot(name) method (body)
+ * Method for changing slot value in nonordered fact
  */
-VALUE cl_fact_initialize_attr_slot_block(VALUE yield, VALUE ary, int argc, VALUE *argv)
+VALUE cl_fact_set_slot(VALUE self, VALUE slot, VALUE newValue)
 {
-  return rb_funcall(rb_ary_entry(ary, 0), rb_intern("slot"), 1, rb_ary_entry(ary, 1));
-}
+  CL_UPDATE(self);
 
-/**
- * For each method for creating slot attributes
- */
-int cl_fact_initialize_attr_slot(VALUE key, VALUE value, VALUE self)
-{
-  VALUE ary = rb_ary_new();
-  rb_ary_push(ary, self);
-  rb_ary_push(ary, key);
+  cl_sFactWrap *wrap = DATA_PTR(self);
+  if( !wrap )
+  {
+      rb_raise(cl_eUseError, "Oops, wrap structure don't exists!");
+      return Qnil;
+  }
 
-  rb_block_call(self, rb_intern("define_singleton_method"), 1, &key, cl_fact_initialize_attr_slot_block, ary);
+  VALUE template  = rb_iv_get(self, "@template");
+  VALUE fslots    = rb_iv_get(self, "@slots");
+  VALUE tslots    = rb_iv_get(template, "@slots");
 
-  return ST_CONTINUE;
+  // Check if given slot really exists  
+  VALUE c  = rb_hash_lookup(tslots, slot);
+  if(NIL_P(c))
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#set_slot Given slot '%s' don't exists", CL_STR(slot));
+    return Qnil;
+  }
+  
+  // Save new value inside Ruby object
+  rb_hash_aset(fslots, slot, newValue);
+
+  // If we're saved, update CLIPS structure as well
+  if(wrap->ptr)
+  {
+    long long index = FactIndex(wrap->ptr);
+    VALUE command = rb_sprintf("(modify %lld (%s %s))", index, CL_STR(slot), CL_STR_ESCAPE(newValue));
+    cl_base_insert_command(Qnil, command);
+  }
+
+  return Qtrue;
 }
 
 /**
@@ -569,38 +599,111 @@ VALUE cl_fact_ordered(VALUE self)
  * Define instance methods based on self's type 
  * (ordered or nonordered fact).
  */
-void cl_fact_define_instance_methods(VALUE self)
+void cl_fact_define_instance_methods(VALUE self, int family)
 {
   VALUE template = rb_iv_get(self, "@template");
 
-  if(TYPE(template) == T_STRING) cl_fact_define_instance_methods_ordered(self);
+  if(TYPE(template) == T_STRING) cl_fact_define_instance_methods_ordered(self, family);
 
-  if(rb_obj_class(template) == cl_cTemplate) cl_fact_define_instance_methods_nonordered(self);
+  if(rb_obj_class(template) == cl_cTemplate) cl_fact_define_instance_methods_nonordered(self, family);
 }
 
 /**
  * Define instance methods in case of ordered fact
  */
-void cl_fact_define_instance_methods_ordered(VALUE self)
+void cl_fact_define_instance_methods_ordered(VALUE self, int family)
 {
-  // Define singleton methods
-  rb_define_singleton_method(self, "slots", cl_fact_slots, 0);
-  rb_define_singleton_method(self, "name", cl_fact_template, 0);
+  if(family & FACT_FAMILY_READ)
+  {
+    // Define singleton methods
+    rb_define_singleton_method(self, "slots", cl_fact_slots, 0);
+    rb_define_singleton_method(self, "name", cl_fact_template, 0);
+  }
 }
 
 /**
  * Define instance methods in case of nonordered fact
  */
-void cl_fact_define_instance_methods_nonordered(VALUE self)
+void cl_fact_define_instance_methods_nonordered(VALUE self, int family)
 {
-  // Define singleton methods
-  rb_define_singleton_method(self, "slot", cl_fact_slot, 1);
-  rb_define_singleton_method(self, "template", cl_fact_template, 0);
+  if(family & FACT_FAMILY_READ)
+  {
+    // Define singleton methods
+    rb_define_singleton_method(self, "slot", cl_fact_slot, 1);
+    rb_define_singleton_method(self, "template", cl_fact_template, 0);
 
-  // Define slot accessors
-  VALUE template = rb_iv_get(self, "@template");
-  VALUE slots = rb_iv_get(template, "@slots");
-  rb_hash_foreach(slots, cl_fact_initialize_attr_slot, self);
+    // Define slot accessors
+    VALUE template = rb_iv_get(self, "@template");
+    VALUE slots = rb_iv_get(template, "@slots");
+    rb_hash_foreach(slots, cl_fact_define_instance_methods_attr_slot, self);
+  }
+  if(family & FACT_FAMILY_WRITE)
+  {
+    // Define set_slot accessors
+    VALUE template = rb_iv_get(self, "@template");
+    VALUE slots = rb_iv_get(template, "@slots");
+
+    rb_define_singleton_method(self, "set_slot", cl_fact_set_slot, 2);
+    rb_hash_foreach(slots, cl_fact_define_instance_methods_attr_set_slot, self);
+  }
+}
+
+/**
+ * Block represenatation for wrapping set_slot(name,newValue) method (body)
+ */
+VALUE cl_fact_define_instance_methods_attr_set_slot_block(VALUE yield, VALUE ary, int argc, VALUE *argv)
+{
+  if(argc != 1)
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#set_slot slot '%s' called without any new value.", CL_STR(rb_ary_entry(ary, 1)));
+    return Qnil;
+  }
+
+  return rb_funcall(rb_ary_entry(ary, 0), rb_intern("set_slot"), 2, rb_ary_entry(ary, 1), argv[0]);
+}
+
+/**
+ * For each method for creating set_slot methods
+ */
+int cl_fact_define_instance_methods_attr_set_slot(VALUE key, VALUE value, VALUE self)
+{
+  VALUE ary = rb_ary_new();
+  rb_ary_push(ary, self);
+  rb_ary_push(ary, key);
+
+  VALUE name = rb_sprintf("%s=", CL_STR(key));
+
+  rb_block_call(self, rb_intern("define_singleton_method"), 1, &name, cl_fact_define_instance_methods_attr_set_slot_block, ary);
+
+  return ST_CONTINUE;
+}
+
+/**
+ * Block represenatation for wrapping slot(name) method (body)
+ */
+VALUE cl_fact_define_instance_methods_attr_slot_block(VALUE yield, VALUE ary, int argc, VALUE *argv)
+{
+  if(argc != 0)
+  {
+    rb_raise(cl_eArgError, "Clips::Fact#slot slot '%s' called with additional parameters.", CL_STR(rb_ary_entry(ary, 1)));
+    return Qnil;
+  }
+
+  return rb_funcall(rb_ary_entry(ary, 0), rb_intern("slot"), 1, rb_ary_entry(ary, 1));
+}
+
+/**
+ * For each method for creating slot attributes
+ */
+int cl_fact_define_instance_methods_attr_slot(VALUE key, VALUE value, VALUE self)
+{
+  VALUE ary = rb_ary_new();
+  rb_ary_push(ary, self);
+  rb_ary_push(ary, key);
+
+  rb_block_call(self, rb_intern("define_singleton_method"), 1, &key, cl_fact_define_instance_methods_attr_slot_block, ary);
+
+  return ST_CONTINUE;
 }
 
 /**

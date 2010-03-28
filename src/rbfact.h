@@ -14,6 +14,13 @@ struct _cl_sFactWrap
 };
 typedef struct _cl_sFactWrap cl_sFactWrap;
 
+//! Specify family of methods should be created for fact
+enum _cl_eMethodFamilies
+{
+  FACT_FAMILY_READ  = 1,
+  FACT_FAMILY_WRITE = 2,
+};
+
 //! Clips::Fact::new
 VALUE cl_fact_new(int, VALUE *, VALUE);
 
@@ -41,6 +48,9 @@ VALUE cl_fact_slots(VALUE);
 //! Clips::Fact\#slot (nonordered only)
 VALUE cl_fact_slot(VALUE, VALUE);
 
+//! Clips::Fact\#set_slot (nonordered only)
+VALUE cl_fact_set_slot(VALUE, VALUE, VALUE);
+
 //! Clips::Fact\#name, template (get name or template (@template) from fact)
 VALUE cl_fact_template(VALUE);
 
@@ -57,7 +67,7 @@ VALUE cl_fact_destroy(VALUE);
 VALUE cl_fact_ordered(VALUE);
 
 //! Define instance methods for given fact
-void cl_fact_define_instance_methods(VALUE);
+void cl_fact_define_instance_methods(VALUE, int);
 
 //! Clips::FactAddress\#to_s
 VALUE cl_factaddress_to_s(VALUE);
