@@ -40,6 +40,11 @@ int cl_fact_update_each(VALUE, VALUE, VALUE);
 //! Method body (block) for creating
 VALUE cl_fact_initialize_attr_slot_block(VALUE, VALUE, int, VALUE *);
 
+//! Define method for ordered fact
+void cl_fact_define_instance_methods_ordered(VALUE);
+
+//! Define method for nonordered fact
+void cl_fact_define_instance_methods_nonordered(VALUE);
 /**
  * Creating new object - wrap struct
  */
@@ -74,6 +79,7 @@ VALUE cl_fact_all(VALUE self)
     // Building it's content
     wrap->ptr = fact;
     CL_UPDATE(obj);
+    cl_fact_define_instance_methods(obj);
 
     rb_ary_push(ret, obj);
   }
@@ -129,6 +135,7 @@ VALUE cl_fact_find(int argc, VALUE *argv, VALUE self)
     // Building it's content
     wrap->ptr = fact;
     CL_UPDATE(obj);
+    cl_fact_define_instance_methods(obj);
 
     rb_ary_push(ret, obj);
   }
@@ -170,9 +177,8 @@ VALUE cl_fact_initialize_ordered(VALUE self, VALUE first, VALUE second)
   rb_iv_set(self, "@template", first);
   rb_iv_set(self, "@slots", second);
 
-  // Define singleton methods
-  rb_define_singleton_method(self, "slots", cl_fact_slots, 0);
-  rb_define_singleton_method(self, "name", cl_fact_template, 0);
+  // Define instance methods
+  cl_fact_define_instance_methods_ordered(self);
 
   return Qtrue;
 }
@@ -194,13 +200,8 @@ VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
   // Check if slot exists
   rb_hash_foreach(second, cl_fact_initialize_nonordered_each, self);
 
-  // Define singleton methods
-  rb_define_singleton_method(self, "slot", cl_fact_slot, 1);
-  rb_define_singleton_method(self, "template", cl_fact_template, 0);
-
-  // Define slot accessors
-  VALUE slots = rb_iv_get(first, "@slots");
-  rb_hash_foreach(slots, cl_fact_initialize_attr_slot, self);
+  // Define instance methods
+  cl_fact_define_instance_methods_nonordered(self);
 
   return Qtrue;
 }
@@ -562,6 +563,44 @@ VALUE cl_fact_ordered(VALUE self)
   if(TYPE(name) == T_STRING) return Qtrue;
 
   return Qfalse;
+}
+
+/**
+ * Define instance methods based on self's type 
+ * (ordered or nonordered fact).
+ */
+void cl_fact_define_instance_methods(VALUE self)
+{
+  VALUE template = rb_iv_get(self, "@template");
+
+  if(TYPE(template) == T_STRING) cl_fact_define_instance_methods_ordered(self);
+
+  if(rb_obj_class(template) == cl_cTemplate) cl_fact_define_instance_methods_nonordered(self);
+}
+
+/**
+ * Define instance methods in case of ordered fact
+ */
+void cl_fact_define_instance_methods_ordered(VALUE self)
+{
+  // Define singleton methods
+  rb_define_singleton_method(self, "slots", cl_fact_slots, 0);
+  rb_define_singleton_method(self, "name", cl_fact_template, 0);
+}
+
+/**
+ * Define instance methods in case of nonordered fact
+ */
+void cl_fact_define_instance_methods_nonordered(VALUE self)
+{
+  // Define singleton methods
+  rb_define_singleton_method(self, "slot", cl_fact_slot, 1);
+  rb_define_singleton_method(self, "template", cl_fact_template, 0);
+
+  // Define slot accessors
+  VALUE template = rb_iv_get(self, "@template");
+  VALUE slots = rb_iv_get(template, "@slots");
+  rb_hash_foreach(slots, cl_fact_initialize_attr_slot, self);
 }
 
 /**

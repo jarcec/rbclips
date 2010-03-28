@@ -304,17 +304,60 @@ class Test_Rule < Test::Unit::TestCase
   end
 
   def test_rcall_fact
-    dump = Dump.new
-    dump.instance_eval { @test = self }
-
     rule = Clips::Rule.new "factCaller" do |r|
       addr = r.pattern 'f', :number
       r.rcall self, :fact, addr
     end
 
-    rule.save
+    assert rule.save
     Clips::Fact.new("f", [3]).save
     Clips::Fact.new("f", [5]).save
     Clips::Base.run
   end
+
+  #
+  # Creating fact instace methods 
+  #
+ def subtest_instance_methods_ordered(fact)
+    assert_instance_of Clips::Fact, fact
+    assert_respond_to fact, :name
+    assert_respond_to fact, :slots
+  end
+  def test_instance_methods_ordered
+    rule = Clips::Rule.new "factInstanceMethods" do |r|
+      addr = r.pattern 'f', :number
+      r.rcall self, :subtest_instance_methods_ordered, addr
+    end
+    assert rule.save
+
+    Clips::Fact.new("f", [3]).save
+    Clips::Base.run
+  end
+
+  def subtest_instance_methods_nonordered(fact)
+    assert_instance_of Clips::Fact, fact
+    assert_respond_to fact, :template
+    assert_respond_to fact, :slot
+    assert_respond_to fact, :name
+    assert_respond_to fact, :age
+    assert_respond_to fact, :race
+  end
+  def test_instance_methods_nonordered
+    template = Clips::Template.new 'animal' do |t|
+      t.slot :name
+      t.slot :age
+      t.slot :race
+    end
+    assert template.save
+
+    rule = Clips::Rule.new "factInstanceMethods" do |r|
+      addr = r.pattern template, {}
+      r.rcall self, :subtest_instance_methods_nonordered, addr
+    end
+    assert rule.save
+
+    Clips::Fact.new(template, :name => "Azor", :race => "dog", :age => 2).save
+    Clips::Base.run
+  end
+ 
 end

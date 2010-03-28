@@ -172,4 +172,40 @@ class Test_Fact < Test::Unit::TestCase
     Clips::Fact.all.each {|f| assert f.destroy! }
     assert template.destroy!
   end
+
+  def test_instance_methods_ordered
+    assert Clips::Fact.new('gameloader', %w(windows)).save
+
+    assert_not_nil a = Clips::Fact.find('gameloader').first
+    assert_respond_to a, :name
+    assert_respond_to a, :slots
+
+    assert_not_nil  = Clips::Fact.all.first
+    assert_respond_to a, :name
+    assert_respond_to a, :slots
+  end
+
+  def test_instance_methods_nonordered
+    template = get_animal
+    assert template.save
+
+    assert Clips::Fact.new(template, :name => "Azor", :race => "dog", :age => 30).save
+
+    assert_not_nil a = Clips::Fact.find(template).first
+    assert_respond_to a, :template
+    assert_respond_to a, :slot
+    assert_respond_to a, :name
+    assert_respond_to a, :race
+    assert_respond_to a, :age
+
+    assert_not_nil  = Clips::Fact.all.first
+    assert_respond_to a, :template
+    assert_respond_to a, :slot
+    assert_respond_to a, :name
+    assert_respond_to a, :race
+    assert_respond_to a, :age
+  
+    assert a.destroy!
+    assert template.destroy!
+  end
 end

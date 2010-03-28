@@ -153,6 +153,7 @@ VALUE cl_generic_convert_dataobject(DATA_OBJECT value)
       // Building it's content
       wrap->ptr = fact;
       CL_UPDATE(ret);
+      cl_fact_define_instance_methods(ret);
       return ret;
     }
 

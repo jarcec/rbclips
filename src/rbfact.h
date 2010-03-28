@@ -56,6 +56,9 @@ VALUE cl_fact_destroy(VALUE);
 //! Clips::Fact\#ordered?
 VALUE cl_fact_ordered(VALUE);
 
+//! Define instance methods for given fact
+void cl_fact_define_instance_methods(VALUE);
+
 //! Clips::FactAddress\#to_s
 VALUE cl_factaddress_to_s(VALUE);
 
