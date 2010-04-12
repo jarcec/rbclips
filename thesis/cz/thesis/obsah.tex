@@ -3,6 +3,8 @@
 %=========================================================================
 TODO: Dopsat zvnaneni proc jsme se rozhodli napsat tento wrapper, popsat jednotlive kapitoly
 
+Napsat sem proc tato knihovna vznikla, priznat se k AVG, pospat moznost i nasazeni.
+
 %=========================================================================
 \chapter{Pou¾ité technologie}
 %=========================================================================
@@ -382,6 +384,9 @@ TODO: Popsat co jsou vlastne expertni systemy, jak se s nimi pracuje, cim se lis
 \subsection{Clips}
 TODO: Popsat historii CLIPS, co to je v dnesni dobe. Prakticke ukazky jak se v clips pracuje. Zahrnout kapitolu o rozsiritelnosti.
 
+\subsubsection{Reetùv algoritmus}
+Popsat jak funguje.
+
 %=========================================================================
 \chapter{Zpùsoby tvorby roz¹íøení}
 %=========================================================================
@@ -415,11 +420,66 @@ Na druhou stranu má tento postup oproti automatickému pøístupu jednu obrovskou n
 %=========================================================================
 \chapter{Knihovna rbClips}
 %=========================================================================
-TODO: Par vet o tom co jsme se rozhodli vytvorit a proc (proc wrapper nad necim co uz existuje).
+Knihovna rbClips je výsledek mé bakaláøské práce. Jedná se o manuálnì napsané binární roz¹íøení pro Ruby, které zapouzdøuje práci s CLIPS.
 
-TODO: Vlastni text...
+K manuálnímu napsání rozhraní jsem se rozhodl z nìkolika dùvodù. 
+
+\section{Implementacni patalie - zmenit}
+Proc jsem se rozhodl pro manualni postup - moznost zapouzdrit libovolne struktury do ruby objektu - zrychleni
+
+\section{Popis knihovny}
+Rozhraní knihovny jsem navrhl po vzoru projektu ActiveRecords.
+
+Sem napsat seznam trid, jejich pouziti, dostupne metody
+
+\section{Pøíklady pou¾ití}
+První pøíklad (Obrázek \ref{rbclips_complex_example1}) ukazuje vyhledávání savcù na mno¾inì zvíøat a jejich vlastností. Pøíklad by ¹el pøepsat i za zapou¾ítí neseøazeného faktu, ale z ukázkových dùvodu je zde pou¾it seøazený fakt.
+
+\begin{figure}[tbh]
+	\begin{verbatim}
+	# Fakta se kterými se bude pracovat
+	Fact.new('animal', %w(dog)).save
+	Fact.new('animal', %w(cat)).save
+	Fact.new('animal', %w(duck)).save
+	Fact.new('animal', %w(turtle)).save
+	Fact.new('warm-blooded', %w(dog)).save
+	Fact.new('warm-blooded', %w(cat)).save
+	Fact.new('warm-blooded', %w(duck)).save
+	Fact.new('lays-eggs', %w(duck)).save
+	Fact.new('lays-eggs', %w(turtle)).save
+	Fact.new('child-of', %w(dog puppy)).save
+	Fact.new('child-of', %w(cat kitten)).save
+	Fact.new('child-of', %w(tutrle hatchling)).save
+
+	# Vyhledání savcù podle toho, ¾e se jedná o zvíøata a
+	# zároven nekladou vejce
+	mammal1 = Rule.new "mammal" do |r|
+		r.pattern 'animal', :name
+		r.pattern 'warm-blooded', :name
+		r.not do |n|
+			n.pattern 'lays-eggs', :name
+		end
+		r.assert 'mammal', :name
+	end
+	mammal1.save
+
+	# Pravidlo pro nalezení savcùm podle rodièù
+	mammal2 = Rule.new "childs" do |r|
+		r.pattern 'mammal', :name
+		r.pattern 'child-of', :name, :young
+		r.assert 'mammal', :young
+	end
+	mammal2.save
+
+	Base.run
+	\end{verbatim}
+ 	\vspace{-0.7cm}
+  \caption{Pøíklad pou¾ítí knihovny rbClips}
+  \label{rbclips_complex_example1}
+\end{figure}
 
 %=========================================================================
 \chapter{Závìr}
 %=========================================================================
 TODO: Taky by se hodil ze jo... ;-)
+Zamer se podaril, knihovna funguje. Nastrel budoucnosti - moznost zapouzdrit i objektove rozsireni CLIPS, COOL.
