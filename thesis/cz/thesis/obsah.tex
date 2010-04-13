@@ -420,15 +420,23 @@ Na druhou stranu má tento postup oproti automatickému pøístupu jednu obrovskou n
 %=========================================================================
 \chapter{Knihovna rbClips}
 %=========================================================================
-Knihovna rbClips je výsledek mé bakaláøské práce. Jedná se o manuálnì napsané binární roz¹íøení pro Ruby, které zapouzdøuje práci s CLIPS.
+Knihovna rbClips je výsledek mé bakaláøské práce. Jedná se o manuálnì napsané binární roz¹íøení pro Ruby, které zapouzdøuje práci s CLIPS. K manuálnímu pøístupu jsem se rozhodl z tøí hlavních dùvodù.
 
-K manuálnímu napsání rozhraní jsem se rozhodl z nìkolika dùvodù. 
+\textbf{Zapouzdøení procedurálního chování.} Manuální pøístup mi umo¾nil zapouzdøit jednotlivé skupiny funkcí pracující s jednou entitou CLIPS (napøíklad fakty, pravidly èi prostøedími) do pøíslu¹ných tøíd. Celé rozhraní jsem pøispùsobil objektovému návrhu a nepsaným konvencím Ruby. Navíc jsem ho navrh podle po vzoru ActiveRecords, tak¾e programátor se základní znalostí tohoto projektu se v práci s rbClips velice rychle zorientuje.
 
-\section{Implementacni patalie - zmenit}
-Proc jsem se rozhodl pro manualni postup - moznost zapouzdrit libovolne struktury do ruby objektu - zrychleni
+\textbf{Zapouzdøení syntaxe CLIPS.} Jak bylo zmínìno vý¹e u popisu CLIPS, u¾ivatelské rozhraní je velice podobné jazyku LISP. Automatický postup by do Ruby zpøístupnil jednotlivé funkce, které by pøijímaly textové øetìzce toho jazyka, co¾ bylo ne¾ádoucí. Nìkteré ménì vyu¾ivané konstrukce CLIPS nejsou bohu¾el v rbClips pøímo podporovány, a proto jsem pøidal mo¾nost vkládat a vykonávat validní úryvky CLIPS k\'{o}du pøímo. 
+
+\textbf{Zpìtné volání Ruby method.} Knihovna obsahuje mo¾nost jako akci pravidla (konsekvent) nastavit metodu libovolného objektu Ruby, které se po aktivaci pravidla zavolá. Do takto zavolané metody lze pøedat libovolné parametry a to nejen ty známé v dobì tvorby pravidla, ale tøeba i ty aktivaèní.
+
+Pøi návrhu jsem je¹tì zva¾oval zvolit kombinovaný pøístup, který jsem opustil díky mo¾nostem binarního rozhraní Ruby. To umo¾nuje ulo¾it do vytváøeného Ruby objektu ukazatel na libovolnou strukturu. Pøíjemným faktem je, ¾e garbage collector o tomto ukazateli ví a pøed odstratením vlastního objektu na nìj zavolá registrovanou uvol\v{n}ovací funkci. V mém pøípadì prosté volání standartní funkce \verb|free()|.
 
 \section{Popis knihovny}
 Rozhraní knihovny jsem navrhl po vzoru projektu ActiveRecords.
+
+\subsection{Modul Base}
+Modul Base obsahuje metody, které nepatøí ¾ádnému vet¹ímu celku CLIPS.
+
+\subsection{Tøída Environment}
 
 Sem napsat seznam trid, jejich pouziti, dostupne metody
 
