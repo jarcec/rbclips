@@ -1,13 +1,21 @@
 %=========================================================================
 \chapter{Úvod}
 %=========================================================================
-Tato bakaláøská práce vznikla v rámci spoleènosti AVG Technologies s.r.o. Jejím hlavním cílem je napodobobit rozhodovací proces lidských pracovníku v oblasti analýzy virových vzorkù automatickými prostøedky. Výsledkem je knihovna spojujicí dynamický skriptovací jazyk Ruby a prostøedí pro tvorbu expertních systémù CLIPS. Ta bude pou¾ita pro vytvoøení komplexnìj¹ího systému, který bude automaticky zpracovávat vzorky a samostatnì se rozhodovat zda-li se jedná o malware nebo èistý legitimní software.
+Poèet novì se objevujících virù a jiných ¹kodlivých k\'{o}dù (malwaru) rok od roku stoupá. Velice tomu pomáhá postupné roz¹iøování internetu i mezí ménì informovanou laickou veøejnost, která se pøíli¹ netrápí dostateèným zapezpeèím svých poèítaèù. Tento nepøíli¹ optimistický trend zpùsobuje prolémy snad ve v¹ech odvìtvích, proto¾e dnes u¾ bez IT oddìlení nemù¾e existovat ¾ádná vet¹í firma. Zpùsobené problémy jsou hlavnì finanèí - rostou náklady jak na zabezpeèení jednotlivých poèítaèových stanic, tak i celých poèítaèívých sítí.
 
-Ve druhé kapitole se ètenáø dùkladnì seznámí s dvìmi technologiemi, které jsem ve své praci spojil dohromady. Dùkladnìji popi¹i zajimavé vlastnosti jazyka Ruby a jeho odli¹nosti od jiných be¾nì pou¾ivaných jazykù. Dalé se rozepí¹i o expertních systémech, jejich vlastnostech a schopnostech. Zamìøím se i na volnì ¹íøitelný pøíklad takovýchto systému, CLIPS.
+Zdravým rozumem by mohl ètenáø dojít k názoru, ¾e na tomto trendu mimo spamerù profitují hlavnì rùzné bezpeèností firmy. Hlavnì pak antivirové spoleènosti, dodavající ochraná øe¹ení proti malwaru. \v{S}kodlivého k\'{o}du je ov¹em nejenom více, ale bohu¾el se takté¾ dost mìní. Jeho autoøi, kterých je stále více, vynalézají nové a dùmyslnìj¹í techniky jak pøedejít odhlanení antivirovým programem. Co¾ na stranì antivirových firem zmanená poptávku po stále vìt¹ím poètu velice dobøe kvalifikovaných lidí pro procházení podezøelých vzorkù a vytváøení nových virových definic.
 
-Tøetí kapitola je ji¾ samotným popisem mnou naimplementované knihovny rbClips.
+Dostateèný poèet dobøe kvalifikovaných lidí bohu¾el na trhu práce není k dispozici a proto se hledají jiné, automatizovanìj¹í postupy, pro zpracování podezøelých vzorkù. Automatizované postupy mají navíc i jiné výhody. Poèítaè pracuje rychleji, mnohdy spolehlivìji a hlavnì výraznì levnìji ne¾ jeho lidský ekvivalent. Na druhou stranu mu chybí takzvaný ``zdravý selský rozum''. Pøirozené lidské my¹lení se jen velmi obtí¾nì implementuje do obvyklých procedurálních programù.
 
-TODO: Prilis kratke. Mozna by se hodil mirne hlubsi uvod.
+Pro adresaci problému lidského uva¾ovaní vznikly tkz. expertní systémy. Expertní systém je program, který napodobuje rozhodovací proces lidského experta podle pøedem nadefinovaných pravidel. V rámci spoleènosti AVG Technologies s.r.o jsme se rozhodli vytvoøit program za pou¾ití expertního systému pro automatickou klasifikaci vzorkù. Vìt¹ina expertních systému je komerèních a vzhledem k tomu, ¾e se nejedná o levné programy rozhodli jsme pou¾ít volnì ¹íøitelný pøíklad takového systému jménem CLIPS.
+
+CLIPS je public domain software, tedy zadarmo i pro komerèní vyu¾ití. Nabízí plnohodnotné prostøedí pro tvorbu expertního systému, které je napsáno v jazyce C. U¾ivatelské rozhrání, které je velice podobné jazyku LISP, je ov¹em u¾ivatelsky velice nepøívìtívé. Proto jsme se rozhodli celé CLIPS vzít a zapouzdøit do nìjakého vy¹¹ího programovacího jazyka. Jako cílový jazyk pro zapouzdøení jsme se vyu¾ít moderní skriptovací jazyk Ruby, kvùli jeho zajimavým a neobvyklým mo¾nostem.
+
+Má bakaláøská práce, která je v následujícíh kapitolách popsána, pojednává o novì vytvoøené knihovnì rbClips, která umo¾nuje pou¾ívat CLIPS v jazyce Ruby. Knihovna bude následnì pou¾ita k tvorbì systému pro automatické rozpoznávání vzorkù, tak jak bylo nastínìní na pøedcházejícíh øádcích. Samotný systém pro klasifikaci vzorkù u¾ ov¹em není rozsahém této práce.
+
+V druhé kapitole bych rád popsal obì nastínìné technologie, které spojím do funkèního celku více do podrobností. Budu se tedy hlavnì vìnovat systému pro tvorbu expertních systému CLIPS a dynamickému skriptovacímu jazyku Ruby.
+
+Tøetí kapitola je ji¾ popisem mé knihovny. Obsahuje jak její návrh, popis rozhraní tak i rùzné zajímavé implementaèní dropnosti.
 
 %=========================================================================
 \chapter{Pou¾ité technologie}
