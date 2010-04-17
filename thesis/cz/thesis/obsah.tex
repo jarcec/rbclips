@@ -1,26 +1,26 @@
 %=========================================================================
 \chapter{Úvod}
 %=========================================================================
-Poèet novì se objevujících virù a jiných ¹kodlivých k\'{o}dù (malwaru) rok od roku stoupá. Velice tomu pomáhá postupné roz¹iøování internetu i mezí ménì informovanou laickou veøejnost, která se pøíli¹ netrápí dostateèným zapezpeèím svých poèítaèù. Tento nepøíli¹ optimistický trend zpùsobuje prolémy snad ve v¹ech odvìtvích, proto¾e dnes u¾ bez IT oddìlení nemù¾e existovat ¾ádná vet¹í firma. Zpùsobené problémy jsou hlavnì finanèí - rostou náklady jak na zabezpeèení jednotlivých poèítaèových stanic, tak i celých poèítaèívých sítí.
+Poèet novì se objevujících virù a jiných ¹kodlivých poèítaèových k\'{o}dù (malwaru) rok od roku stoupá. Velice tomu pomáhá postupné roz¹iøování internetu i mezí ménì informovanou laickou veøejnost, která se pøíli¹ netrápí dostateèným zapezpeèím svých poèítaèù. Tento nepøíli¹ optimistický trend zpùsobuje prolémy snad ve v¹ech odvìtvích, proto¾e dnes u¾ bez IT oddìlení nemù¾e existovat ¾ádná vet¹í firma. Zpùsobené problémy jsou hlavnì finanèí\,--\,rostou náklady jak na zabezpeèení jednotlivých poèítaèových stanic, tak i celých poèítaèívých sítí.
 
-Zdravým rozumem by mohl ètenáø dojít k názoru, ¾e na tomto trendu mimo spamerù profitují hlavnì rùzné bezpeèností firmy. Hlavnì pak antivirové spoleènosti, dodavající ochraná øe¹ení proti malwaru. \v{S}kodlivého k\'{o}du je ov¹em nejenom více, ale bohu¾el se takté¾ dost mìní. Jeho autoøi, kterých je stále více, vynalézají nové a dùmyslnìj¹í techniky jak pøedejít odhlanení antivirovým programem. Co¾ na stranì antivirových firem zmanená poptávku po stále vìt¹ím poètu velice dobøe kvalifikovaných lidí pro procházení podezøelých vzorkù a vytváøení nových virových definic.
+Logickou úvahou by mohl ètenáø dojít k názoru, ¾e na tomto trendu mimo spamerù profitují hlavnì rùzné bezpeèností firmy. Nejvíce pak antivirové spoleènosti, dodavající ochraná øe¹ení proti malwaru. \v{S}kodlivého k\'{o}du je ov¹em nejenom více, ale bohu¾el se takté¾ dost mìní. Jeho autoøi, kterých je stále více, vynalézají nové a dùmyslnìj¹í techniky jak pøedejít odhlanení antivirovým programem. Co¾ na stranì antivirových firem zmanená poptávku po stále vìt¹ím poètu velice dobøe kvalifikovaných lidí pro procházení podezøelých vzorkù a vytváøení nových virových definic.
 
 Dostateèný poèet dobøe kvalifikovaných lidí bohu¾el na trhu práce není k dispozici a proto se hledají jiné, automatizovanìj¹í postupy, pro zpracování podezøelých vzorkù. Automatizované postupy mají navíc i jiné výhody. Poèítaè pracuje rychleji, mnohdy spolehlivìji a hlavnì výraznì levnìji ne¾ jeho lidský ekvivalent. Na druhou stranu mu chybí takzvaný ``zdravý selský rozum''. Pøirozené lidské my¹lení se jen velmi obtí¾nì implementuje do obvyklých procedurálních programù.
 
 Pro adresaci problému lidského uva¾ovaní vznikly tkz. expertní systémy. Expertní systém je program, který napodobuje rozhodovací proces lidského experta podle pøedem nadefinovaných pravidel. V rámci spoleènosti AVG Technologies s.r.o jsme se rozhodli vytvoøit program za pou¾ití expertního systému pro automatickou klasifikaci vzorkù. Vìt¹ina expertních systému je komerèních a vzhledem k tomu, ¾e se nejedná o levné programy rozhodli jsme pou¾ít volnì ¹íøitelný pøíklad takového systému jménem CLIPS.
 
-CLIPS je public domain software, tedy zadarmo i pro komerèní vyu¾ití. Nabízí plnohodnotné prostøedí pro tvorbu expertního systému, které je napsáno v jazyce C. U¾ivatelské rozhrání, které je velice podobné jazyku LISP, je ov¹em u¾ivatelsky velice nepøívìtívé. Proto jsme se rozhodli celé CLIPS vzít a zapouzdøit do nìjakého vy¹¹ího programovacího jazyka. Jako cílový jazyk pro zapouzdøení jsme se vyu¾ít moderní skriptovací jazyk Ruby, kvùli jeho zajimavým a neobvyklým mo¾nostem.
+CLIPS je public domain software, je tedy zadarmo i pro komerèní vyu¾ití. Nabízí plnohodnotné prostøedí pro tvorbu expertního systému, které je napsáno v jazyce C. U¾ivatelské rozhrání, které je velice podobné jazyku LISP, je ov¹em u¾ivatelsky velice nepøívìtívé. Proto jsme se rozhodli celé CLIPS vzít a zapouzdøit do nìjakého vy¹¹ího programovacího jazyka. Jako cílový jazyk pro zapouzdøení jsme se rozhodli vyu¾ít moderní skriptovací jazyk Ruby, kvùli jeho zajimavým a neobvyklým mo¾nostem.
 
 Má bakaláøská práce, která je v následujícíh kapitolách popsána, pojednává o novì vytvoøené knihovnì rbClips, která umo¾nuje pou¾ívat CLIPS v jazyce Ruby. Knihovna bude následnì pou¾ita k tvorbì systému pro automatické rozpoznávání vzorkù, tak jak bylo nastínìní na pøedcházejícíh øádcích. Samotný systém pro klasifikaci vzorkù u¾ ov¹em není rozsahém této práce.
 
-V druhé kapitole bych rád popsal obì nastínìné technologie, které spojím do funkèního celku více do podrobností. Budu se tedy hlavnì vìnovat systému pro tvorbu expertních systému CLIPS a dynamickému skriptovacímu jazyku Ruby.
+V druhé kapitole bych rád popsal obì nastínìné technologie, které spojím do funkèního celku více do detailu. Budu se tedy pøednì vìnovat systému pro tvorbu expertních systému CLIPS a dynamickému skriptovacímu jazyku Ruby.
 
 Tøetí kapitola je ji¾ popisem mé knihovny. Obsahuje jak její návrh, popis rozhraní tak i rùzné zajímavé implementaèní dropnosti.
 
 %=========================================================================
 \chapter{Pou¾ité technologie}
 %=========================================================================
-Má bakaláøská práce se zabývá spojením dvou technologií, Ruby a CLIPS do jednoho funkèního celku. Proto se jejich hlub¹ím popisem budu v dal¹ích sekcích blí¾e zabývat.
+Jak jsem popsal v úvodu, cílem mé bakaláøské práce je vytvoøit knihovnu rbClips umo¾nující propojit CLIPS a Ruby. V následujících dvou kapitolách se obìma technologiím budu zabývat více do hloubky a vysvìtlím proè jsme se rozhodli pou¾ít právì je. Obì technologie jsou napsány v programovacím jazyce C, proto i moje knihovna bude napsána tém¾e jazyce. Samotný popis jazyka C jsem ji¾ ov¹em do své práce nezahrnul a lze najít napøíklad v knize \cite{programovaciJazykC}.
 
 \section{Ruby}
 Ruby\cite{webRuby} je relativnì mladý dynamický skriptovací jazyk vytvoøený japonským in¾enýrem Yukihiro Matsumoto známym pod pøezdívkou Matz. V souèasné dobì neexistuje ¾ádná specifikace èi norma jako je tomu napøíklad u jazykù C/C++ a dal¹ích. Z tohoto dùvodu se jako reference jazyka bere samotný interpret napsaný Matzem\,--\,Matz' ruby intepret (MRI). Interpretù existuje více a jejich zkrácený seznam je uveden dále v textu. Absence existujícího standartu vedla v roce 2008 k vytvoøení skupiny pro standardizaci jazyka v rámci japonské organizace Information-technology Promotion Agency (IPA), která vychází z MRI verze 1.8.7. V souèasné dobì je k dispozici ji¾ návrh standartdu\footnote{http://ruby-std.netlab.jp/draft\_spec/agreement.html}, který má být navr¾en ke schválení prvnì v japonsku u Japanese Industrial Standards Committee (JISC) a následnì i u International Standard Organization (ISO).
@@ -432,17 +432,63 @@ Na druhou stranu má tento postup oproti automatickému pøístupu jednu obrovskou n
 %=========================================================================
 \chapter{Knihovna rbClips}
 %=========================================================================
-Knihovna rbClips je výsledek mé bakaláøské práce. Jedná se o manuálnì napsané binární roz¹íøení pro Ruby, které zapouzdøuje práci s CLIPS. K manuálnímu pøístupu jsem se rozhodl z tøí hlavních dùvodù.
+V této kapitole se budu dùkladnì vìnovat u¾ své vlastní prácí - knihovnì rbClips. Postupnì v následujícíh podkapitolách popí¹i její návrh, nìkteré zajimavé implementaèní detaily a samozøejmì nevynechám shrnutý popis rozhraní. Detaily aplikaèního rozhraní u¾ ov¹em nechám do programové dokumentace. V závìru kapitoly je uvedeno také nìkolik ukázkových pøíkladù, jak se dá rbClips pou¾ít.
 
-\textbf{Zapouzdøení procedurálního chování.} Manuální pøístup mi umo¾nil zapouzdøit jednotlivé skupiny funkcí pracující s jednou entitou CLIPS (napøíklad fakty, pravidly èi prostøedími) do pøíslu¹ných tøíd. Celé rozhraní jsem pøispùsobil objektovému návrhu a nepsaným konvencím Ruby. Navíc jsem ho navrh podle po vzoru ActiveRecords, tak¾e programátor se základní znalostí tohoto projektu se v práci s rbClips velice rychle zorientuje.
+\section{Návrh}
+Velice jsem rozmý¹lel jak výsledné binární roz¹íøení vytvoøit. Nejjednodu¹¹í pøístup automatického vytvoøení celého rozhraní by zachoval funkce i jejich parametry. U¾ivatel knihovny by ted byl nucel se uèit syntaxi u¾ivatelskéh rozhraní CLIPS, co¾ bylo velice ne¾ádoucí. V úvodních verzích návrh jsem se proto pøiklonil spí¹e ke kombinovanému pøístupu. Nad automaticky vygenerovaným rozhraním napsat vlastní vy¹¹í logiku, která by celé procedurální chování zapouzdøila do objektù. S tímto pøístupem vzniklo nìkolik prototypù knihovny na prezentaci, ¾e je to takto mo¾né vytvoøit (tkz. ''proof of concept``). Prototypy opravdu fungovaly ov¹em trpìly slab¹ím výkonem, kvùli neustálému pøevádìní ve¹kerých datových typù. Napøiklad i jinak velice rychlé ukazatele na úrovni jazyka C byly konvertovaný do objektù a pøedaný do vy¹¹ích vrstev k operacím, aby se následne zpìtnì z objektù pøevedly na ukazatele a vyhledala se podle nich v CLIPS urèitá entita (napøíklad fakt).
 
-\textbf{Zapouzdøení syntaxe CLIPS.} Jak bylo zmínìno vý¹e u popisu CLIPS, u¾ivatelské rozhraní je velice podobné jazyku LISP. Automatický postup by do Ruby zpøístupnil jednotlivé funkce, které by pøijímaly textové øetìzce toho jazyka, co¾ bylo ne¾ádoucí. Nìkteré ménì vyu¾ivané konstrukce CLIPS nejsou bohu¾el v rbClips pøímo podporovány, a proto jsem pøidal mo¾nost vkládat a vykonávat validní úryvky CLIPS k\'{o}du pøímo. 
+Proto jsem se nakonec rozhodl celé rozhraní napsat v jazyce C a dodávat jako plnì binární roz¹íøení. Po dùkladném pøeètìní dokumentace Ruby jsem navíc zjistil, ¾e Ruby umo¾nuje do objektu ulo¾it i ukazatel na libovoulnou strukturu. O tu se stará sám interpret. Garbage collector pøed uvolnìním objektu obsahující ukazatel zavolá registrovanou uvol\v{n}ovací funkci na ulo¾ený ukazatel a a¾ poté objekt odstraní. Nejèastìji je registrováná funkce \verb|free()|, ale v pøípadì potøeby pro slo¾itìj¹í struktury lze zaregistrovat zcela libovolnou funkci (pøijímací právì jeden parametr typu \verb|void *|). Ta mù¾e strukturu postupnì uvolnit tak, aby nedo¹lo k ¾ádným únikùm pamìti.
 
-\textbf{Zpìtné volání Ruby method.} Knihovna obsahuje mo¾nost jako akci pravidla (konsekvent) nastavit metodu libovolného objektu Ruby, které se po aktivaci pravidla zavolá. Do takto zavolané metody lze pøedat libovolné parametry a to nejen ty známé v dobì tvorby pravidla, ale tøeba i ty aktivaèní.
+Do objektù ukládám vlastní struktury, které obsáhují alespo\v{n} jednu promìnou. Tou je ukazatel na danou strukturu v CLIPS. Tedy napøíklad Ruby objekt reprezentující fakt má takto ulo¾en ukazatel na jeho strukturu v CLIPS. Tím padém mám k dispozici rychlé spojení mezi Ruby objektem a jeho CLIPS reprezentací. Nemusím poka¾dé popisovanou entitu vyhledávat a operace v¹echny operace jsou rychlej¹í.
 
-Pøi návrhu jsem je¹tì zva¾oval zvolit kombinovaný pøístup, který jsem opustil díky mo¾nostem binarního rozhraní Ruby. To umo¾nuje ulo¾it do vytváøeného Ruby objektu ukazatel na libovolnou strukturu. Pøíjemným faktem je, ¾e garbage collector o tomto ukazateli ví a pøed odstratením vlastního objektu na nìj zavolá registrovanou uvol\v{n}ovací funkci. V mém pøípadì prosté volání standartní funkce \verb|free()|.
+Samotné aplikaèní rozhraní, které je pøístupné u¾ivateli (API), jsem navrhnul po vzoru open source knihovny ActiveRecords (AR). Projekt AR je v Ruby svìtì hlavnì spojován s webovým frameworkem Ruby on Rails a pou¾ívá se k zapouzdøení jazyka SQL do objektù. Stejnì jako AR odsti\v{n}uje programátora od nutnosti znát SQL, tak i rbClips odstin\v{n}uje programátora od nutnosti znát u¾ivatelské rozhraní CLIPS. Ve¹kerou funkcionalita je zapouzdøena do objektù a ovládá se pomocí method tìchto objektù. Hlavní dùvod proè jsem rozhraní navrhl po vzoru AR je jeho velká roz¹íøenost. Jakykoliv programátor, který alespo\v{n} èásteèné zná rozhraní AR se v rbClips velice rychle zorientuje a nebude mít pøíli¹ velké problémy mou knihovnu pou¾ívat.
 
-\section{Popis knihovny}
+Inspirace AR se projevila v urèitých vzorech, které jsou shodné napøíè celým API. Mimo vyjímek zmínìných u popisu konkretních tøíd ní¾e v popisu rozhraní obsahují v¹echny tøídy spoleènou podmno¾inu metod zobrazenou na obrázku \ref{common_methods}. Inspirace AR není vidìt jen u spoleèných metod, ale také v chování celé knihovny. Napøíklad vytvoøení instance tøídy Fact, Rule nebo Template automaticky nevytvoøí odpovídající novou entitu i v prostøedí CLIPS. K vytvoøení (ulo¾ení) entity v prostøedí CLIPS dojde a¾ v okam¾iku volání metody \verb|save|. Velice podobnì to funguje i s aktualizací entit, ve¹keré zmìny je potøeba potvrdit opìtovným voláním metody \verb|save|, jinak se zmìny v prostøedí CLIPS nikdy neobjeví.
+
+\begin{figure}[tbh]
+\begin{description}
+ \item[save] Ulo¾í nebo aktualizuje popisovanou entitu v prostøedí CLIPS.
+ \item[saved?] Vrátí boolenovou hodnotu zda-li je daná entita pøítomna v prostøedí CLIPS. 
+ \item[destroy!] Vyma¾e danou entitu z CLIPS prostøedí.
+ \item[update] Aktualizuje vlastnosti podle aktuální hodnoty v prostøedí CLIPS.
+ \end{description}
+ 	\vspace{-0.7cm}
+  \caption{Spoleèná podmno¾ina metod vìt¹iny tøíd knihovny rbClips.}
+  \label{common_methods}
+\end{figure}
+
+\section{Výhody pou¾ití rbClips}
+Výhody, které pou¾ítí rbClips nabízí oproti pøímemù pou¾ití CLIPS, jsou rùznì rozprostøeny v celém tomto textu. Pro pøehlednost jsem se rozhodl je zde dohromady shrnout a zopakovat, aby je ètenáø mìl k dispozici na jednom místì a nemusel slo¾itì prohledávat celý text.
+
+\textbf{Zapouzdøení procedurálního chování.} Manuální pøístup k tvorbì zpøístup\v{n}ovacího binárního roz¹íøení mi umo¾nil zapouzdøit jednotlivé skupiny funkcí do tøíd. Napøíklad v¹echny funkce pracující s fakty jsou a\v{t} u¾ pøímo èi nepøímo volány pomocí method tøídy Fact. Samotná tøída navíc celé rozhraní pøispùsobuje objektovému návrhu a nepsaným konvecím jazyka Ruby. Programátor pou¾ivající rbClips si vùbec nemùsí být vìdom, ¾e na ní¾¹í úrovni se pou¾ívá pouze procedurální knihovna napsaná v jazyce C.
+
+\textbf{Zapouzdøení syntaxe CLIPS.} Zapouzdøení celého rozhraní knihovny rbClips do objektù umo¾nilo schovat u¾ivatelské rozhraní CLIPS. Programátor se tak nemusí uèit dal¹í jazyk, navíc od Ruby velice odli¹ný, kterým by ovládal prostøedí CLIPS. Nìkteré ménì vyu¾ivané konstrukce CLIPS nejsou bohu¾el v rbClips pøímo podporovány, a proto jsem pøidal mo¾nost vkládat a vykonávat validní úryvky CLIPS k\'{o}du pøímo. 
+
+\textbf{Zpìtné volání Ruby method.} Knihovna obsahuje mo¾nost jako akci pro pravidla (konsekvent) nastavit metodu libovolného objektu Ruby. Ta se po aktivaci pravidla zavolá. Do takto volané metody lze pøedat libovolné parametry a to nejen ty známé v dobì tvorby pravidla, ale tøeba i ty které vedly k aktivaci tohoto pravidla.
+
+\textbf{Vyu¾itý v¹ech dostupných Ruby knihoven.} Ve výsledém expertním systému jeho¾ základem bude knihovna rbClips, lze vyu¾ívat naprosto libovolnou Ruby knihovnu. Díky mo¾nosti volání libovolné metody v rámci aktivace pravidel lze napøíklad v dobì vyhodnocení pravidla pou¹tet dotazy v relaèních databázích nebo spou¹tet externí utility.
+
+\section{Pøeklad}
+Zdrojové k\'{o}dy knihovny rbClips jsou k dispozici na pøilo¾eném CD. Na tém¾e CD je k dispozici i celý git repozitáø. \u{C}tenáø má tedy pøístup k celé historii projektu, ne jen k jeho odevzdané verzi. Vývoj knihovny dnem odevzdání bakaláøské práce nekonèí a proto lze nejaktuálnìj¹í verzi stáhnout z veøejného git repozitáøe serveru Github (potøebný pøíkaz je na obrázku \ref{github_download}).
+
+Knihovna má dvì hlavní závislosti - CLIPS a Ruby. CLIPS je mo¾nost stáhnout z oficiálních stránek projektu a to zvlá¹\v{t} balíèek se zdrojovými k\'{o}dy a s rùznymi makefile soubory. Makefile soubor pro pøeklad knihovny bohu¾el obsahuje chybu. Chybí v nìm flag -fPIC, bez kterého se nedá dynamická knihovna vytvoøit. Proto jsem se rozhodl umístit zdrojové k\'{o}dy CLIPS, oproti kterým je má bakaláøská práce vytvoøena a otestována, pøímo do svého repositáøe. Odpadá tedy nutnost ruèního stáhnutí a pøelo¾ení CLIPS.
+
+Druhá hlavní závislost\,--\,Ruby\,--\,ji¾ v mém repozitaøi z dùvodu pøítomnosti ve vìt¹inì distribucí a velice aktivnímu vývoji není pøítomna. Pro pøeklad je potøeba mít nainstalován nejen samotný interpret, ale i jeho devel balíèky. Po¾adovaná verze je 1.9.x, dnes ji¾ pouze udr¾ovaná vìtev 1.8 není rbClips podporována a knihovna nepùjde s touto verzí pøelo¾it.
+
+Z obvyklých závislostí je potøeba mít prostøedí pro pøeklad, tedy hlavnì pøekladaè gcc. Z rodiny nástroju autotools je potøeba pouze balíèek s programem make. Ostatní nejsou potøeba, proto¾e Makefile pro pøeklad binárního roz¹íøení vytvoøí Ruby skript, který je pro tyto úèely dodán. V koøenové slo¾ce projektu je ji¾ vytvoøen hlavní soubor Makefile, který obsahuje v¹echny èásti pøekladu pohromadì. Pro samotný pøeklad tedy staèí spustit program make v koøenové slo¾ce knihovny. 
+
+Jako první se pøelo¾í zahrnutá verze CLIPS a následnì se a¾ vlastní knihovna rbClips. V poslední fázi pøekladu se spustí testy, aby u¾ivatel mìl jistotu, ¾e se v¹e pøelo¾ilo správnì.
+
+\begin{figure}[tbh]
+	\begin{verbatim}
+git clone git://github.com/jarcec/rbclips.git
+	\end{verbatim}
+ 	\vspace{-0.7cm}
+  \caption{Sta¾ení nejnovìj¹í verze knihovny rbClips ze serveru Github.}
+  \label{github_download}
+\end{figure}
+
+\section{Popis rozhraní knihovny}
 Rozhraní knihovny jsem navrhl po vzoru projektu ActiveRecords.
 
 \subsection{Modul Base}
@@ -452,7 +498,7 @@ Modul Base obsahuje metody, které nepatøí ¾ádnému vet¹ímu celku CLIPS.
 
 Sem napsat seznam trid, jejich pouziti, dostupne metody
 
-\section{Pøíklady pou¾ití}
+\section{Pou¾ítí a praktické pøíklady}
 První pøíklad (Obrázek \ref{rbclips_complex_example1}) ukazuje vyhledávání savcù na mno¾inì zvíøat a jejich vlastností. Pøíklad by ¹el pøepsat i za zapou¾ítí neseøazeného faktu, ale z ukázkových dùvodu je zde pou¾it seøazený fakt.
 
 \begin{figure}[tbh]
@@ -501,5 +547,10 @@ První pøíklad (Obrázek \ref{rbclips_complex_example1}) ukazuje vyhledávání savcù
 %=========================================================================
 \chapter{Závìr}
 %=========================================================================
-TODO: Taky by se hodil ze jo... ;-)
-Zamer se podaril, knihovna funguje. Nastrel budoucnosti - moznost zapouzdrit i objektove rozsireni CLIPS, COOL.
+Knihovnu rbClips jsem úspì¹nì naprogramoval a odzkou¹el na základì testù, které jsem vytvoøil ve fázi navrhu rozhraní knihovny. V souèasné dobì probíha jeji dal¹í testovaní pro odhalení rùzných zavleèených chyb, kterých jsem si pøi vlastním testování nev¹iml. Dal¹ím krokem bude pou¾ít knihovnu k tvorbì expertního systému v Ruby pro automatickou klasifikaci vzorkù, tak jak jsem zmínil v úvodu. 
+
+Výhod pou¾ítí rbClips a Ruby místo pøímého pou¾ítí CLIPS je nìkolik. Za prvé lze vyu¾ít v¹ech ji¾ napsaných knihoven Ruby. V praxi hlavnì vyu¾ijeme mo¾nosti napojení na relaèní databáze, ve kterých jsou ulo¾eny informace o malware (napøíklad kontrolní souèty). Dále nám Ruby umo¾nuje snadné volání externích utilit (napøíklad skenovací engine) a rozhodování na základì jejich výsledkù pøesnì po vzoru lidského pracovníka. Poslední výhoda se ji¾ nevztahuje k rbClips, ale ke CLIPS obecnì. Existuje mo¾nost automaticky vytváøet nová pravidla na základì zji¹tìných zkuteènosti (tedy strojové uèení).
+
+Knihovna rbClips by se mohla vyvíjet i nadále. Souèasný stav pokrýva fakta a pravidla, ale CLIPS nabízí napøíklad i vlastní objektový jazyk COOL. Bylo by velice pìkné v budoucích verzích rbClips pøínest mo¾nost pøímeho vyu¾ítí i tìchto zatím nepokrytých èástí CLIPS.
+
+Navíc by knihovna mohla slou¾it jako základ dopl\v{n}ku ke stávajícímu antivirovému jádru. To klasifikuje viry na základì vyhledávání rùzných vzorù v prohledávaných souborech. K tomu by ¹lo vytvoøit druhé jádro klasifikující malware na základì jeho chování (tedy behaviour detekce), jejím¾ základem by byla právì knihovna rbClips. Operaèní systém by hlásil akce jednotlivých programù. Napøíklad alokace velkého bloku souvislé pamìti, roz¹ifrování dat do této pamìti a její následné spustìní. rbClips knihovna by poté rozhodovala zda-li je chovaní programù správné a pøípustné. Pøípadnì by oznaèila daný program za malware a oznámila v¹e u¾ivateli. Samozdøejmì by výsledné nové jádro antiviru mohlo vyu¾ívat ve¹keré mo¾nosti, které nabízí jak CLIPS, tak i Ruby nabízí. Napøíklad nechat zkontrolovat stávajícím jádrem u¾ roz¹ifrovaný k\'{o}du malwaru, který pøedtím nemusel být detekován.
