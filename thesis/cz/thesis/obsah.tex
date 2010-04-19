@@ -488,15 +488,32 @@ git clone git://github.com/jarcec/rbclips.git
   \label{github_download}
 \end{figure}
 
-\section{Popis rozhraní knihovny}
-Rozhraní knihovny jsem navrhl po vzoru projektu ActiveRecords.
+\section{Aplikaèní rozhraní knihovny}
+Jak jsem ji¾ zmínil celé aplikaèní rozhraní je navr¾eno podle vzoru ActiveRecords, podle kterého sdílí základní my¹lenky a principy pou¾ívání. Celá knihovna je zapouzdøena v jednom Ruby modulu jménem \verb|Clips|. Ten obsahuje pìt hlavních tøíd - \verb|Fact|, \verb|Template|, \verb|Rule|, \verb|Environment|, \verb|Constraint| - které popisují pøíslu¹né entity v CLIPS a zapouzdøují celou práci s nimi. Dále obsahuje nìkolik pomocných tøíd, které u¾ivatel není oprávnìn vytváøet pøímo. Dostává je jako ji¾ vytvoøené objekty do konfiguraèních blokù hlavních tøíd. Tyto pomocné tøídy budou upøesnìny dále v textu v popisu jednotlivých hlavních tøíd, kde jsou pou¾ívány. Nakonec obsahuje je¹te module \verb|Base| slou¾ící pro volání dùle¾itých funkcí CLIPS, které nejsou souèástí jiných tøíd. 
 
 \subsection{Modul Base}
-Modul Base obsahuje metody, které nepatøí ¾ádnému vet¹ímu celku CLIPS.
+CLIPS je celé prostøedí pro tvorbu expertních systémù, nikoliv jen knihovna pro tvorbu faktù, pravidel a dal¹ích vìt¹ích entit. Proto obsahuje také velké mno¾ství rùzných dopl\v{n}kových funkcí, které toto prostøedí umo¾nují ovládat. Právì pro tyto funkce existuje modul Base, ve kterém jsou pohromadì metody, které se nedotýkají ¾ádného velkého celku CLIPS, ale nelze si bez nich výsledný expertní systém pøedstavit. Dále uvedu krátky seznam nejdùle¾itìj¹ích metod:
+
+\textbf{run(FixNum = 0)} Metoda run slou¾í k zahájení pou¾ívání pravidel. Bì¾ný postup spu¹tìní programu v CLIPS sestává z vytvoøení mno¾iny pravidel a prvotních faktù a následného spu¹tìní vlastního enginu pro zpracování. Knihovna rbClips na tomto pøístupu nic nezmìnila proto se do zavolání metody run ¾ádná pravidla neaplikují. Pro zamezení pøípadnému nekoneènému cyklu slou¾í jeden argument urèující maximální poèet pravidel, která se smí aplikovat.
+
+\textbf{insert\_command(String)} Knihovna rbClips zapouzdøuje nejpou¾ívanìj¹í èásti CLIPS, bohu¾el ov¹em ne ve¹kerou mo¾nou funkcionalitu. Kvùli absenci 100\% pokrytí jsem vytvoøit metodu \verb|insert\_command|. Na vstupu dostává jako parametr jeden validní pøíkaz CLIPS, který následnì provede. Kvùlí chování funkcí, které jsou v prostøedí CLIPS nakonec zavolány, je pro správnu funkènost nutné, aby pøedaný øetezec obsahoval maximálnì jeden pøíkaz. V pøípadì, ¾e jich bude obsahovat více, tak se provede pouze první z nich. Navíc se do Ruby vrátí informace, ¾e v¹e probìhlo v poøádku, co¾ mù¾e být velice matoucí.
 
 \subsection{Tøída Environment}
+CLIPS umo¾nuje soubì¾ný bìh nìkolika prostøedí, které jsou na sobì navzájem nezávislé. Ka¾dé prostøedí má svou vlastní mno¾inu pravidel, faktù a pro spu¹tìní rozhodovacího enginu musí pro ka¾dé prostøedí být spu¹tìna methoda \verb|run|. Souèasná implementace prostøedí v rbClips je napsána mírnì neobjektovì, proto¾e následuje mo¾nosti, které ji CLIPS nabízí. V jeden okam¾ik mù¾e být aktivní pouze jedno prostøedí a to i v pøípadì více vláknové aplikace. Navíc je potøeba pro vícevláknové aplikace dávat pozor na potencionálnì nebezpeèné volání \verb|Environment::new|.  CLIPS novì vytvoøené prostøedí rovnou nastaví jako aktuální, co¾ poru¹uje konvence rbClips. Prostøedí se stává aktivní a¾ po zavolání metody \verb|set\_current| (obdoba metody \verb|save| z ostatních hlavních tøíd). Volání konstruktoru tøídy tedy vytvoøí nové prostøedí a poté pøepne zpìt do starého prostøedí. Toto pøehazování je nebezpeèné právì ve více vláknových aplikacích, kde mohou nastat te¾ko odhalitelné race conditions. Napøíklad se ukládaná pravidla èi fakta mohou ulo¾it do zdánlivì náhodných prostøedí. Proto doporuèuji vytvoøit v¹echna potøebná prostøedí je¹tì pøed samotným vytvoøením vláken.
 
-Sem napsat seznam trid, jejich pouziti, dostupne metody
+\subsection{Tøída Constraint}
+Na rozdíl od Ruby v CLIPS existuje více datových typù ne¾ pouhý objekt. Existují zde datová primitiva známá z ostatních programovacích jazykù jako napøíklad celá èísla, desetíná èísla èi øetezce. Ve výchozím stavu lze do slotu neseøazených faktù ulo¾it libovolnou hodnotu. Popøípadnì mno¾inu hodnot, jedná-li se o multislot. Z logického hlediska by ov¹em napøíklad do slotu vìk, který jak u¾ z názvu vyplývá ud¾uje vìk osoby, nemìlo pøílis smysl ukládat øetezec. Z toho dùvodu zavádí CLIPS tkz. Constraints. U neseøazených faktù lze v ¹ablonì nastavit u jednotlivých faktù také jejich omezení. Tedy napøíklad ji¾ zmínìné omezení typù, které pro daný slot budou akaceptovány. Mimo toho lze je¹tì omezit pro multisloty napøíklad minimální a maximální poèet prvkù, pro èíselné sloty dolní i horní hranici mo¾né hodnoty nebo pro napodobéní výètového typu lze pøímo vyjmenovat v¹echny hodnoty, které má daný slot akceptovat.
+
+Uvnitø CLIPS bohu¾el neexistuje mo¾nost jak mno¾inu omezení ulo¾it jako samostatnou entitnu. Omezení je v¾dy ulo¾eno a¾ v rámci jednotlivých slotù definovaných ¹ablon. Z toho dùvodu objekty tøídy \verb|Constraint| nemají metodu \verb|save| a nejdou tedy ani ulo¾it. Existují pouze na úrovni interpretu Ruby. Pokud programátor nastaví nìjakému slotu omezení, tak se vezme aktuální stav objektu popisujícího omezení a ten se pou¾ije. Pokud je tento Constraint objekt posléze zmìnìn, tak se zmeny ji¾ zpìtnì nepromítnou do v¹ech míst, kde byly pou¾ity. Z tìchto dùvodù doporuèuji vytvoøit v¹echny objekty popisující omezení na jednou místì a je¹tì pøed tvorbou ¹ablon a dále je ji¾ nemìnit.
+
+\subsection{Tøída Template}
+
+
+\subsection{Tøída Fact}
+
+
+\subsection{Tøída Rule}
+
 
 \section{Pou¾ítí a praktické pøíklady}
 První pøíklad (Obrázek \ref{rbclips_complex_example1}) ukazuje vyhledávání savcù na mno¾inì zvíøat a jejich vlastností. Pøíklad by ¹el pøepsat i za zapou¾ítí neseøazeného faktu, ale z ukázkových dùvodu je zde pou¾it seøazený fakt.
@@ -543,6 +560,8 @@ První pøíklad (Obrázek \ref{rbclips_complex_example1}) ukazuje vyhledávání savcù
   \caption{Pøíklad pou¾ítí knihovny rbClips}
   \label{rbclips_complex_example1}
 \end{figure}
+
+TODO: Dodat alespon jeden dalsi priklad
 
 %=========================================================================
 \chapter{Závìr}
