@@ -507,7 +507,7 @@ Na rozdíl od Ruby v CLIPS existuje více datových typù ne¾ pouhý objekt. Existují
 Uvnitø CLIPS bohu¾el neexistuje mo¾nost jak mno¾inu omezení ulo¾it jako samostatnou entitnu. Omezení je v¾dy ulo¾eno a¾ v rámci jednotlivých slotù definovaných ¹ablon. Z toho dùvodu objekty tøídy \verb|Constraint| nemají metodu \verb|save| a nejdou tedy ani ulo¾it. Existují pouze na úrovni interpretu Ruby. Pokud programátor nastaví nìjakému slotu omezení, tak se vezme aktuální stav objektu popisujícího omezení a ten se pou¾ije. Pokud je tento Constraint objekt posléze zmìnìn, tak se zmeny ji¾ zpìtnì nepromítnou do v¹ech míst, kde byly pou¾ity. Z tìchto dùvodù doporuèuji vytvoøit v¹echny objekty popisující omezení na jednou místì a je¹tì pøed tvorbou ¹ablon a dále je ji¾ nemìnit.
 
 \subsection{Tøída Template}
-
+CLIPS umo¾nuje vytváøet i takzvané neseøazené fakty, které se svým pojetím dají pøirovnat napøíklad ke strukturám v jazyce C. Stejnì jako ony mají svùj pøedpis mo¾ných polo¾ek, které se v terminilogii CLIPS nazývají sloty. Tento pøedpis se v CLIPS vytváøí pomocí ¹ablon. Ve¹kerá práce se ¹ablonami je v rbClips zapouzdøena pomocí tøídy \verb|Template|.
 
 \subsection{Tøída Fact}
 
