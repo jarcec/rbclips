@@ -508,10 +508,34 @@ CLIPS umo¾nuje soubì¾ný bìh nìkolika prostøedí, které jsou na sobì navzájem nezá
 
 Navíc je potøeba u vícevláknových aplikace dávat pozor na potencionálnì nebezpeèné volání \verb|Environment::new|. CLIPS novì vytvoøené prostøedí rovnou nastaví jako aktuální, co¾ poru¹uje konvence rbClips. Prostøedí se stává aktivní a¾ po zavolání metody \verb|set\_current| (obdoba metody \verb|save| z ostatních hlavních tøíd). Volání konstruktoru tøídy tedy vytvoøí nové prostøedí a poté pøepne zpìt do starého prostøedí. Toto pøehazování je nebezpeèné právì ve více vláknových aplikacích, kde mohou nastat te¾ko odhalitelné race conditions. Napøíklad se ukládaná pravidla èi fakta mohou ulo¾it do zdánlivì náhodnì jiných prostøedí. Z tohoto dùvodu doporuèuji vytvoøit v¹echna potøebná prostøedí je¹tì pøed samotným vytvoøením vláken.
 
+\begin{figure}[tbh]
+  \begin{verbatim}
+    include Clips
+    env = Environment.new # Vytvori nove prostredi
+    cur = Environment.current # Vrati aktualni prostredi
+    env.set_current # Nastavi aktualni prostredi
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Pøíklad pou¾ití tøídy Environment.}
+  \label{rbclips_example_environment}
+\end{figure}
+
 \subsection{Tøída Constraint}
 Na rozdíl od Ruby v CLIPS existuje více datových typù ne¾ pouhý objekt. Existují zde datová primitiva známá z ostatních programovacích jazykù jako napøíklad celá èísla, desetinná èísla èi øetìzce. Ve výchozím stavu lze do slotu neseøazených faktù ulo¾it libovolnou hodnotu. Popøípadnì mno¾inu hodnot, jedná-li se o multislot. Z logického hlediska by ov¹em napøíklad do slotu vìk, který jak u¾ z názvu vyplývá udr¾uje vìk osoby, nemìlo pøílis smysl ukládat øetezec. Z toho dùvodu zavádí CLIPS mo¾nosti omezeni (constraints). V ¹ablonách lze pro libovolný nastavit také jeho omezení, napøíklad seznam akceptovaných datových typù. Mimo toho lze je¹tì omezit v pøípadì multislotù minimální a maximální poèet prvkù, pro èíselné sloty dolní i horní hranici mo¾né ulo¾ené hodnoty nebo pro napodobéní výètového typu lze pøímo vyjmenovat v¹echny hodnoty, kterých smí daný slot nabývat.
 
 Uvnitø CLIPS bohu¾el neexistuje mo¾nost jak mno¾inu omezení ulo¾it jako samostatnou entitnu. Omezení je v¾dy ulo¾eno pouze v rámci jednotlivých slotù vytváøených ¹ablon. Z tohoto dùvodu objekty tøídy \verb|Constraint| nemají metodu \verb|save| a nejdou tedy ani ulo¾it. Existují pouze na úrovni interpretu Ruby. Pokud programátor nastaví nìjakému slotu omezení, vezme se jeho aktuální stav a ten se pou¾ije. Pokud je tento \verb|Constraint| objekt posléze zmìnìn, tak se zmeny ji¾ zpìtnì nepromítnou do v¹ech míst, kde byl pou¾it. Proto doporuèuji vytvoøit v¹echny objekty popisující omezení na jednou na zaèátku programu a je¹tì pøed tvorbou ¹ablon a dále je pokud mo¾no ji¾ nemìnit.
+
+Vytvoøení omezení je snadné, konstruktor akceptuje jako parametr jedno asociativní pole se ètyømi mo¾nými klíèi. První mo¾nost klíè \verb|:type| jako hodnotu akceptuje jeden nebo pole mo¾ných typù. Typy jsou reprezentováný symboly a smí nabývat hodnot \verb|:symbol|, \verb|:string|, \verb|:lexeme|, \verb|:integer|, \verb|:float|, \verb|:number|, \verb|:instance_name|, \verb|:instance_address|, \verb|:instance|, \verb|:external_address|, \verb|:fact_address| popøípadnì hodnoty \verb|:any| reprezentující jakýkoliv datový typ (implicitní hodnota). Druhý mo¾ný klíè je \verb|:values| akceptující jednu èi pole v¹ech rùzných hodnot, kterých slot s tímto omezení smí nabývat. Poslední dva klíèe \verb|:range| a \verb|:cardinatily| akceptují Ruby objekt interval. Klíè \verb|:cardinality| omezuje poèet mo¾ných hodnot v multislotech, zatímco \verb|:range| omezuje mo¾né velikosti ulo¾itelných èísel.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+    a = Constraint.new :type => [:string, :lexeme]
+    b = Constraint.new :type => :integer, :range => 3..13
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Pøíklad pou¾ití tøídy Constraint.}
+  \label{rbclips_example_constraint}
+\end{figure}
 
 \subsection{Tøída Template}
 V CLIPS lze mimo obvyklých seøazených faktù, které obsahují neorganizovaný seznam atributù, také takzvané seøazené fakta. Ty bych mohl pøirovnat ke strukturním promìnám v jazyce C. Struktura má svuj pøedpis, tedy jméno a seznam atributù, které obsahuje. Velice podobnì je tomu i v CLIPS, pøedpis pro tvorbu seøazených faktù se jmenuje ¹ablona. V rbClips se celá práce s ¹ablonami zapouzdøuje do tøídy \verb|Template|. Jednotlivým atributùm se potom øíka sloty. Ka¾dý slot musí mít v rámci jedné ¹ablony své unikátní jméno. Navíc mu lze volitelnì nastavit i \verb|Contrait| objekt, kterým lze omezit mo¾né ulo¾itelné hodnoty. 
@@ -530,6 +554,24 @@ Výhoda pou¾ití seøazeného faktu nad neseøazeným je v mo¾nosti ulo¾it do faktu i 
 
 Velice zajimavá je vnitøní implementace rozdílu seøazených a neseøazených faktù a ¹ablon na úrovní zdrojových k\'{o}dù CLIPS v jazyce C. Ve skuteènosti toti¾ na této nejni¾¹í úrovni vytváøí CLIPS pro seøazené fakty ¹ablony s jedním multislotem jménem \verb|implied| a v¹echny atributy ukládá dovnitø. Tuto zkuteènost si samozdøejmì poznaèí a odstíní tak u¾ivatele od nutnosti znát vnitøní implementaci. Toto chování usnadnilo vnitøní implementaci tøídy Fact, jak blí¾e popí¹i v následujících odstavcích. Pøíná¹í s sebou ov¹em i jeden problém, jména ¹ablon a skupiny seøazených faktù jsou bráná se spoleèné mno¾iny. A vzhledem k tomu, ¾e musí být unikátní, tak nelze mít ¹ablonu a skupinu seøazených faktù se stejným jménem. Proto v uvedené ukazce se ¹ablona jmenuje \verb|neserazeny-clovek| a skupina seøazených faktù \verb|serazeny-clovek|.
 
+Vytvoøit ¹ablonu lze dvìmi základními postupy. Konstruktor akceptuje bu\v{d} konfiguraèní asociativní pole nebo jméno ¹ablony s konfiguraèním blokem. V pøípadì konfigurace u¾itím asociativního pole, musí toto pole obsahovat povinnì dva klíèe - \verb|:name| a \verb|:slots|. Klíè \verb|:name| slou¾í pro zadání jména ¹ablony, které musí být v daném prostøedí unikátní. Druhý po¾adovaný klíè \verb|:slots| slou¾í jako seznam slotù vytváøené ¹ablony. Akceptuje jako hodnotu bu\v{d} pole objektù tøídy \verb|String| nebo \verb|Symbol|, které bude reprezentováno jako jména jednotlivých slotù. V pøípadì kdy u¾ivatel potøebuje slotùm zmìnit výchozí chování je pro nìj nachystána druhá varianta klíèe \verb|:slots|, která pøijimá dal¹í (ji¾ tedy vnoøené) asociativní pole. Klièi tohoto vnoøeného pole jsou jména slotù pøièem¾ hodnotami je v poøadí ji¾ tøetí asociativní pole, které obsahuje seznam atributù daného slotu. Attributy slotù existují dva, \verb|:multislot| povolující ulo¾ení více hodnot v rámci jednoho slotu a \verb|:default| obsahující výchozí hodnotu (implicitnì \verb|nil|).
+
+Zápis u¾ivající postupnì tøi vnoøená asociativní pole není zrovna pro èlovìka pøehledný a proto existuje druhá o dost èitelnìj¹í varianta volání konstruktoru u¾itím bloku. Konfiguraèní blok bude zavolán s jednou promìnou tøídy \verb|TemplateCreator|, která má metodu \verb|slot| slou¾ící pro vytvoøení nového slotu. Jméno slotu je pøedání jako první argument. Volitelnì lze jako druhý argument pøedat asociativní pole popisující atributy slotu (tedy to samé asociativní pole, které se pøedává jako druhé vnoøené pøí první variantì volání konstuktoru).
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+Template.new :name => 'animal', :slots => %w(name age race)
+Template.new 'animal' do |t|
+  t.slot :name
+  t.slot :age
+  t.slot :race
+end
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Dvì mo¾nosti tvorby stejné ¹ablony.}
+  \label{rbclips_example_template}
+\end{figure}
+
 \subsection{Tøída Fact}
 Jak ji¾ bylo zmíno CLIPS rozli¹ují dva typy faktù - seøazené a neseøazené. Díky velice podobné vnitøní implementaci obou druhù faktù v CLIPS, jsem je oba zapouzdøil do jediné Ruby tøídy jménem \verb|Fact|. Vìt¹ína rozhraní této tøídy je shodná pro oba typy faktù, ale samozdøejmì existují èásti, ve kterých se API li¹í.
 
@@ -540,10 +582,39 @@ Na následujících pár øádcích bych rád popsal metody specifické pro seøazený fakt
 
 U seøazené varianty slotu si rbClips stejnì jako CLIPS samy uchovává pole atributù, které vrací metoda \verb|slots|. První atribut neseøazeného faktu není ve vráceném poli obsa¾en, proto¾e se k nìmu CLIPS chovají jako ke jménu skupiny faktù. Jak ji¾ bylo zmínìno vý¹e, ve skuteènosti se jedná o jméno automaticky vygenerované ¹ablony. Pro získání prvního atributu (jména) slou¾í metoda \verb|name|.
 
+Vytvoøení seøazeného faktu je velice jednoduché, konstruktor v tomto pøípadì oèekává dva parametry. Prvním je jméno skupiny (objekt tøídy \verb|String| nebo \verb|Symbol|) a druhý pole v¹ech attributù neseøazeného faktu.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+Fact.new 'Jarcec', [20, "muz"]
+Fact.new 'pohlavi', %w(muz zena)
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Ukázka vytvoøení seøazeného faktu.}
+  \label{rbclips_example_template}
+\end{figure}
+
 \subsubsection{Metody pøístupné pro neseøazený fakt}
 Práce s neseøazenými fakty je v prostøedí rbClips o dost pohodlnìj¹í ne¾ v pøípadì seøazených faktù. Existují dvì základní metody podobné tìm, které jsou k dispozici v pøípadì seøazeného faktu. První z nich je metoda \verb|slot(String or Symbol)| vracející hodnotu ulo¾enou v daném slotu a metoda \verb|template| vracející ¹ablonu, které daný fakt odpovídá (tedy objekt tøídy \verb|Template|).
 
 Navíc ov¹em rbClips plnì vyu¾ívá dynamiènosti a otevøenosti Ruby a pro jednotlivé sloty vytváøí pøístupové metody shodného jména jako sloty samotné. \u{C}ím¾ velice napodobuje chovani ActiveRecords, které vytváøí pøístupové metody podle názvù sloupcù relaèních tabulek. Jednotlivé instance neseøazených faktù mají rùzné metody, vygenerované podle ¹ablony, ze které byly vytvoøeny. Z toho dùvodu je dobré dávát pozor a nevytváøet ¹ablony s jmény slotù, které jsou stejné jako ji¾ existující metody. Pøíkladem nevhodného jména slotu je napøíklad \verb|save|. Pokud bude ¹ablona obsahovat takto pojmenovaný \verb|slot|, tak pùvodní metoda save, bude pøekryta metodou pro pøístup k atributùm faktu a nebude vùbec mo¾né instanci ulo¾it do prostøedí CLIPS.
+
+V pøípadì tvorby neseøazeného faktu oèekává konstruktor dvojici parametrù. Prvním z nich musí být ulo¾ená instance ¹ablony (tøída \verb|Template|), druhým je asociativní pole, kde klíèe jsou jména slotù ¹ablony a jejich hodnoty jsou ulo¾eny do tìchto slotù pøi vytváøení faktu.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+# Pro neserazeny fakt potrebuji sablonu
+animal = Template.new :name => 'animal', 
+  :slots => %w(name age race)
+animal.save
+
+Fact.new animal, :name => "Azor"
+Fact.new animal, :name => "Zorka", :age => 2
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Ukázka vytvoøení neseøazeného faktu.}
+  \label{rbclips_example_template}
+\end{figure}
 
 \subsection{Tøída Rule}
 Poslední z hlavních tøíd knihovny rbClips zapouzdøuje práci s pravidly. Ty v CLIPS mají nezastupitelnou roli, proto¾e je v nich ulo¾ena informace co se má a za jakých podmínek provést. Rozhodovací jádro CLIPS jen vybírá podle rùzných mnohdy u¾ivatelsky nastavitelných kriterií které pravidla se mají a v jakém poøadí provést. V rámci CLIPS jednou vytvoøená pravidla ji¾ nelze dále upravovat, proto i rbClips vytváøí tyto objekty needitovatelné. Vyjímkou z needitovatelnosti je samozdøejmì tvorba pravidla v rámci konstruktoru tøídy.
@@ -563,6 +634,22 @@ Velice u¾iteèným roz¹íøením mo¾ností CLIPS v knihovnì rbClips je mo¾nost v rámci
 Poslední zatím nezmínìnou metodou objektu \verb|RuleCreator| je metoda \verb|rhs|. Akceptuje právì jeden argument tøídy \verb|String|, který bez jakýhkoliv kontrol vlo¾í do pravé strany vytváøeného pravidla. Slou¾í jako záchrana v pøípadì, ¾e po¾adovaná funkcionalita není mou knihovnou zapouzdøena.
 
 Po vytvoøení pravidla je potøeba je ho je¹tì ulo¾it do CLIPS pomocí metody \verb|save|. Pravidla se zaènou aktivovat a¾ po spu¹tìní rozhodovacího algoritmu, který se v rbClips spou¹tí pomocí metody \verb|run| modulu \verb|Base|.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+savci = Rule.new "savci" do |r|
+  r.pattern 'animal', :name
+  r.pattern 'warm-blooded', :name
+  r.not do |n|
+    n.pattern 'lays-eggs', :name
+  end
+  r.assert 'mammal', :name
+end
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Ukázka vytvoøení pravidla.}
+  \label{rbclips_example_template}
+\end{figure}
 
 \section{Praktický pøíklad}
 Jako poslední kapitolu o knihovnì rbClips bych rád uvedl tro¹ku slo¾itìj¹í pøíklad spolu s jeho slovním popisem. Ukázka je zobrazena na Obrázku \ref{rbclips_complex_example1} a ukazuje vyhledávaní savcù na mno¾ine rùzných zvíøat a jejich vlastností.
