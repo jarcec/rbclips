@@ -414,7 +414,21 @@ OPTIONAL TODO: Popis toho co to je EigenClass
 OPTIONAL TODO: Zapouzrení a moznosti jeho obejiti - private je jen doporuceni na implicitni save, objekt\#instance\_eval
 
 \section{Expertní systémy}
-TODO: Popsat co jsou vlastne expertni systemy, jak se s nimi pracuje, cim se lisi od ostatnich, trochu historie.
+Expertní systémy jsou obecnì programy, které mají za cíl simulovat rozhodování lidského experta. Tedy na základì vstupù umí zodpovìdìt u¾ivatelské dotazy.
+
+Zpravidla obsahuji nìkolik èástí:
+
+\textbf{Rozhodovací algoritmus.} Jádrem expertního systému v¾dy musí být nìjaký rozhodovací algorimus, který øídí celý proces rozhodování od poèáteèních informací a¾ k dosa¾enému výsledku. Tento algoritmus je potøeba v¾dy spustit ruènì po zadání úvodních informací.
+
+\textbf{Báze znalostí.} Báze znalostí reprezentuje znalosti ulo¾ené v expertním systému. Zpravidla má formu pravidel kdy¾-tak (if-then), které se zkládají ze dvou èástí - levé a pravé strany. Levá strana obsahuje seznam podmínek, které musí platit pøed vykonáním samotného pravidla. Zatímco pravá strana zase obsahuje akce, které se mají vykonat po aktivaci pravidla. Tato pravidla umo¾nují mìnit, mazat a vyvozovat rùzné závìry z pracovní pamìti. Báze znalostí spolu s rozhodovacím algoritmem tvoøí nezbytnou souèást ka¾dého expertního systému.
+
+\textbf{Pracovní pamì\v{t}.} Pracovní pamìt slou¾í k uchování aktualnì známých dat. Mù¾e také obsah vyvozené mezi závìry a nakonec zde také bude ulo¾inen koneèný závìr, ke kterému expertní systém dojde. Jak zde data budou reprezentována zále¾í na daném expertním systému a nejde pøíli¹ dobøe obecnì generalizovat.
+
+\textbf{Vysvìtlující podsystém.} Dal¹í dùle¾itou ov¹em ji¾ nikoliv nezbytnou souèástí expertního systemu je vysvìtlující podsystém. V mnoha pøípadech staèí lidskému u¾ivateli vìdìt výsledek, ke kterému systém dospìl. V jiných pøípad je ov¹em dobré znat i jak a proè k nìmu do¹el. Napøíklad v dobì ladìjí báze znalostí, je postup expertního systémù vedoucí k závìru naprosto nepostradatelný.
+
+\textbf{U¾ivatelské rozhraní.} 
+
+\textbf{Expertní systémy.} Expertní systém~\cite{expertSystems} je program, který umí odpovídat na dotazy u¾ivatele na základì ulo¾ených znalostí. Svou funkèností simuluje rozhodování lidského experta a pou¾ívá se v pøípadech, ve kterých neexistuje algoritmické øe¹ení, pøípadnì na místech kde by takové øe¹ení bylo pøílis slo¾ité èi ¹patnì udr¾ovatelné. Zpravidla se skládá z nìkolika èástí: (1) Báze znalostí, kde jsou ulo¾ena pravidla umo¾nující mìnit, mazat a vyvozovat nová fakta z pracovní pamìti, (2) pracovní pamìt uchovavající známá fakta, (3) øídící algoritmus vykonavající vyhovující pravidla, (4) vysvìtlující podsystém pro zdùvodnìní dosa¾eného výsledku a také (5) u¾ivatelské rozhraní pro komunikaci s u¾ivatelem (a\v{t} u¾ formou pøíkazového øádku nebo grafického rozhraní).
 
 \subsection{Clips}
 TODO: Popsat historii CLIPS, co to je v dnesni dobe. Prakticke ukazky jak se v clips pracuje. Zahrnout kapitolu o rozsiritelnosti.
