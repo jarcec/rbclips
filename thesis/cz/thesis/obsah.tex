@@ -1,21 +1,19 @@
 %=========================================================================
 \chapter{Úvod}
 %=========================================================================
-Poèet novì se objevujících virù a jiných ¹kodlivých poèítaèových k\'{o}dù (malwaru) rok od roku stoupá. Velice tomu pomáhá postupné roz¹iøování internetu i mezí ménì informovanou laickou veøejnost, která se pøíli¹ netrápí dostateèným zapezpeèím svých poèítaèù. Tento nepøíli¹ optimistický trend zpùsobuje prolémy snad ve v¹ech odvìtvích, proto¾e dnes u¾ bez IT oddìlení nemù¾e existovat ¾ádná vet¹í firma. Zpùsobené problémy jsou hlavnì finanèí\,--\,rostou náklady jak na zabezpeèení jednotlivých poèítaèových stanic, tak i celých poèítaèívých sítí.
+Poèet novì se objevujících virù a jiných ¹kodlivých poèítaèových k\'{o}dù (malwaru) rok od roku stoupá. Velice tomu pomáhá postupné roz¹iøování internetu i mezi laickou veøejnost, která se pøíli¹ netrápí dostateèným zapezpeèím svých poèítaèù. Tento nepøíli¹ optimistický trend zpùsobuje prolémy snad ve v¹ech odvìtvích, proto¾e dnes u¾ bez oddìlení starajícího se o poèítaèovou infrastrukturu nemù¾e existovat ¾ádná vet¹í firma. Zpùsobené problémy jsou hlavnì finanèí\,--\,rostou náklady jak na zabezpeèení jednotlivých poèítaèových stanic, tak i celých poèítaèívých sítí.
 
-Logickou úvahou by mohl ètenáø dojít k názoru, ¾e na tomto trendu mimo spamerù profitují hlavnì rùzné bezpeèností firmy. Nejvíce pak antivirové spoleènosti, dodavající ochraná øe¹ení proti malwaru. \v{S}kodlivého k\'{o}du je ov¹em nejenom více, ale bohu¾el se takté¾ dost mìní. Jeho autoøi, kterých je stále více, vynalézají nové a dùmyslnìj¹í techniky jak pøedejít odhlanení antivirovým programem. Co¾ na stranì antivirových firem zmanená poptávku po stále vìt¹ím poètu velice dobøe kvalifikovaných lidí pro procházení podezøelých vzorkù a vytváøení nových virových definic.
+Logickou úvahou by mohl ètenáø dojít k názoru, ¾e na tomto trendu mimo producentù nevy¾ádané po¹ty profitují hlavnì rùzné bezpeèností firmy. Nejvíce pak antivirové spoleènosti, dodavající ochraná øe¹ení proti malwaru. Bohu¾el opak je opravdou. \v{S}kodlivého k\'{o}du je ov¹em nejenom více, ale bohu¾el se takté¾ dost mìní. Jeho autoøi, kterých je stále pøibývá, vynalézají nové a dùmyslnìj¹í techniky jak pøedejít odhlanení antivirovým programem. Co¾ na stranì antivirových firem znamená poptávku po stále vìt¹ím poètu velice dobøe kvalifikovaných lidí, kteøí jsou schopní projít podezøelé vzorky a pro malware vytvoøit nové virové definice.
 
-Dostateèný poèet dobøe kvalifikovaných lidí bohu¾el na trhu práce není k dispozici a proto se hledají jiné, automatizovanìj¹í postupy, pro zpracování podezøelých vzorkù. Automatizované postupy mají navíc i jiné výhody. Poèítaè pracuje rychleji, mnohdy spolehlivìji a hlavnì výraznì levnìji ne¾ jeho lidský ekvivalent. Na druhou stranu mu chybí takzvaný ``zdravý selský rozum''. Pøirozené lidské my¹lení se jen velmi obtí¾nì implementuje do obvyklých procedurálních programù.
+Dostateèný poèet dobøe kvalifikovaných lidí bohu¾el na trhu práce není k dispozici, a proto se hledají jiné, automatizovanìj¹í postupy, pro zpracování podezøelých vzorkù. Automatizované postupy mají navíc i jiné výhody. Poèítaè pracuje rychleji, mnohdy spolehlivìji a hlavnì výraznì levnìji ne¾ jeho lidský ekvivalent. Na druhou stranu mu chybí takzvaný ``zdravý selský rozum''.
 
-Pro adresaci problému lidského uva¾ovaní vznikly tkz. expertní systémy. Expertní systém je program, který napodobuje rozhodovací proces lidského experta podle pøedem nadefinovaných pravidel. V rámci spoleènosti AVG Technologies s.r.o jsme se rozhodli vytvoøit program za pou¾ití expertního systému pro automatickou klasifikaci vzorkù. Vìt¹ina expertních systému je komerèních a vzhledem k tomu, ¾e se nejedná o levné programy rozhodli jsme pou¾ít volnì ¹íøitelný pøíklad takového systému jménem CLIPS.
+Jako jeden ze zpùsobù adresace problému lidského uva¾ovaní vznikly tkz. expertní systémy. Expertní systém je program, který napodobuje rozhodovací proces lidského experta podle pøedem nadefinovaných pravidel. Rozhodli jsme se vytvoøit program s jádrem v  expertního systému pro automatickou klasifikaci vzorkù. Vìt¹ina expertních systému je komerèních a vzhledem k tomu, ¾e se nejedná o levné programy zvolili jsme volnì ¹íøitelný pøíklad takového systému jménem CLIPS.
 
-CLIPS je public domain software, je tedy zadarmo i pro komerèní vyu¾ití. Nabízí plnohodnotné prostøedí pro tvorbu expertního systému, které je napsáno v jazyce C. U¾ivatelské rozhrání, které je velice podobné jazyku LISP, je ov¹em u¾ivatelsky velice nepøívìtívé. Proto jsme se rozhodli celé CLIPS vzít a zapouzdøit do nìjakého vy¹¹ího programovacího jazyka. Jako cílový jazyk pro zapouzdøení jsme se rozhodli vyu¾ít moderní skriptovací jazyk Ruby, kvùli jeho zajimavým a neobvyklým mo¾nostem.
+CLIPS je public domain software, je tedy zadarmo i pro komerèní vyu¾ití. Nabízí plnohodnotné prostøedí pro tvorbu expertního systému, které je napsáno v jazyce C. U¾ivatelské rozhrání, které je velice podobné jazyku LISP, je ov¹em u¾ivatelsky velice nepøívìtivé. Proto jsme se rozhodli celé CLIPS vzít a zapouzdøit do nìjakého vy¹¹ího programovacího jazyka. Jako cílový jazyk pro zapouzdøení jsme se rozhodli vyu¾ít moderní skriptovací jazyk Ruby, kvùli jeho zajimavým a neobvyklým mo¾nostem.
 
-Má bakaláøská práce, která je v následujícíh kapitolách popsána, pojednává o novì vytvoøené knihovnì rbClips, která umo¾nuje pou¾ívat CLIPS v jazyce Ruby. Knihovna bude následnì pou¾ita k tvorbì systému pro automatické rozpoznávání vzorkù, tak jak bylo nastínìní na pøedcházejícíh øádcích. Samotný systém pro klasifikaci vzorkù u¾ ov¹em není rozsahém této práce.
+Má bakaláøská práce pojednává o novì vytvoøené knihovnì rbClips, která umo¾nuje pou¾ívat nástroj pro tvorbu expertních systémù CLIPS v jazyce Ruby. Knihovna bude následnì pou¾ita k tvorbì systému pro automatické rozpoznávání vzorkù, tak jak bylo nastínìní v úvodních odstavcích. Samotný systém pro klasifikaci vzorkù u¾ ov¹em není obsahem této práce.
 
-V druhé kapitole bych rád popsal obì nastínìné technologie, které spojím do funkèního celku více do detailu. Budu se tedy pøednì vìnovat systému pro tvorbu expertních systému CLIPS a dynamickému skriptovacímu jazyku Ruby.
-
-Tøetí kapitola je ji¾ popisem mé knihovny. Obsahuje jak její návrh, popis rozhraní tak i rùzné zajímavé implementaèní dropnosti.
+Zbytek této práce je rozdìlen do dvou dal¹ích kapitol. Po této první úvodní kapitole následuje popis pou¾itých technologíí. Tedy úvod do programovacího jazyka Ruby, dùvody proè jsme se rozhodli pou¾ít pravì ten. A následnì také úvod do problematiky expertních systému a nástroje CLIPS. Následující kapitola se ji¾ vìnuje èistì knihovnì rbClips, výsledku mé práce. Budu se zábývat jak návrhem a popisem rozhraní tak i rùznými zajímavými implementaèními detaily.
 
 %=========================================================================
 \chapter{Pou¾ité technologie}
@@ -243,6 +241,37 @@ foo { puts a } # Vytiskne hodnotu promene a, ale ktere? 10 nebo 30?
   \label{ruby_bloky_fig2}
 \end{figure}
 
+\subsubsection{Datový typ Symbol}
+\verb|Symbol| je textový øetìzec podobný øetìzcùm tøídy \verb|String|, který se pro odli¹ení pí¹e s dvojteèkou pøed vlastním øetezcem. Pokud je symbol navíc slo¾en pouze z písmen, je mo¾né vynechat i jindy povinné uvozovky èi apostrofy (ukázky mo¾ností zápisu symbolu jsou na Obrázku \ref{ruby_symboly_fig1}).
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+:ahoj.class # => Symbol 
+:'ahoj, tady jezisek'.class # => Symbol
+:'4'.class # => Symbol
+  \end{verbatim} 
+  \vspace{-0.7cm}
+  \caption{Rùzné zpùsoby zadání symbolu.}
+  \label{ruby_symboly_fig1}
+\end{figure}
+
+Symboly v Ruby mají nìkolik odli¹ných vlastností od tøídy \verb|String|\,--\,za prvé se jedná o objekty pouze pro ètení (nelze zmìnit hodnota, text symbolu). Druhý a podstatnìj¹í rozdíl je v rovnosti a identitì. V ukázce na Obrázku \ref{ruby_symboly_fig2} se provádí dvì dvojice porovnání na objektech tøíd \verb|String| a \verb|Symbol|. V prvním testu porovnávám objekty zda-li se rovnají (mají-li stejný obsah). Druhý test se ptá na ID (jednoznaèný identifikátor) objektu. Testuje tedy identitu objektu. Testy na rovnost samozøejmì v¾dy uspìjí, proto¾e jak symbol, tak øetìzec obsahují stejné hodnoty. Ov¹em test na identitu v pøípadì øetìzce sel¾e, proto¾e se jedná o dva rùzné objekty (vytvoøené interpretem pøi parsování zdrojového k\'{o}du programu). Symboly jsou si ov¹em identické - jedná se o jednu instanci. Tato dùle¾itá vlastnost symboly pøedurèuje k pou¾ítí na místech konstant nebo klíèù do asociativních polí. Symbol s daným textem existuje v pamìti maximalnì jednou, bez ohledu na poèet výskytù v programu, co¾ vede k ¹etøení pamìti a zvý¹ení výkonu aplikace.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+'ahoj' == 'ahoj' # => true
+'ahoj'.object_id == 'ahoj'.object_id # => false
+
+:ahoj == :ahoj # => true
+:ahoj.object_id == :ahoj.object_id # => true
+  \end{verbatim} 
+  \vspace{-0.7cm}
+  \caption{Porovnání a test identity symbolu a textového øetìzce.}
+  \label{ruby_symboly_fig2}
+\end{figure}
+
+
+Na úrovní zdrojových k\'{o}du MRI se jedná o tabulku jednoznaènì pøevádìjící textovou reprezentaci symbolu na datový typ \verb|ID| (co¾ je pøedefinovaný typ \verb|unsigned long|). Ve¹kerá porovnávání na rovnost symbolu jsou ve skuteènosti celoèíselná porovnání, která jsou rychlej¹í ne¾ øetìzcová, èím¾ se dosahuje optimalizace. Symbol je podobnì jako Fixnum pøímo zak\'{o}dován do typu \verb|VALUE|, nedochazí zde tedy k dereferencování ukazatele pro získaní èíselné hodnoty. Java obsahuje velice obdobný mechanismus pomocí volání \verb|String.intern()|, C++ nic jako symbol bohu¾el nezná.
 
 \subsubsection{Drobnosti}
 Dále bych se chtìl u¾ jenom krátce zmínit o nìkolika vlastnostech Ruby, které popisem nevydají na samostatnou èást, ale pøesto si myslím, ¾e by zde mìly být uvedeny.
@@ -319,17 +348,15 @@ Jedná se o implementaci Ruby bì¾ícího uvnitø SAP NetWeaver\footnote{www.SAP.com/
 Zajimavý nápad napsat co nejvìt¹í èást ruby v samotném Ruby\footnote{http://rubini.us} - jedná se o pøepsaní nezbytnì nutných èástí interpretu do C++ a zbývajícího k\'{o}du do Ruby (napøíklad standardní tøídy - String, Array, Hash, ...). Intepret obsahuje just in time (JIT) kompilátor\,--\,parsovaný skript pøelo¾í prvnì do binárního k\'{o}du spustitelném na dané platformì a a¾ ten následnì spoustí. Tímto dosahuje zrychlení oproti MRI. Díky kompilaci do nativního k\'{o}du není zatí¾en GIL a umo¾nuje tedy plný paralelismus. V souèasné dobì je tento projekt stále ve vývoji - nìkolik aplikací v nìm ji¾ bì¾í, ale pro reálné nasazení není pøíli¹ vhodný.
 
 \subsection{Binární roz¹íøení}
-Binární roz¹íøení skriptovacího jazyka je dynamická knihovna napsaná vìt¹inou ve stejném jazyce jako cílový interpret. V pøípadì MRI verze Ruby jsou roz¹íøení psaná v C. Lze je psát i v C++, ale kvùli odli¹ným pøekladovým a linkovacím konvencím se jedná o vyjímeèné pøípady. Tyto knihovny pøi naèítání zpravidla zaregistrují v interpretu nové tøídy a jejich metody namapují na své vlastní funkce. Tímto postupem se roz¹íøí mno¾ina dostupných tøíd a funkcionality dostupná pro programátora skriptovacího jazyka.
+Binární roz¹íøení skriptovacího jazyka je dynamická knihovna napsaná vìt¹inou ve stejném jazyce jako cílový interpret. Tyto knihovny pøi naèítání zpravidla zaregistrují v interpretu nové tøídy a jejich metody namapují na své vlastní funkce. Tímto postupem se roz¹íøí mno¾ina dostupných tøíd a funkcionality dostupná pro programátora skriptovacího jazyka. V pøípadì MRI verze Ruby jsou roz¹íøení psaná v jazyce C. Lze je psát i v C++, ale kvùli odli¹ným pøekladovým a linkovacím konvencím se jedná o vyjímeèné pøípady.
 
-Dùvodù proè napsat binární roz¹íøení místo nativního kódu se dá najít nìkolik. Prvním a asi i nejpodstatnìj¹ím je rychlost. Programy napsané v C budou provádìny rychleji ne¾ jejich skriptovací ekvivalenty a proto zapouzdøení nejnároènìj¹ího kódu z Ruby do C pøíná¹í výkonostní vylep¹ení. V rámci standadních Ruby tøíd je k dispozici modul pro práci s XML jménem \verb|REXML| napsaný v èistém Ruby. Existuje k nìmu nìkolik alternativ, z nich¾ napøíklad libxml-ruby\footnote{http://libxml.rubyforge.org/}, co¾ je binární roz¹íøení zapouzdøující práci s XML knihovnou libxml\footnote{http://xmlsoft.org/}, je podle webových stránek projektu a¾ o dva øády rychlej¹í.
+Dùvodù proè napsat binární roz¹íøení místo nativního kódu se dá najít nìkolik. Prvním, a asi i nejpodstatnìj¹ím, je rychlost. Programy napsané v C budou provádìny rychleji ne¾ jejich skriptovací ekvivalenty, a proto zapouzdøení nejnároènìj¹ího kódu z Ruby do C pøíná¹í výkonostní vylep¹ení. V rámci standadních Ruby tøíd je k dispozici modul pro práci s XML jménem \verb|REXML| napsaný v èistém Ruby. Existuje k nìmu nìkolik alternativ, z nich¾ napøíklad libxml-ruby\footnote{http://libxml.rubyforge.org/}, co¾ je binární roz¹íøení zapouzdøující práci s XML knihovnou libxml\footnote{http://xmlsoft.org/}, je podle webových stránek projektu a¾ o dva øády rychlej¹í.
 
-Druhým dùvodem mù¾e být nutnost. Standardní knihovny nemùsí zpøístup\v{n}ovat v¹echny po¾adované nízko úrov\v{n}ové mo¾nosti operaèního systému. Programátor je tak nucen napsat si miniroz¹íøení, které právì jím po¾adované vlastnosti zpøístupní.
+Druhým dùvodem mù¾e být nutnost. Standardní knihovny nemùsí zpøístup\v{n}ovat v¹echny po¾adované nízkoúrov\v{n}ové operace operaèního systému. Programátor je tak nucen napsat si miniroz¹íøení, které právì jím po¾adované vlastnosti zpøístupní. Poslední dùvod je pohodlnost. Proè pøepisovat celou ji¾ napsanou a navíc i odladìnou knihovnu do jiného jazyka, kdy¾ staèí zpøístupnít pouze její aplikaèní rozhraní (API). Velice dobrým pøíkladem takovýchto knihoven jsou binární roz¹íøení pro frameworky grafických u¾ivatelských rozhraní GTK\footnote{http://ruby-gnome2.sourceforge.jp/} a QT\footnote{http://www.darshancomputing.com/qt4-qtruby-tutorial/}.
 
-Poslední dùvod je pohodlnost. Proè pøepisovat celou ji¾ napsanou a navíc i odladìnou knihovnu do jiného jazyka, kdy¾ staèí zpøístupnít pouze její API. Velice dobrým pøíkladem takovýchto knihoven jsou rozhraní pro GUI frameworky GTK\footnote{http://ruby-gnome2.sourceforge.jp/} a QT\footnote{http://www.darshancomputing.com/qt4-qtruby-tutorial/}.
+Libovolnou knihovnu napsanou v C jako roz¹íøení pro skriptovací jazyk nelze pou¾ít pøímo, proto¾e by interpret nevìdel, jak s ní má zacházet. Je potøeba napsat rozhraní mezi touto knihovnou a interpretem, které je zodpovìdné za dvì dùle¾ité èinnosti: (1) musí v interpretu registrovat nabízené funkce a tøídy knihovny a (2) musí poskytovat pøekladovou úrovìn pro odli¹né volací konvence knihovny a interpretu. MRI napøíklad vy¾aduje u v¹ech funkcí volatelných z ruby, aby pøijímaly a vracely pouze datový typ \verb|VALUE| (popsán dále). Bì¾ná knihovna nic o specifickém datovém typu interpretu neví a u¾ vùbec netu¹í jak tøídu \verb|String| pøevést na C reprezentaci øetìzce. Za tyto typové pøevody je takté¾ odpovìdné binární roz¹íøení.
 
-Libovolnou knihovnu napsanou v C jako roz¹íøení pro skriptovací jazyk nelze pou¾ít pøímo, proto¾e by interpret nevìdel, jak s ní má zacházat. Je potøeba napsat rozhraní mezi touto knihovnou a interpretem, které je zodpovìdné za dvì dùle¾ité èinnosti: (1) musí v interpretu registrovat nabízené funkce a tøídy knihovny, (2) musí poskytovat pøekladovou úrovìn pro odli¹né volací konvence knihovny a interpretu. MRI napøíklad vy¾aduje u v¹ech funkcí volatelných z ruby, aby pøijímaly a vracely pouze datový typ \verb|VALUE|. Bì¾ná knihovna nic o specifickém datovém typu interpretu neví a u¾ vùbec netu¹í jak tøídu \verb|String| pøevést na C reprezentaci øetìzce. Za tyto typové pøevody je takté¾ odpovìdná pøekladová úrove\v{n}.
-
-Existují v základì dva odli¹né postupy k tvorbì binarních roz¹íøení skriptovacích jazykù, automatický a manuální. 
+Tvorbu binárních roz¹íøení lze v základì rozdìlit do dvou odli¹ných postupù - do postupu automatického a manuálního. V dal¹ích odstavích se ka¾dému pøístupu budu vìnovat více do detailu.
 
 \subsubsection{Automatický postup}
 Pomocí speciálních nástrojù lze vrstvu mezi knihovnou a interpretem nechat vygenerovat automaticky. Pøíkladem mù¾e být projekt SWIG\footnote{http://www.swig.org/} (Simplified Wrapper and Interface Generator) slou¾ící pro automatickou tvorbu roz¹íøení pro knihovny napsané v C nebo C++. Seznam podporovaných jazykù je uctyhodný a mimo jiné zahrnuje známé jazyky jako Python, Perl, PHP nebo právì Ruby.
@@ -341,12 +368,14 @@ Vygenerovné rozhraní zpravidla obsahuje pro ka¾dou nalezenou funkci knihovny jed
 Takto vygenerované rozhraní je velice pøímoèaré a programátor ma minimální kontrolu nad jeho výslednou podobou. Zpøístup\v{n}uje v¹echny funkce knihovny pro jejich volání ze skriptovacího jazyka se zachováním sémantiky jejich argumentù bez jakékoliv vý¹¹í abstrakce. Navíc zde mù¾e být problém se slo¾itými vnitøními datovými typy, které se pou¾ívají i vnì knihovny.
 
 \subsubsection{Manuální postup}
-Manuálním napsáním spojovací vrstvy získá prográmátor plnou kontrolu nad výsledkem. Jako jednu z hlavních výhod vidím mo¾nost vytvoøit z vnitøních struktur pou¾ivaných i vnì knihovny tøídy a z funkcí nad nimi operujícími metody této tøídy. Výsledkem je krásnì objektové chování, jak jsou programátoøi v Ruby zvyklí na rozdíl od pouhého procedurálního zpøístup\v{n}ení v¹ech funkcí. Navíc není problém zapouzdøovanou knihovnu tøeba roz¹íøit o dal¹í funkcionalitu, která se u¾ ov¹em bude odehrávát pouze na úrovni Ruby.
+Manuálním napsáním spojovací vrstvy získá prográmátor plnou kontrolu nad výsledkem. Jako jednu z hlavních výhod vidím mo¾nost vytvoøit z vnitøních struktur pou¾ivaných i vnì knihovny tøídy a z funkcí nad nimi operujícími metody této tøídy. Výsledkem je krásnì objektové chování, jak jsou programátoøi v Ruby zvyklí na rozdíl od pouhého procedurálního zpøístup\v{n}ení v¹ech funkcí. Navíc není problém zapouzdøovanou knihovnu roz¹íøit o dal¹í funkcionalitu, která se u¾ ov¹em bude odehrávát pouze na úrovni Ruby.
 
-Na druhou stranu má tento postup oproti automatickému pøístupu jednu obrovskou nevýhodu - èas programátora. Ten mùsí nastudovat rozhraní knihovny, navrhnout jeho vhodné zapouzdøení a nakonec i celé rozhraní napsat. Díky èasové nároènosti se plnì manuální pøístup v praxi pou¾ívá pouze zøídka a pokud je snaha knihovnu je¹tì zapouzdøit na vy¹¹í úrovni, polo¾ením do objektù napøíklad, tak se spí¹e pou¾ívá kombinace obou pøístupù. Automaticky se vytvoøí rozhraní knihovny pøístupné ve skriptovacím jazyce a a¾ toto rozhraní se následnì zapouzdøí do objektù a dal¹ích specifických jazykových konstrukcí, které v C nebo C++ nejsou známy.
+Na druhou stranu má tento postup oproti automatickému pøístupu jednu obrovskou nevýhodu\,--\,èas programátora. Ten mùsí nastudovat rozhraní knihovny, navrhnout jeho vhodné zapouzdøení a nakonec i celé rozhraní napsat. Díky èasové nároènosti se plnì manuální pøístup v praxi pou¾ívá pouze zøídka. Pokud je potøeba knihovnu je¹tì zapouzdøit na vy¹¹í úrovni, napøíklad adaptací na objektový model, tak se spí¹e pou¾ívá kombinace obou pøístupù. Automaticky se vytvoøí rozhraní knihovny pøístupné ve skriptovacím jazyce a a¾ toto rozhraní se následnì zapouzdøí do objektù a dal¹ích specifických jazykových konstrukcí, které v C nebo C++ nejsou známy.
 
 \subsubsection{Pøeklad roz¹íøení}
-Binární roz¹íøení se pro MRI pøekládají pomocí pøíkazu \verb|make| tak, jak je tomu u vìt¹iny ostatních projektù v prostøedí Linuxu. Ov¹em na rozdíl od nich není pou¾ita sada programù autotools (skript ./configure pro generaci souboru Makefile). Makefile popisující jak se má roz¹íøení pøelo¾it a nainstalovat toti¾ vygeneruje samo Ruby. Existuje modul \verb|mkmf| (MaKe MakeFile), pomocí jeho¾ metod programátor popí¹e na vysoké úrovní abstrakce, jak pøelo¾it jeho roz¹íøení a tento skript potom distribuuje spolu se zdrojovými k\'{o}dy. Celý sled pøíkazù pro pøeklad a instalaci je zobrazen na Obrázku \ref{ruby_rozsireni_fig1}.
+Vzhledem k faktu, ¾e binární roz¹íøení jsou psána ve stejném jazyce jako cílový interpret skriptovacího jazyka, tak se velice podobnì i pøekládají. Ve vìt¹inì pøípadù jsou interprety napsány v jazycích C nebo C++, pøekládají se tedy do binární podoby pomocí programù z balíèku \verb|gcc|. Pøeklad bývává øízen pøíkazem \verb|make|, podle pokynù uvedených v souboru \verb|Makefile|. Tento soubor bývá vygenerován ze ¹ablon dodaných programátorem za pomocí nástrojù z rodiny \verb|autotools| (napøíklad script \verb|configure|).
+
+Binární roz¹íøení se pro MRI pøekládají také pomocí pøíkazu \verb|make|. Ov¹em na rozdíl od ostatních interpretù i jiných skriptovacích jazykù není pou¾ita sada programù autotools. \verb|Makefile| popisující jak se má roz¹íøení pøelo¾it a nainstalovat toti¾ vygeneruje samo Ruby. Pro tyto úèely existuje modul \verb|mkmf| (MaKe MakeFile), pomocí jeho¾ metod programátor popí¹e na vysoké úrovní abstrakce, jak pøelo¾it jeho roz¹íøení a tento skript potom distribuuje spolu se zdrojovými k\'{o}dy. Celý sled pøíkazù pro pøeklad a instalaci je zobrazen na Obrázku \ref{ruby_rozsireni_fig1}.
 
 \begin{figure}[tbh]
   \begin{verbatim}
@@ -359,10 +388,10 @@ make install
   \label{ruby_rozsireni_fig1}
 \end{figure}
 
-Modul \verb|mkmf| slou¾í hlavnì k nastavení dùle¾itých cest pro pøeklad automaticky a nezávisle na dané verzi èi distribuci operaèního systemu (cesta k hlavièkovým souborùm ruby, jeho knihovnám). Mimo této èinnosti modul nabízí metody, které umo¾nují podobné èinnosti jako skript ./configure\,--\,nalézat cesty k systémovým knihovnám, ovìøováním zda-li obsahují po¾adované symboly (funkce, promìné, ...) a dal¹í podobnou funkcionalitu. Takto vytvoøený skript je samozøejmì plnohodnotný program v Ruby. Lze tedy pou¾ít ve¹keré jeho mo¾nosti vèetnì pou¾ití dal¹ích knihoven. Napøíklad lze distribuovat pouze skript bez zdrojových k\'{o}dù, který si prvnì stáhne nejnovìj¹í verzi projektu a a¾ poté bude pokraèovat ve své obvyklé èinnosti.
+Modul \verb|mkmf| slou¾í hlavnì k nastavení dùle¾itých cest pro pøeklad automaticky, a nezávisle na dané verzi èi distribuci operaèního systemu (cesta k hlavièkovým souborùm ruby, jeho knihovnám). Mimo této èinnosti modul nabízí metody, které umo¾nují podobné èinnosti jako skript ./configure\,--\,lokalizovat systémové knihovny, ovìøováním zda-li obsahují po¾adované symboly (funkce, promìné, ...) a dal¹í podobnou funkcionalitu. Takto vytvoøený skript je samozøejmì plnohodnotný program v Ruby. Lze tedy pou¾ít ve¹keré jeho mo¾nosti vèetnì pou¾ití dal¹ích knihoven. Napøíklad lze distribuovat pouze skript bez zdrojových k\'{o}dù, který si prvnì stáhne nejnovìj¹í verzi projektu a a¾ poté bude pokraèovat ve své obvyklé èinnosti.
 
 \subsubsection{Datový typ VALUE}
-\verb|VALUE| je datový typ, který v jazyce C reprezentuje Ruby objekt. V¹e je objekt a proto se tento datový typ pou¾ívá v¹ude\,--\,ka¾dá funkce volatelná z ruby vrací \verb|VALUE| jako svou návratovou hodnotu. Ve skuteènosti se jedná o pøejmenování datového typu \verb|unsigned long| obsahujícího adresu struktury reprezentující daný objekt. Vìt¹inou se tedy jedná o prostý ukazatel. Ov¹em ne ve v¹ech pøípadech. Interpret vyu¾ívá faktu, ¾e ukazatele jsou na platformì x86 v pamìti zarovnány - nejni¾¹í dva bity jsou pro ukazatele v¾dy nulové (platí pro 32 bitovou architekturu, pro 64 bitù se zarovnává na 8 bytù - tedy poslední ètyøi bity ukazatele jsou nulové).
+\verb|VALUE| je datový typ specifický pro interpret  MRI. Ostatní implementace Ruby stejnì jako interprety úplnì jinýcy skriptovacích jazykù ho neznají. V bináøním roz¹íøení tento typ reprezujte Ruby objekt. V¹e je objekt a proto se tento datový typ pou¾ívá v¹ude\,--\,ka¾dá funkce volatelná z ruby vrací \verb|VALUE| jako svou návratovou hodnotu. Ve skuteènosti se jedná o pøejmenování datového typu \verb|unsigned long| obsahujícího adresu struktury reprezentující daný objekt. Vìt¹inou se tedy jedná o prostý ukazatel. Ov¹em ne ve v¹ech pøípadech. Interpret vyu¾ívá faktu, ¾e ukazatele jsou na platformì x86 v pamìti zarovnány - nejni¾¹í dva bity jsou pro ukazatele v¾dy nulové (platí pro 32 bitovou architekturu, pro 64 bitù se zarovnává na 8 bytù - tedy poslední ètyøi bity ukazatele jsou nulové).
 
 Napøíklad objekty tøídy \verb|Fixnum| (reprezentující celá èísla) nemají svou strukturu jako ostatní objekty, ale jejich hodnota je zak\'{o}dována pøímo do promìné typu \verb|VALUE| tak, ¾e nultý bit (LSB, Least significant bit, nejménì významný bit) je nastaven na jednièku a ostatní bity jsou pou¾ity pro ulo¾ení vlastní hodnoty èísla. Tímto pøístupem se u¹etøí dereferencování ukazatele pøi práci s celými èísly. Samozøejmì zobrazitelný rozsah èísel je tímto pøístupem omezený na 31 bitù (èíslo je ulo¾eno v pamìti jako znaménkové v dopl\v{n}kovém k\'{o}du). Proto Ruby pro pøíli¹ velká celá èísla nabízí je¹tì tøídu \verb|Bignum|, její¾ hodnota není reprezentována pøímo v místì ukazatele a nabízí podstatnì vìt¹í rozsah.
 
@@ -375,38 +404,6 @@ Tato optimalizace není pou¾ita jen u celých èísel, ale také u singleton promìnýc
   \label{fig_ruby_value_diagram}
 \end{figure}
 
-\subsubsection{Datový typ Symbol}
-\verb|Symbol| je jeden z  datových typù Ruby, jeho¾ popis patøí spí¹e do sekce o vlastnostech, ale kvùli velké návaznosti na jeho vnitøní implementaci jsem se rozhodl zaøadit zmínku o nìm a¾ v této èásti. \verb|Symbol| je textový øetìzec podobný øetìzcùm tøídy \verb|String|, který se pro odli¹ení pí¹e s dvojteèkou pøed vlastním øetezcem. Pokud je symbol navíc slo¾en pouze z písmen, je mo¾né vynechat i jindy povinné uvozovky èi apostrofy (ukázky mo¾ností zápisu symbolu jsou na Obrázku \ref{ruby_symboly_fig1}).
-
-\begin{figure}[tbh]
-  \begin{verbatim}
-:ahoj.class # => Symbol
-:'ahoj'.class # => Symbol
-:'ahoj, tady jezisek'.class # => Symbol
-:'4'.class # => Symbol
-  \end{verbatim} 
-  \vspace{-0.7cm}
-  \caption{Rùzné zpùsoby zadání symbolu.}
-  \label{ruby_symboly_fig1}
-\end{figure}
-
-Symboly v Ruby mají nìkolik odli¹ných vlastností od tøídy \verb|String|\,--\,za prvé se jedná o objekty pouze pro ètení (nelze zmìnit hodnota, text symbolu). Druhý a podstatnìj¹í rozdíl je v rovnosti a identitì. V ukázce na Obrázku \ref{ruby_symboly_fig2} se provádí dvì dvojice porovnání na objektech tøíd \verb|String| a \verb|Symbol|. V prvním testu porovnávám objekty zda-li se rovnají (mají-li stejný obsah). Druhý test se ptá na ID (jednoznaèný identifikátor) objektu. Testuje tedy identitu objektu. Testy na rovnost samozøejmì v¾dy uspìjí, proto¾e jak symbol, tak øetìzec obsahují stejné hodnoty. Ov¹em test na identitu v pøípadì øetìzce sel¾e, proto¾e se jedná o dva rùzné objekty (vytvoøené interpretem pøi parsování zdrojového k\'{o}du programu). Symboly jsou si ov¹em identické - jedná se o jednu instanci. Tato dùle¾itá vlastnost symboly pøedurèuje k pou¾ítí na místech konstant nebo klíèù do asociativních polí. Symbol s daným textem existuje v pamìti maximalnì jednou, bez ohledu na poèet výskytù v programu, co¾ vede k ¹etøení pamìti a zvý¹ení výkonu aplikace.
-
-\begin{figure}[tbh]
-  \begin{verbatim}
-'ahoj' == 'ahoj' # => true
-'ahoj'.object_id == 'ahoj'.object_id # => false
-
-:ahoj == :ahoj # => true
-:ahoj.object_id == :ahoj.object_id # => true
-  \end{verbatim} 
-  \vspace{-0.7cm}
-  \caption{Porovnání a test identity symbolu a textového øetìzce.}
-  \label{ruby_symboly_fig2}
-\end{figure}
-
-
-Na úrovní zdrojových k\'{o}du MRI se jedná o tabulku jednoznaènì pøevádìjící textovou reprezentaci symbolu na datový typ \verb|ID| (co¾ je pøedefinovaný typ \verb|unsigned long|). Ve¹kerá porovnávání na rovnost symbolu jsou ve skuteènosti celoèíselná porovnání, která jsou rychlej¹í ne¾ øetìzcová, èím¾ se dosahuje optimalizace. Symbol je podobnì jako Fixnum pøímo zak\'{o}dován do typu \verb|VALUE|, nedochazí zde tedy k dereferencování ukazatele pro získaní èíselné hodnoty. Java obsahuje velice obdobný mechanismus pomocí volání \verb|String.intern()|, C++ nic jako symbol bohu¾el nezná.
 
 \subsubsection{TODO}
 OPTIONAL TODO: Popis toho co to je EigenClass
@@ -414,26 +411,120 @@ OPTIONAL TODO: Popis toho co to je EigenClass
 OPTIONAL TODO: Zapouzrení a moznosti jeho obejiti - private je jen doporuceni na implicitni save, objekt\#instance\_eval
 
 \section{Expertní systémy}
-Expertní systémy jsou obecnì programy, které mají za cíl simulovat rozhodování lidského experta. Tedy na základì vstupù umí zodpovìdìt u¾ivatelské dotazy.
+Jako jeden ze zpùsobù adresace problému lidského pøístupu pøemý¹lení vznikly expertní systémy. Jedná se o systémy umìlé inteligence, které mají za cíl simulovat rozhodovací proces lidského experta. Tedy na základì ulo¾ených znalostí a u¾ivatelských vstupù dojít k nìjakému závìru. Napøíklad expertní systém MYCIN, vyvinutý na zaèátku 90. let minulého století, slou¾il jako výpomoc lékaøùm k urèení diagnózy pacienta. Pomocí pokladání otázek typu ano/ne nakonec u¾ivatele informoval o jeho mo¾ných diagnózách.
 
-Zpravidla obsahuji nìkolik èástí:
+Expertní systémy neadresují problém univerzálního øe¹ení problému podobnì jako General problem solver (GPS). Místo toho po vzoru èlovìka, jeden konkrétní expertní systém umo¾nuje øe¹it probémy jen v urèité pøedem omezené oblasti vìdìní. Pou¾ívají se na místech, kde je obvyklé algoritmické øe¹ení nevhodné, slo¾ité popøípadnì te¾ce udr¾ovatelné.
 
-\textbf{Rozhodovací algoritmus.} Jádrem expertního systému v¾dy musí být nìjaký rozhodovací algorimus, který øídí celý proces rozhodování od poèáteèních informací a¾ k dosa¾enému výsledku. Tento algoritmus je potøeba v¾dy spustit ruènì po zadání úvodních informací.
+Zpravidla expertní systémy obsahuji nìkolik èástí:
+
+\textbf{Rozhodovací algoritmus.} Jádrem expertního systému v¾dy musí být rozhodovací algorimus, který øídí celý proces rozhodování od poèáteèních informací a¾ k dosa¾enému výsledku. Tento algoritmus je v¾dý spu¹tìn a¾ na ¾ádost u¾ivatele, poté co skonèí se zadáváním úvodních informací. 
 
 \textbf{Báze znalostí.} Báze znalostí reprezentuje znalosti ulo¾ené v expertním systému. Zpravidla má formu pravidel kdy¾-tak (if-then), které se zkládají ze dvou èástí - levé a pravé strany. Levá strana obsahuje seznam podmínek, které musí platit pøed vykonáním samotného pravidla. Zatímco pravá strana zase obsahuje akce, které se mají vykonat po aktivaci pravidla. Tato pravidla umo¾nují mìnit, mazat a vyvozovat rùzné závìry z pracovní pamìti. Báze znalostí spolu s rozhodovacím algoritmem tvoøí nezbytnou souèást ka¾dého expertního systému.
 
-\textbf{Pracovní pamì\v{t}.} Pracovní pamìt slou¾í k uchování aktualnì známých dat. Mù¾e také obsah vyvozené mezi závìry a nakonec zde také bude ulo¾inen koneèný závìr, ke kterému expertní systém dojde. Jak zde data budou reprezentována zále¾í na daném expertním systému a nejde pøíli¹ dobøe obecnì generalizovat.
+\textbf{Pracovní pamì\v{t}.} Pracovní pamìt slou¾í k uchování aktualnì známých dat. Mù¾e také obsah vyvozené mezi závìry a nakonec zde také bude ulo¾inen koneèný závìr, ke kterému expertní systém dojde. Jak zde data budou reprezentována zále¾í na daném expertním systému a nelze je pøíli¹ dobøe generalizovat.
 
-\textbf{Vysvìtlující podsystém.} Dal¹í dùle¾itou ov¹em ji¾ nikoliv nezbytnou souèástí expertního systemu je vysvìtlující podsystém. V mnoha pøípadech staèí lidskému u¾ivateli vìdìt výsledek, ke kterému systém dospìl. V jiných pøípad je ov¹em dobré znat i jak a proè k nìmu do¹el. Napøíklad v dobì ladìjí báze znalostí, je postup expertního systémù vedoucí k závìru naprosto nepostradatelný.
+\textbf{Vysvìtlující podsystém.} Dal¹í dùle¾itou ov¹em ji¾ nikoliv nezbytnou souèástí expertního systemu je vysvìtlující podsystém. V mnoha pøípadech staèí lidskému u¾ivateli znát výsledek, ke kterému jeho expertní systém dospìl. V jiných pøípad je ov¹em dobré znat i jak a proè k nìmu do¹el. Napøíklad v dobì ladìjí báze znalostí, je postup expertního systémù vedoucí k závìru naprosto nepostradatelný.
 
-\textbf{U¾ivatelské rozhraní.} 
-
-\textbf{Expertní systémy.} Expertní systém~\cite{expertSystems} je program, který umí odpovídat na dotazy u¾ivatele na základì ulo¾ených znalostí. Svou funkèností simuluje rozhodování lidského experta a pou¾ívá se v pøípadech, ve kterých neexistuje algoritmické øe¹ení, pøípadnì na místech kde by takové øe¹ení bylo pøílis slo¾ité èi ¹patnì udr¾ovatelné. Zpravidla se skládá z nìkolika èástí: (1) Báze znalostí, kde jsou ulo¾ena pravidla umo¾nující mìnit, mazat a vyvozovat nová fakta z pracovní pamìti, (2) pracovní pamìt uchovavající známá fakta, (3) øídící algoritmus vykonavající vyhovující pravidla, (4) vysvìtlující podsystém pro zdùvodnìní dosa¾eného výsledku a také (5) u¾ivatelské rozhraní pro komunikaci s u¾ivatelem (a\v{t} u¾ formou pøíkazového øádku nebo grafického rozhraní).
+\textbf{U¾ivatelské rozhraní.} Poslední hlavní souèástí expertních systému je u¾ivatelské rozhraní. Slou¾í k ovládání celého systému, tedy k zadávání známych dat do pracovní pamìti a ovládání celého prostøedí - spu¹tìní rozhodovacího algoritmu a získaní výsledku. U nìkterých expertních systému lze pøes u¾ivatelské rozhraní takké upravovat bázi znalostí, ale to ji¾ zále¾í na konkrétním systému.
 
 \subsection{Clips}
-TODO: Popsat historii CLIPS, co to je v dnesni dobe. Prakticke ukazky jak se v clips pracuje. Zahrnout kapitolu o rozsiritelnosti.
+CLIPS je systém pro tvorbu expertních systému vyvinutý v NASA na poèátku 90. let napsaný v jazyce C. V souèasné dobì je dostupný jako public domain software a je tedy k dispozici zadarmo i pro komerèní vyu¾ití. Pùvodní autor ==TODO dopsat== se systému stále vìnuje a to jak opravovaním nalezených chyb, tak i dal¹ím vývojem.
 
-\subsubsection{Reetùv algoritmus}
+CLIPS není expertní systém, nýbr¾ nástroj pro tvorbu expertních systému. Z tohoto tì¾ko postøehnutelného rozdílu slov vyplývá velice dùle¾ítý fakt - CLIPS samo o sobì je díky absenci jakékoliv báze znalostí naprosto k nièemu. U¾ivatel CLIPS první musí dodat bázi znalostí a a¾ poté se dá hovoøit o expertním systému, který lze pou¾ít k rozhodovaní. Na¹tìstí je u¾ivatelské rozhrání uzpùsobeno i pro snadnou manipulaci s bázi znalosti.
+
+\subsection{U¾ivatelské rozhraní CLIPS}
+U¾ivatelské rozhraní CLIPS slou¾í k ovládání celého prostøedí od manipulace s bázi znalostí pøes práci s pracovní pamìtí a¾ po spu¹tìní rozhodovacího algoritmu. Rozhraním je vlastní programovací jazyka, který se strukturou velice podobá jazyku LISP. Mít vlastní programovací jazyk pro ovládání celého prostøedí má své výhody i nevýhody. Výhodou je nezavislost na výsledné podobì celkového u¾ivatelského rozhraní - mù¾e se jedna o formu pøíkazového øádku stejnì jako grafické okno oèekávající jednotlivé pøíkazy jazyka. Popøípadnì CLIPS je¹tì umo¾nují mo¾nost nahrát a vykonat libovolný textový soubor, ve kterém mù¾e být ulo¾ena báze ználostí s výchozí podobou pracovní pamìti. Na druhou stranu ov¹em tento pøístup má i velkou nevýhodu\,--\,u¾ivatel se musí nauèit zcela nový jazyk. Co¾ mù¾e pøiná¹et problémy zvlá¹\v{t} má-li výsledný expertní systém vyu¾ívat bì¾nì neprogramující obsluha.
+
+\subsubsection{Datove typy u¾ivatelského rozhraní}
+Ne¾ se dostanu k detailnìj¹ímu popisu mo¾ností samotného rozhraní, popí¹i datové typy, se kterými vestavìný programovací jazyk pracuje. Nejzákladnìj¹í datovým typem je symbol, jedná se øetezec velkých nebo malých písmen a podtr¾ítek èi pomlèek (podtr¾ítko ani pomlèka ov¹em nesmí být na první pozici). Symbol se pou¾ívá na mnoha místech pro interní jména rùzných CLIPS struktur. Podobným datovým typem je øetezec, který se skládá s libovolné posloupnosti znakù uzavøené v uvozovkách. Obsahuje-li samotný øetezec znak pro uvozovky je potøeba ho escapovat podobnì jako v jazyce C. Dále CLIPS rozlu¹eje dva typy pro èísla - jeden pro celá èísla a druhý pro desetiná èísla. Syntaxe jejich zápisu je shodná s jazykem C, proto ji zde pro její slo¾itost zvlá¹\v{t} v pøípadì desetiné konstanty nebudu hloubìji popisovat. Poslední datový typ, který bych zde rád zmínil pro jeho pou¾ití v dal¹ím textu je fact address. Jedná se o referenci na vytvoøený fakt v pracovní pamìti CLIPS. Reference u¾ivatel sám explicitnì nevytváøí, ale jsou vytváøené prostøedím a dána u¾ivateli k dal¹ímu zpracování.
+
+\subsubsection{Pracovní pamì\v{t}}
+Známé skuteènosti jsou v CLIPS reprezentovány pomocí tkz. faktù. Na fakta se lze dívat jako na tvrzení, na jejíh¾ základì poté expertní systém odvozuje dal¹í nové skuteènosti. Tento popis je mo¾ný ve dvou základních typech faktù - seøazených a neseøazených.
+
+Seøazený fakt je vlastnì seznam rùzných promìných ulo¾ených v pracovní pamìti CLIPS. Na první polo¾ku seznamu jsou kladena zvlá¹tní omezení - musí se jednat o symbol a musí být v¾dy pøítomna. Tato první polo¾ka je reprezentována jako jméno skupiny pøíbuzných seøazených faktù. Poèet následujících polo¾ek je zcela libovolný a ty mohou nabývat libovolných datových typù mimo referencí. Seøazený fakt je tedy mo¾né vytvoøit s 1 a¾ N polo¾kami. 
+
+Existují dva základní pøístupy k ukládání dat pomocí seøazeného faktu. Prvním je vytvoøení jednoho dlouhého faktu s pozièními parametry pro v¹echny popisované skuteènosti. Pøíklad tohoto pøístupu k ulo¾ení informací o èlovìku je na Obrázku \ref{clips_ordered_fact}. Tento pøístup má nìkolik problému s nich¾ vìt¹inu øe¹í a¾ neseøazených fakt, kterému se budu vìnovat a¾ ní¾e. Jeden z problémù tohoto pøístupu, který ov¹em mù¾e být snadno øe¹en je¹tì v rámci seøazených faktù je adresace problému prázdných hodnot. Mùj fakt z pøíkladu sestává ze 4 hodnot - jména, vìku, pohlaví a rodiného stavu. Problém nastane v pøípadì, ¾e nebudeme o dané osobì znát napøíklad vìk. Pak je otazné co zde má být ulo¾eno, proto¾e vzhledem k poziènímu charakteru v¹ech hodnot zde musí být nìco ulo¾eno. Proto je lep¹í ka¾dou sledovanu vlastnost dát do samostatného faktu a spojovat je na základì jedné polo¾ky. V pøípadì neznalosti nìjaké hodnoty pak prostì fakt s chybìjící vlastností chybí celý. Pøepsaný pøíklad je zobrazen na Obrázku \ref{clips_ordered_fact_2}. Tento druhý pøístup zvedá pamì\v{t}ovou nároènost výsledné aplikace, ov¹em na druhou stranu je optimalizovanìj¹í pro vnitøí implementaci rozhodovacího algoritmu a proto bude dosahovat lep¹ích výkonù. Dal¹ím problémem, který u¾ ov¹em seøazený fakt øe¹it neumí, jsou omezení. Napøíklad je oèekáváné, ¾e vìk bude èíselná hodnota, ov¹em do seøazeného faktu lze ulo¾it zcela libovolná hodnota.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+(clovek "Jaroslav Cecho" 22 muz svobodny)  
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Uchování dat v rámci jednoho dlouhého seøazeného faktu.}
+  \label{clips_ordered_fact}
+\end{figure}
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+(clovek "Jaroslav Cecho")
+(vek "Jaroslav Cecho" 22)
+(pohlavi "Jaroslav Cecho" muz)
+(rodiny-stav "Jaroslav Cecho" svobodny)  
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Rozøezání sledovaných hodnot do separátních faktù.}
+  \label{clips_ordered_fact_2}
+\end{figure}
+
+Oproti seøazeným faktù, neseøazený fakt lze pøirovnat ke strukturním promìnám v jazyce C. Ty mají svùj typ identifikovaný jménem a poté seznam jednotlivých polo¾ek. V CLIPS jsou neseøazené fakty vytváøené na základì ¹ablon a proto se jejich popisu budu vìnovat je¹tì pøed dal¹ím popisem neseøazených faktù. Jak vyplývá z pøedcházejícího textu, ¹ablona je pøedpis obsahující pøednì seznam v¹ech mo¾ných polo¾ek pro fakt. V terminologii CLIPS se polo¾ky nazývají sloty. Jméno ¹ablony musí být unikátní, proto¾e se fakty vytváøejí za pou¾ítí právì tohoto jména.
+
+Ka¾dý slot musí mít své jméno, podobnì jako polo¾ky ve strukturách jazyka C. Na rozdíl od nich ov¹em je definice typu volitená - ve výchozím stavu mù¾e slot pøíjímat jakékoliv datové typy CLIPS. U¾ivatel mù¾e slotu volitenì nastavit jaký datový typ popøipádnì celou mno¾inu datových typù, které bude akceptovat. \u{C}ím¾ se dá vyøe¹it døíve uvedený problém s ukládáním vìku osoby. Navíc mimo specifikace typu lze slot vytvoøit i s dal¹ími omezenímy. Pro èíselné sloty lze nastavit minimální i maximální akceptovanou hodnotu. Slot lze nastavit jako tkz. multislot, který smí obsahovat více ne¾ jednu hodnotu, popøípadnì tomuto multislotu lze nastavit minimální i maximální poèet obsa¾ených polo¾ek. Pøíklad vytvoøení ¹ablony pro popis èlovìka je na Obrázku \ref{clips_template}.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+(deftemplate clovek 
+  (slot name) 
+  (slot vek (type INTEGER))
+  (slot pohlavi)
+  (slot rodiny-stav)
+)
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{\v{S}ablona pro reprezentaci dat o èlovìku.}
+  \label{clips_template}
+\end{figure}
+
+Na základì vytvoøené ¹ablony lze vytváøet u¾ jednotlivé neseøazené fakta. Zde je analogie se strukturní promìnou jazyka C stejná, prvnì se vytvoøí ¹ablona (struktura) a poté se mohou vytváøet její fakta (promìné s typem vytvoøené struktury). První hodnota vytváøeného faktu musí být jméno ji¾ vytvoøené struktury následované seznamem slotù s jejich hodnotami. Neseøazená fakta mají nìkolik výhod oproti seøazeným faktùm, pøednì zapouzdøují data týkající se jedné popisované entity dohromady (v mých pøíkladech se jedná o popis èlovìka). Dále jak jsem uvedl v popisu ¹ablony, jednotlivé sloty lze omezit na akceptované hodnoty, co¾ umo¾nuje mít èístý a kontrolovaný návrh. Neseøazené fakta také øe¹í problém neznámých hodnot - nezadané sloty jsou neznáme a nemusí se zde ukládat ¾adna hodnota znaèící ''nic``. Pøíklad neseøazeného faktu je na Obrázku \ref{clips_nonordered_fact}.
+ 
+\begin{figure}[tbh]
+  \begin{verbatim}
+(clovek 
+  (name "Jaroslav Cecho") 
+  (vek 22)
+  (pohlavi muz)
+)
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Neseøazený fakt popisující èlovìka.}
+  \label{clips_nonordered_fact}
+\end{figure}
+
+Te\v{d} kdy¾ jsem uvedl jakou strukturu mají jak seøazené tak i neseøazené fakty, chybí mi zde poslední odstavec o práci s nimi. V CLIPS se fakta vytváøejí pomocí funkce \verb|assert|. Pøíklady ulo¾ení faktu do pracovní pamìti CLIPS jsou na Obrázku \ref{clips_assert}. Jak jde v ukázce vidìt, funkce se volá úplnì stejnì jak pro neseøazený, tak i pro seøazaný fakt. Pro variantu seøazeného faktu ov¹em ¹ablona jména \verb|clovek| ji¾ musí existovat jinak ukázka skonèí chybou. Dal¹í operace jako aktualizace hodnot nebo smazání celého faktu budou popsány v rámci báze znalostí.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+(assert (neserazeny-clovek "Jaroslav Cecho" 22 muz))
+(assert (clovek (name "Jaroslav Cecho") (vek 22) (pohlavi muz)))
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Vytváøení faktù v pracovní pamìti.}
+  \label{clips_assert}
+\end{figure}
+
+Je¹tì bych se rád vìnoval vnitøní implementaci rozdílu seøazených a neseøazených faktù v CLIPS. Na té nejni¾¹í úrovni jsou toti¾ i pro seøazené fakty vytváøené ¹ablony s právì jedním multislotem jménem \verb|implied|. První hodnota seøazeného faktu slou¾í jako jméno automaticky vytvoøené ¹ablony. Celé chovaní je samozdøejmì vy¹¹ími vrstvami CLIPS zapouzdøeno a u¾ivatel si tak nemusí být vìdom tohoto chování. Tento pøístup s sebou ov¹em pøíná¹í jednu nevýhodu. Jméno ¹ablony musí být v rámci systému unikátní a první hodnota seøazených faktù slou¾í právì jako jméno ¹ablony. Nelze tedy vytvoøit ¹ablonu a skupinu seøazených faktù stejného jméno. Co¾ vzhledem k odli¹nému výstkytu mù¾e u¾ivateli zpùsobit zmatení, proto¾e není hned viditelné, ¾e se obì tato jména vybírají ze stejné mno¾iny. Tento problém lze obejít pou¾ívání v jedné aplikaci právì jednoho typu faktu.
+
+\subsubsection{Báze znalostí}
+CLIPS podobné jako mnoho dal¹ích expertních systémù pro reprezentaci pou¾íva pravidla typu kdy¾-tak (if-then).
+
+\subsubsection{}
+
+\subsubsection{Prostøedí v CLIPS}
+Pro sna¾¹í oddìlenní více be¾ících instancí expertního systému umo¾nuje CLIPS vytváøet takzvaná prostøedí. Ka¾dé prostøedí obsahuje svou vlastní mno¾inu pravidel a faktù. 
+
+\subsection{Roz¹iøitelnost}
+Par slov k rozsiritelnosti, moznosti definovat vlastni uzivatelské funkce
+
+\subsection{Reetùv algoritmus}
 Popsat jak funguje.
 
 %=========================================================================
