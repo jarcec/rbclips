@@ -514,18 +514,80 @@ Te\v{d} kdy¾ jsem uvedl jakou strukturu mají jak seøazené tak i neseøazené fakty
 Je¹tì bych se rád vìnoval vnitøní implementaci rozdílu seøazených a neseøazených faktù v CLIPS. Na té nejni¾¹í úrovni jsou toti¾ i pro seøazené fakty vytváøené ¹ablony s právì jedním multislotem jménem \verb|implied|. První hodnota seøazeného faktu slou¾í jako jméno automaticky vytvoøené ¹ablony. Celé chovaní je samozdøejmì vy¹¹ími vrstvami CLIPS zapouzdøeno a u¾ivatel si tak nemusí být vìdom tohoto chování. Tento pøístup s sebou ov¹em pøíná¹í jednu nevýhodu. Jméno ¹ablony musí být v rámci systému unikátní a první hodnota seøazených faktù slou¾í právì jako jméno ¹ablony. Nelze tedy vytvoøit ¹ablonu a skupinu seøazených faktù stejného jméno. Co¾ vzhledem k odli¹nému výstkytu mù¾e u¾ivateli zpùsobit zmatení, proto¾e není hned viditelné, ¾e se obì tato jména vybírají ze stejné mno¾iny. Tento problém lze obejít pou¾ívání v jedné aplikaci právì jednoho typu faktu.
 
 \subsubsection{Báze znalostí}
-CLIPS podobné jako mnoho dal¹ích expertních systémù pro reprezentaci pou¾íva pravidla typu kdy¾-tak (if-then).
+CLIPS podobné jako mnoho dal¹ích expertních systémù pro reprezentaci báze znalostí pou¾íva pravidla typu kdy¾-tak (if-then). Pravidla fungují na principu vyhledávání vzorù na mno¾iny existujících faktù, proto levá strana pravidla obsahuje v¹echny vzory, které musí být nalezeny pro aktivaci pravidla. Pravá strana poté obsahuje seznam èinností, které se mají stát po aktivaci pravidla. V rámci lze provádìt mnoho rùzných èinností jako vypisování nalezených informací, ov¹em nejdùle¾itìj¹í operace se týkají manipulace s fakty. Ta lze modifikovat, vytváøet èi mazat.
 
-\subsubsection{}
+První se budu blí¾eji vìnovat mo¾nostem levé strany. Jak ji¾ bylo øeèeno, levá strana obsahuje vyhledávané vzory. Z tohoto dùvodu je zde seznam faktù, které musí existovat. CLIPS zde nemá ¾ádné restrikce a lze libovolnì míchat seøazené a neseøazené fakta. Zápis se neli¹í od be¾ného zápisu faktu a¾ na mo¾nost místo libovolné hodnoty mimo ¹ablony nebo skupiny podobných seøazených faktù zadat promìnou. Ta zaèíná znakem otazníku následovaného jménem promìné. Opravdová síla promìných se projeví a¾ kdy¾ je pou¾itá stejná promìná na vícech místech v rámci jednoho pravidla. Proto¾e v¹echny promìné stejného jména jsou nahrazeny stejnou hodnotou, èeho¾ se vyu¾íva pøi vyhledávání faktù se stejnými ov¹em pøedem neznámímy hodnotami velice podobnì jako v jazyce PROLOG. Na Obrázku \ref{clips_rule_1} je ukázka pravidla s pouze levou stranou na kterém mimo jiné prezentuji zápis promìných. Pokud bude v systému vyhovovad danému vyhledávanému vzoru více mo¾ných kombinací pravidel, tak to stejné pravidlo bude zavoláno vícekrát\,--\,jednou pro ka¾dou hledanou kombinaci. 
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+(defrule pouze-leva-strana
+  (neserazeny-fakt ?promena)
+  (serzeny-fakt (prvni-slot ?promena))
+-> )
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Vytvoøení pravidla pouze s levou stranou.}
+  \label{clips_rule_1}
+\end{figure}
+
+Jeli na levé stranì pravidla uvedeno více hledaných faktù, je mezi polo¾ena logická spojka ''a``. Pravidlo bude aktivováno právì tehdy kdy¾ budou v systému pøítomny v¹echny fakta, tak jak je uvedono. Pro jemnìj¹í nastavení podmínek aktivace CLIPS umo¾nuje pou¾ívat i ostatní logické spojky - ''nebo`` a negaci. Jejich pou¾ítí je zobrazeno na Obrázku \ref{clips_rule_2}. Pravidlo z pøíkladu bude aktivovaní pro ka¾dou dvojici faktù \verb|prvni| a \verb|treti|, \verb|druhy| a \verb|treti|, které mají stejnou druhou hodnotu.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+(defrule logicke-spojky
+  (or
+    (prvni ?promena)
+    (druhy ?promena)
+  )
+  (treti ?promena)
+-> )
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Vytvoøení pravidla s logickými spojkami.}
+  \label{clips_rule_2}
+\end{figure}
+
+K levé stranì pravidla u¾ mám poslední informaci, kterou bych rád dodal ne¾ se dostanu k popisu pravé strany. Nalezená fakta díky kterých do¹lo k aktivaci pravidla se dají v CLIPS odchytit do promìné. Na rozdíl od promìných prezentovaných vý¹e, zde u¾ neplatí, ¾e více vyskytù se nahradí právì jednou hodnotou. Pokud se u¾ivatel do promìné rozhodne ulo¾it referenci na aktivaèní fakt, promìnou tohoto jména v rámci levé strany ji¾ nelze pou¾ít. Pøíklad zápisu ulo¾ení reference na aktièní fakt je na Obrázku \ref{clips_rule_3}.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+(defrule reference-na-fakt
+  ?ref <- (fakt ktery se ma najit)
+-> )
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Ulo¾ení reference na aktivaèní fakt.}
+  \label{clips_rule_3}
+\end{figure}
+
+Jak ji¾ bylo uvedeno vý¹e, pravá strana pravidla slou¾í k popsání vìcí, které se mají stát po aktivaci pravidla. Lze zde volat libovolná funkce CLIPS, ov¹em ja se omezím na popis manipulace s fakty. Na pravé stranì lze vytváøet fakta úplnì stejnì jako jinde v systému, tedy pomocí pou¾ítí funkce \verb|assert|. Navíc lze místo pøesných hodnot pou¾ít promìné získané z levé strany pravidla (s vyjímkou promìných referencujících fakta). Dal¹ími mo¾nostmi je aktivaèní fakta mazat pomocí funkce \verb|retract| nebo je mìnit pomocí funkce \verb|modify|. Pøíklady pou¾ítí v¹ech tøí funkcí jsou na Obrázku \ref{clips_rule_4}.
+
+\begin{figure}[tbh]
+  \begin{verbatim}
+(defrule prava-strana
+  ?ref1 <- (prvni ?prom ?x)
+  ?ref2 <- (clovek (name ?name) (nickname ?nick))
+  ->
+  (assert (treti ?x))
+  (retract ?ref1)
+  (modify ?ref2 (nickname ?name) (name ?nick) )
+)
+  \end{verbatim}
+  \vspace{-0.7cm}
+  \caption{Ukázka pravé strany pravidla.}
+  \label{clips_rule_4}
+\end{figure}
 
 \subsubsection{Prostøedí v CLIPS}
-Pro sna¾¹í oddìlenní více be¾ících instancí expertního systému umo¾nuje CLIPS vytváøet takzvaná prostøedí. Ka¾dé prostøedí obsahuje svou vlastní mno¾inu pravidel a faktù. 
+Aby u¾ivatel v pøípadì potøeby více instancí expertního systému nemusel pro ka¾dou vytváøet separátní proces obsahují CLIPS prostøedí. Prostøedí jsou od sebe navzájem plnì oddìlena, mohou tedy obsahovat zcela jiná pravidla èi fakta. Jejich nasazení se pou¾ívá pro dva pøípady. Za prvé se pou¾ívají v pøípadì, kdy u¾ivatel potøebuje dva nezávislé expertní systémy (napøíklad øe¹ící úplnì jiné problémy) a nechce je be¾et jako nezávislé procesy operaèního systému. Druhý pøípad spoèívá v optimalizaci rychlosti. Obsahuje-li pracovní pamìt velký poèet faktù, které lze rozdìlit do nìkolika nezávislých skupin, lze tyto skupiny umístit do separátních prostøedí. Pravidla se poté do obou prostøedí musí sice ulo¾it zvlá¹\v{t} a budou tedy v pamìti ulo¾eny 2x, ov¹em na druhou stranu pøi jejich aktivaci nebude potøeba zpracovávat tolik faktù. Tento druhý pøípad díky vhodnì zvoleným algoritmùm v jádru CLIPS nedosahuje pøíli¹ného zrychlení.
 
 \subsection{Roz¹iøitelnost}
-Par slov k rozsiritelnosti, moznosti definovat vlastni uzivatelské funkce
+Podobnì jako lze binárními roz¹íøeními pøidat do interpretu skriptovacího jazyka dal¹í funkcionalitu, i CLIPS jde roz¹íøit o nové funkce. Aplikaèní rozhraní CLIPS umo¾nuje u¾ivateli zaregistrovat libovolnou novou funkci a poté ji z u¾ivatelského rozhraní volat. Oproti roz¹íøením interpretu mají roz¹íøení CLIPS velké omezení. Nelze je nahrávat za bìhu, tak jako v Ruby pomocí pøíkazu \verb|include|. Musí tedy být do CLIPS pøidány ji¾ v dobì kompilace. V ostatních ohledech se ov¹em chovají a øe¹í stejné problémy jako ony. Jsou odpovìdné za pøevody typù a volacích konvencí mezi rùznymi spojovanými knihovnami.
 
-\subsection{Reetùv algoritmus}
-Popsat jak funguje.
+\subsection{Rozhodovací algoritmus}
+Jak jsem ji¾ zmínil v pøedchozejícíh odstavcích, rozhodovací engine CLIPS funguje na základì vyhledávání vzorù na mno¾inì v¹ech faktù pøítomných v systému. Jedním z mo¾ných zpùsobu na nalezení v¹ech mo¾ných pravidel k aktivaci i spolu se v¹emi aktivaèními parametry je sekvenèní prùchod existujících faktù. Tato naivní implementace by u¾ pro systémy se stovkami faktù byla pøíli¹ pomalá a proto CLIPS vyu¾ívá algoritmu optimalizovaného pro vyhledávání vzorù\,--\,algoritmus Rete (Rete algorithm).
+
+Detailní popis algoritmu je nad rámec této práce, proto zde uvedu pouze nástin jak algoritmus funguje. V pamìti vytváøí stromovu strukturu, kde ka¾dý uzel mimo koøene odpovídá jednomu hledaném vzoru nìjakého pravidla. Bude-li mít pravidlo celkem tøí vyhledávané vzory, poté bude celé pravidlo reprezentované celkem tøemi uzly. Cesta od koøene k listu odpovídá celé levé stranì pravidla. V ka¾dém uzlu bude ulo¾en ukazatel na fakta, které daný vzor spl\v{n}ují. V listech stromu poté fakta vyhovující pro aktivaci pravidla, jeho¾ levá strana je ve stromu reprezentována. Jak jsou jednotlivé fakta vytváøena èi modifikováná, tak se propagují do tohoto stromu a pøi ulo¾ením a¾ do nìjakého listu mohou zpùsobit aktivaci pravidla. Velkou výhodou algoritmu je teoretická nezávislost rychlosti na poètu pravidel v systému.
 
 %=========================================================================
 \chapter{Knihovna rbClips}
