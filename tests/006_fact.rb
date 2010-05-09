@@ -208,4 +208,30 @@ class Test_Fact < Test::Unit::TestCase
     assert a.destroy!
     assert template.destroy!
   end
+
+  def test_save_update
+    t = Clips::Template.new('animal') do |t|
+      t.slot :name
+      t.slot :age
+      t.slot :race
+    end
+    t.save
+
+    a = Clips::Fact.new(t, :name => "Azor")
+
+    a.save
+    b = Clips::Fact.find(t).first;
+    assert a.name, "Azor"
+    assert b.name, "Azor"
+
+    a.name = "Bohus"
+    b = Clips::Fact.find(t).first
+    assert a.name, "Bohus"
+    assert b.name, "Azor"
+
+    a.save
+    b = Clips::Fact.find(t).first
+    assert a.name, "Bohus"
+    assert b.name, "Bohus"
+  end
 end

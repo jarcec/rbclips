@@ -269,14 +269,7 @@ VALUE cl_fact_set_slot(VALUE self, VALUE slot, VALUE newValue)
   // Save new value inside Ruby object
   rb_hash_aset(fslots, slot, newValue);
 
-  // If we're saved, update CLIPS structure as well
-  if(wrap->ptr)
-  {
-    long long index = FactIndex(wrap->ptr);
-    VALUE command = rb_sprintf("(modify %lld (%s %s))", index, CL_STR(slot), CL_STR_ESCAPE(newValue));
-    cl_base_insert_command(Qnil, command);
-  }
-
+  // C'est tout
   return Qtrue;
 }
 
