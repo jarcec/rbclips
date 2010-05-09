@@ -574,8 +574,6 @@ int cl_fact_update_each(VALUE key, VALUE value, VALUE self)
  */
 VALUE cl_fact_destroy(VALUE self)
 {
-  CL_UPDATE(self);
-
   cl_sFactWrap *wrap = DATA_PTR(self);
   if( !wrap )
   {
@@ -585,6 +583,8 @@ VALUE cl_fact_destroy(VALUE self)
 
   // if NULL return (don't rectract something that is not saved)
   if( !wrap->ptr ) return Qfalse;
+
+  if ( !FactExistp(wrap->ptr) ) return Qfalse;
 
   if( Retract(wrap->ptr) ) return Qtrue;
 

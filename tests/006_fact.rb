@@ -28,7 +28,7 @@ class Test_Fact < Test::Unit::TestCase
     assert_equal a.instance_eval { @template }, 'human'
 
     assert a.save
-    assert !a.save
+    assert a.save
     assert a.destroy!
     assert !a.destroy!
 
