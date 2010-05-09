@@ -93,6 +93,6 @@ extern cl_sIds cl_vIds;
                                   if(TYPE(ret) != T_TRUE) return Qfalse
 #define CL_EQUAL_DEFINE_WRAP(s)   s *aaa = DATA_PTR(a); \
                                   s *bbb = DATA_PTR(b)
-#define CL_EQUAL_CHECK_PTR        if(!aaa || !bbb || aaa->ptr != bbb->ptr) return Qfalse
+#define CL_EQUAL_CHECK_PTR        if( !(aaa && bbb && aaa->ptr == bbb->ptr) ) return Qfalse
 
 #endif // _RBCLIPS_H_

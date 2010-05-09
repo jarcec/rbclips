@@ -218,8 +218,6 @@ VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
  */
 VALUE cl_fact_slots(VALUE self)
 {
-  CL_UPDATE(self);
-
   VALUE slots = rb_iv_get(self, "@slots");
   return rb_ary_dup(slots);
 }
@@ -229,8 +227,6 @@ VALUE cl_fact_slots(VALUE self)
  */
 VALUE cl_fact_slot(VALUE self, VALUE slot)
 {
-  CL_UPDATE(self);
-
   VALUE template  = rb_iv_get(self, "@template");
   VALUE fslots    = rb_iv_get(self, "@slots");
   VALUE tslots    = rb_iv_get(template, "@slots");
@@ -251,8 +247,6 @@ VALUE cl_fact_slot(VALUE self, VALUE slot)
  */
 VALUE cl_fact_set_slot(VALUE self, VALUE slot, VALUE newValue)
 {
-  CL_UPDATE(self);
-
   cl_sFactWrap *wrap = DATA_PTR(self);
   if( !wrap )
   {
@@ -420,8 +414,6 @@ int cl_fact_to_s_nonordered_each(VALUE key, VALUE value, VALUE target)
  */
 VALUE cl_fact_clone(VALUE self)
 {
-  CL_UPDATE(self);
-
   cl_sFactWrap *selfwrap = DATA_PTR(self);
   cl_sFactWrap *wrap = calloc( 1, sizeof(*wrap) );
   
@@ -445,6 +437,8 @@ VALUE cl_fact_equal(VALUE a, VALUE b)
 {
   CL_EQUAL_CLASS(b, cl_cFact);
 
+  // This is outdated right now, but from unknown reason
+  // it have to be here, otherwise testcases are segmentating
   CL_UPDATE(a);
   CL_UPDATE(b);
 
@@ -464,8 +458,6 @@ VALUE cl_fact_equal(VALUE a, VALUE b)
  */
 VALUE cl_fact_save(VALUE self)
 {
-  CL_UPDATE(self);
-
   cl_sFactWrap *wrap = DATA_PTR(self);
   if( !wrap )
   {
