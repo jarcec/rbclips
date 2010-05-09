@@ -46,7 +46,7 @@ class Test_Fact < Test::Unit::TestCase
     assert_raise(Clips::ArgumentError)  { Clips::Fact.new template, 29     => 'agatha' }
 
     a = Clips::Fact.new template, :name => 'agatha', 'age' => 30
-    assert_equal a.instance_eval { @slots }, { :name => 'agatha', :age => 30}
+    assert_equal a.instance_eval { @slots }, { :name => 'agatha', :age => 30, :race => nil}
     assert_equal a.instance_eval { @template }, template
 
     assert !a.ordered?
@@ -209,7 +209,7 @@ class Test_Fact < Test::Unit::TestCase
     assert template.destroy!
   end
 
-  def test_save_update
+  def test_saved
     t = Clips::Template.new('animal') do |t|
       t.slot :name
       t.slot :age
@@ -218,20 +218,41 @@ class Test_Fact < Test::Unit::TestCase
     t.save
 
     a = Clips::Fact.new(t, :name => "Azor")
+    assert !a.saved?
 
-    a.save
-    b = Clips::Fact.find(t).first;
-    assert a.name, "Azor"
-    assert b.name, "Azor"
+    assert a.save
+    assert a.saved?
 
     a.name = "Bohus"
+    assert !a.saved?
+
+    a.save
+    assert a.saved?
+  end
+
+  def test_save_update
+    t = Clips::Template.new('animal') do |t|
+      t.slot :name
+      t.slot :age
+      t.slot :race
+    end
+    assert t.save
+
+    a = Clips::Fact.new(t, :name => "Azor")
+
+    assert a.save
+    b = Clips::Fact.find(t).first;
+    assert_equal a.name, "Azor"
+    assert_equal b.name, "Azor"
+
+    assert a.name = "Bohus"
     b = Clips::Fact.find(t).first
-    assert a.name, "Bohus"
-    assert b.name, "Azor"
+    assert_equal a.name, "Bohus"
+    assert_equal b.name, "Azor"
 
     a.save
     b = Clips::Fact.find(t).first
-    assert a.name, "Bohus"
-    assert b.name, "Bohus"
+    assert_equal a.name, "Bohus"
+    assert_equal b.name, "Bohus"
   end
 end

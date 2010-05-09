@@ -28,6 +28,9 @@ VALUE cl_fact_to_s_nonordered(VALUE);
 //! Foreach method for creating nonordered fact
 int cl_fact_initialize_nonordered_each(VALUE, VALUE, VALUE);
 
+//! Foreach method for creating entries in internal hash
+int cl_fact_initialize_nonordered_create_entries(VALUE, VALUE, VALUE);
+
 //! Foreach method for string conversion
 int cl_fact_to_s_nonordered_each(VALUE, VALUE, VALUE);
 
@@ -204,7 +207,11 @@ VALUE cl_fact_initialize_nonordered(VALUE self, VALUE first, VALUE second)
   rb_iv_set(self, "@template", first);
   rb_iv_set(self, "@slots", rb_hash_new());
 
-  // Check if slot exists
+  // Take all template slots and create entry in our internal slot hash
+  VALUE tslots = rb_iv_get(first, "@slots");
+  rb_hash_foreach(tslots, cl_fact_initialize_nonordered_create_entries, self);
+
+  // Go throw given hash and fill internal slots from it
   rb_hash_foreach(second, cl_fact_initialize_nonordered_each, self);
 
   // Define instance methods
@@ -281,6 +288,18 @@ VALUE cl_fact_template(VALUE self)
 {
   VALUE ret = rb_iv_get(self, "@template");
   return rb_funcall(ret, cl_vIds.clone, 0);
+}
+
+/**
+ * Go throw each slot in template and create entry with nil value in our
+ * internal hash slot list. E.g. fill nil value to it
+ */
+int cl_fact_initialize_nonordered_create_entries(VALUE key, VALUE value, VALUE self)
+{
+  VALUE slots = rb_iv_get(self, "@slots");
+  rb_hash_aset(slots, key, Qnil);
+
+  return ST_CONTINUE;
 }
 
 /**
@@ -432,8 +451,8 @@ VALUE cl_fact_equal(VALUE a, VALUE b)
 
   // This is outdated right now, but from unknown reason
   // it have to be here, otherwise testcases are segmentating
-  CL_UPDATE(a);
-  CL_UPDATE(b);
+//  CL_UPDATE(a);
+//  CL_UPDATE(b);
 
   CL_EQUAL_DEFINE;
   
@@ -477,6 +496,38 @@ VALUE cl_fact_save(VALUE self)
   }
 
   return Qtrue;
+}
+
+/**
+ * Return True or False based on whether this object was
+ * already saved and/or if it change after last save.
+ */
+VALUE cl_fact_saved(VALUE self)
+{
+  cl_sFactWrap *wrap = DATA_PTR(self);
+  if( !wrap )
+  {
+      rb_raise(cl_eUseError, "Oops, wrap structure don't exists!");
+      return Qnil;
+  }
+
+  if( !wrap->ptr ) return Qfalse;
+
+  // Valid?
+  if ( !FactExistp(wrap->ptr) )
+  {
+    wrap->ptr = NULL;
+    return Qfalse;
+  }
+
+  // Creating the object from CLIPS
+  cl_sFactWrap *wrap_clips = calloc(1, sizeof(*wrap_clips));
+  VALUE obj_clips = Data_Wrap_Struct(cl_cFact, NULL, free, wrap_clips);
+  wrap_clips->ptr = wrap->ptr;
+  CL_UPDATE(obj_clips);
+
+  // Return whether us and the CLIPS representation are the same
+  return rb_funcall(self, cl_vIds.eqq, 1, obj_clips);
 }
 
 /**

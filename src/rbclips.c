@@ -96,6 +96,7 @@ void Init_rbclips()
   rb_define_alias(cl_cFact, "equal?", "==");
   rb_define_alias(cl_cFact, "eql?", "==");
   rb_define_method(cl_cFact, "save", cl_fact_save, 0);
+  rb_define_method(cl_cFact, "saved?", cl_fact_saved, 0);
   rb_define_method(cl_cFact, "destroy!", cl_fact_destroy, 0);
   rb_define_method(cl_cFact, "ordered?", cl_fact_ordered, 0);
   rb_define_method(cl_cFact, "update", cl_fact_update, 0);

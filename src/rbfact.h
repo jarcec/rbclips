@@ -57,6 +57,9 @@ VALUE cl_fact_template(VALUE);
 //! Clips::Fact\#save
 VALUE cl_fact_save(VALUE);
 
+//! Clips::Fact\#saved?
+VALUE cl_fact_saved(VALUE);
+
 //! Clips::Fact\#update
 VALUE cl_fact_update(VALUE);
 
