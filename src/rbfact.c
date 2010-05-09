@@ -477,11 +477,19 @@ VALUE cl_fact_save(VALUE self)
   if ( !FactExistp(wrap->ptr) )
    wrap->ptr = NULL;
 
-  // Already saved?
-  if(wrap->ptr) return Qfalse;
-
-  // Saving
-  wrap->ptr = AssertString( CL_STR(self) );
+  // Is this fact already saved or not?
+  if( !wrap->ptr )
+  { 
+    // No it's not, so we're creating new on
+    wrap->ptr = AssertString( CL_STR(self) );
+  } else {
+    // This fact is already saved, so we're making same approach
+    // as CLIPS itself - retracting current and asssert new one.
+    // Modify command is not suitable here, because it "forget"
+    // pointer to newly created fact.
+    if( !Retract(wrap->ptr) ) return Qfalse;
+    wrap->ptr = AssertString( CL_STR(self) );
+  }
 
   return Qtrue;
 }
