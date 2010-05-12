@@ -349,6 +349,12 @@ Práce je chránìna autorským zákonem a její u¾ití bez udìlení oprávnìní autorem j
 
 \newpage\fontfamily{\familydefault}\selectfont%
 %=================================================================================
+\begin{center}
+\Huge
+ ZDE PROSIM VLOZIT ZADANI PRACE
+\end{center}
+
+\newpage
 \makeabstract\makedeclaration
 \clearpage
 \setcounter{tocdepth}{2}\setcounter{page}{1}
