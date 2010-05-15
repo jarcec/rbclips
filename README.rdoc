@@ -4,10 +4,25 @@ RbClips is a binary extension for Ruby[http://ruby-lang.org] language (MRI versi
 
 == Interface
 
-I'm supposing that you're already familiar with CLIPS tool and it's user interface. Interface of rbClips have similar approach as ActiveRecord project.
+I'm supposing that you're already familiar with CLIPS tool and it's user interface. Entire interface of rbClips have similar approach as ActiveRecord project.
+
+=== Templates
+
+Working with templates is done via Template class.
+
+Example:
+  Template.new "human" do |s|
+    s.slot name
+    s.slot surname
+    s.slot age, :constraint => { :type => :integer, :range => 0..120 }
+  end
+
+=== Facts
+
+Facts are wrapped by Fact class - both ordered and nonordered
 
 
-== Example
+== "Complex" example
 
   # Load binary extension into memory
   require 'Clips'
@@ -53,4 +68,4 @@ I'm supposing that you're already familiar with CLIPS tool and it's user interfa
 
 == Documentation
 
-Documentation can be build from source codes using {Doxygen tool}[http://www.stack.nl/~dimitri/doxygen/].
+Documentation can be build from source codes using {Doxygen tool}[http://www.stack.nl/~dimitri/doxygen/]. To build documentation just run "doxygen" command in doc/doxygen subdirectory.
