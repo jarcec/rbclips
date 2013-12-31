@@ -89,3 +89,7 @@ Example:
 == Documentation
 
 Documentation can be build from source codes using {Doxygen tool}[http://www.stack.nl/~dimitri/doxygen/]. To build documentation just run "doxygen" command in doc/doxygen subdirectory.
+
+== License
+
+Project is licensed under {ASLv2}[http://www.apache.org/licenses/LICENSE-2.0].
